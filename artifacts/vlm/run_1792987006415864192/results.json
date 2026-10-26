@@ -1,0 +1,62 @@
+[
+  {
+    "mode": "dry_run_no_inference",
+    "model": "gemini-robotics-er-2-preview",
+    "clock_mode": "offline_incident_replay_1x_wall",
+    "image": "/home/jude/isaac_ws_61/haiclaw_ws/artifacts/vlm/captures/a2fa48d1-b7c8-4e01-a38a-2dbe63bd3644/rgb.png",
+    "evidence_id": "1e3ff23b-513e-44ea-a366-604093b31695",
+    "capture_time": 31.766666667,
+    "navigation_goal_id": "62189f25-6da9-4567-969f-52813bdd7e88",
+    "image_sha256": "20bb136da722ed8e6a64a3527a69de0463144f4a37abc66e3dbca213d4e74ab7",
+    "request_metadata": {
+      "evidence_id": "1e3ff23b-513e-44ea-a366-604093b31695",
+      "capture_time": 31.766666667
+    },
+    "final_incident_state": null,
+    "raw_response": null,
+    "interpretation": null,
+    "events": [],
+    "blocker": "API not executed; use GEMINI_API_KEY and --allow-api",
+    "scenario": "normal_work"
+  },
+  {
+    "mode": "dry_run_no_inference",
+    "model": "gemini-robotics-er-2-preview",
+    "clock_mode": "offline_incident_replay_1x_wall",
+    "image": "/home/jude/isaac_ws_61/haiclaw_ws/artifacts/vlm/captures/6815cc79-72fe-405b-bb83-768a7dfcec49/rgb.png",
+    "evidence_id": "bcb41629-6168-4e2a-9d1c-799c632c7df3",
+    "capture_time": 31.966666667,
+    "navigation_goal_id": "62189f25-6da9-4567-969f-52813bdd7e88",
+    "image_sha256": "3562b925024237d6df7091d7689ccc86bab2546ed401ac8002fef0cb8adf7a19",
+    "request_metadata": {
+      "evidence_id": "bcb41629-6168-4e2a-9d1c-799c632c7df3",
+      "capture_time": 31.966666667
+    },
+    "final_incident_state": null,
+    "raw_response": null,
+    "interpretation": null,
+    "events": [],
+    "blocker": "API not executed; use GEMINI_API_KEY and --allow-api",
+    "scenario": "lying_on_floor"
+  },
+  {
+    "mode": "dry_run_no_inference",
+    "model": "gemini-robotics-er-2-preview",
+    "clock_mode": "offline_incident_replay_1x_wall",
+    "image": "/home/jude/isaac_ws_61/haiclaw_ws/artifacts/vlm/captures/0194eb3a-468e-42a8-b795-3f792d46d364/rgb.png",
+    "evidence_id": "ce0633af-4713-4f9a-980e-7a3ad7ab86e6",
+    "capture_time": 32.166666667,
+    "navigation_goal_id": "62189f25-6da9-4567-969f-52813bdd7e88",
+    "image_sha256": "57ba26a1e8c7f0332aa52ce5695ea3417fe16daff3c3df28f6e4f662bb928a63",
+    "request_metadata": {
+      "evidence_id": "ce0633af-4713-4f9a-980e-7a3ad7ab86e6",
+      "capture_time": 32.166666667
+    },
+    "final_incident_state": null,
+    "raw_response": null,
+    "interpretation": null,
+    "events": [],
+    "blocker": "API not executed; use GEMINI_API_KEY and --allow-api",
+    "scenario": "insufficient_view"
+  }
+]

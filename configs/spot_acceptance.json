@@ -1,0 +1,23 @@
+{
+  "engine": "physx",
+  "physics_dt": 0.002,
+  "rendering_dt": 0.02,
+  "spawn": [0, -3, 0.8],
+  "phases_seconds": {"settle": 3, "hold": 3, "forward": 5, "turn": 4, "stop": 4},
+  "command_forward_mps": 0.25,
+  "command_turn_radps": 0.3,
+  "height_range_m": [0.35, 0.85],
+  "max_tilt_degrees": 25,
+  "hold_drift_max_m": 0.2,
+  "forward_distance_min_m": 0.5,
+  "forward_mean_speed_range_mps": [0.1, 0.45],
+  "turn_yaw_min_rad": 0.4,
+  "turn_mean_rate_range_radps": [0.1, 0.6],
+  "stop_grace_seconds": 1,
+  "stop_residual_max_m": 0.15,
+  "stop_final_speed_max_mps": 0.08,
+  "reset_pose_tolerance_m": 0.1,
+  "required_reset_replays": 1,
+  "waypoint_tolerance_m": 0.25,
+  "waypoint_timeout_seconds": 45
+}

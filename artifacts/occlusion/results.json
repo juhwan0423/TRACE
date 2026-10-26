@@ -1,0 +1,140 @@
+{
+  "verification_level": "isaac-rendered-primitive-occlusion",
+  "motion": "authored camera transform; no robot locomotion",
+  "perception": "renderer semantic labels; no YOLO/VLM",
+  "seed": 7,
+  "records": [
+    {
+      "phase": "entry",
+      "camera": "FixedCamera",
+      "person_proxy_pixels": 13229,
+      "shape": [
+        720,
+        1280,
+        3
+      ],
+      "mean_rgb": 174.2981344039352,
+      "std_rgb": 45.087188342741115,
+      "file": "artifacts/occlusion/entry_FixedCamera.png",
+      "bytes": 2766492,
+      "sim_time_at_read": 4.34999999999999,
+      "wall_capture_seconds": 0.027077273999566387,
+      "sensor_metadata": {},
+      "segmentation_labels": {
+        "0": {
+          "class": "BACKGROUND"
+        },
+        "1": {
+          "class": "UNLABELLED"
+        },
+        "2": {
+          "class": "person_proxy"
+        }
+      }
+    },
+    {
+      "phase": "occluded",
+      "camera": "FixedCamera",
+      "person_proxy_pixels": 0,
+      "shape": [
+        720,
+        1280,
+        3
+      ],
+      "mean_rgb": 175.60854817708332,
+      "std_rgb": 44.348573276580744,
+      "file": "artifacts/occlusion/occluded_FixedCamera.png",
+      "bytes": 2766492,
+      "sim_time_at_read": 5.366666666666653,
+      "wall_capture_seconds": 0.040544161000070744,
+      "sensor_metadata": {},
+      "segmentation_labels": {
+        "0": {
+          "class": "BACKGROUND"
+        },
+        "1": {
+          "class": "UNLABELLED"
+        }
+      }
+    },
+    {
+      "phase": "before_move",
+      "camera": "MovingCamera",
+      "person_proxy_pixels": 0,
+      "shape": [
+        720,
+        1280,
+        3
+      ],
+      "mean_rgb": 175.58964735243055,
+      "std_rgb": 44.364118173271706,
+      "file": "artifacts/occlusion/before_move_MovingCamera.png",
+      "bytes": 2766492,
+      "sim_time_at_read": 5.3833333333333195,
+      "wall_capture_seconds": 0.02227759600009449,
+      "sensor_metadata": {},
+      "segmentation_labels": {
+        "0": {
+          "class": "BACKGROUND"
+        },
+        "1": {
+          "class": "UNLABELLED"
+        }
+      }
+    },
+    {
+      "phase": "after_move",
+      "camera": "MovingCamera",
+      "person_proxy_pixels": 36178,
+      "shape": [
+        720,
+        1280,
+        3
+      ],
+      "mean_rgb": 163.2367599826389,
+      "std_rgb": 52.13257195569052,
+      "file": "artifacts/occlusion/after_move_MovingCamera.png",
+      "bytes": 2766492,
+      "sim_time_at_read": 7.399999999999979,
+      "wall_capture_seconds": 0.04097984199961502,
+      "sensor_metadata": {},
+      "segmentation_labels": {
+        "0": {
+          "class": "BACKGROUND"
+        },
+        "1": {
+          "class": "UNLABELLED"
+        },
+        "2": {
+          "class": "person_proxy"
+        }
+      }
+    },
+    {
+      "phase": "after_move",
+      "camera": "FixedCamera",
+      "person_proxy_pixels": 0,
+      "shape": [
+        720,
+        1280,
+        3
+      ],
+      "mean_rgb": 175.18617513020834,
+      "std_rgb": 44.87228191956247,
+      "file": "artifacts/occlusion/after_move_FixedCamera.png",
+      "bytes": 2766492,
+      "sim_time_at_read": 7.416666666666646,
+      "wall_capture_seconds": 0.02168357600021409,
+      "sensor_metadata": {},
+      "segmentation_labels": {
+        "0": {
+          "class": "BACKGROUND"
+        },
+        "1": {
+          "class": "UNLABELLED"
+        }
+      }
+    }
+  ],
+  "passed": true
+}

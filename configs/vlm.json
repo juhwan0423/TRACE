@@ -1,0 +1,12 @@
+{
+  "provider": "gemini",
+  "endpoint": null,
+  "model": "gemini-robotics-er-2-preview",
+  "timeout_seconds": 20,
+  "max_evidence_age_seconds": 30,
+  "safe_closure_from_single_frame": false,
+  "auto_download": false,
+  "api_key_env": "GEMINI_API_KEY",
+  "allow_api": false,
+  "incident_budget_seconds": 30
+}

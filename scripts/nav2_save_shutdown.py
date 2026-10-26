@@ -1,0 +1,5 @@
+inspection.close()
+ros_bridge.close()
+demo.hold()
+omni.usd.get_context().get_stage().Export(str(root/'artifacts/nav2/before_transport_restart.usda'))
+omni.kit.app.get_app().post_quit()

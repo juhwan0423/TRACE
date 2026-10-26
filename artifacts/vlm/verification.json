@@ -1,0 +1,47 @@
+{
+  "syntax_files": 10,
+  "captures": [
+    {
+      "scenario": "normal_work",
+      "image": "/home/jude/isaac_ws_61/haiclaw_ws/artifacts/vlm/captures/a2fa48d1-b7c8-4e01-a38a-2dbe63bd3644/rgb.png",
+      "width": 640,
+      "height": 360,
+      "bytes": 99736,
+      "arrival": 31.542,
+      "capture": 31.766666667,
+      "authored_at": 31.622,
+      "xy_error": 0.08145416003829765,
+      "yaw_error": 0.10442494726934148,
+      "common_actual_arrival": true
+    },
+    {
+      "scenario": "lying_on_floor",
+      "image": "/home/jude/isaac_ws_61/haiclaw_ws/artifacts/vlm/captures/6815cc79-72fe-405b-bb83-768a7dfcec49/rgb.png",
+      "width": 640,
+      "height": 360,
+      "bytes": 90796,
+      "arrival": 31.542,
+      "capture": 31.966666667,
+      "authored_at": 31.822,
+      "xy_error": 0.08133515951399002,
+      "yaw_error": 0.10165618413932488,
+      "common_actual_arrival": true
+    },
+    {
+      "scenario": "insufficient_view",
+      "image": "/home/jude/isaac_ws_61/haiclaw_ws/artifacts/vlm/captures/0194eb3a-468e-42a8-b795-3f792d46d364/rgb.png",
+      "width": 640,
+      "height": 360,
+      "bytes": 89219,
+      "arrival": 31.542,
+      "capture": 32.166666667,
+      "authored_at": 32.022,
+      "xy_error": 0.08121017813565641,
+      "yaw_error": 0.09873305046035297,
+      "common_actual_arrival": true
+    }
+  ],
+  "dry_run_viewer": "/home/jude/isaac_ws_61/haiclaw_ws/artifacts/vlm/run_1792987006415864192/index.html",
+  "actual_api_calls": 0,
+  "guide_sha256": "09adb11f375e5b03dff4b0f4713e9eff925ba7253c9d6f67bbaf76c42ac66403"
+}

@@ -1,0 +1,10 @@
+import os
+print('domain', rclpy.get_default_context().get_domain_id(), os.environ.get('ROS_DOMAIN_ID'))
+print('playing', omni.timeline.get_timeline_interface().is_playing())
+print('bridgefailure', ros_bridge.failure)
+print('nodes', ros_bridge.get_node_names_and_namespaces())
+print('topics', ros_bridge.get_topic_names_and_types())
+frame_time = rep.AnnotatorRegistry.get_annotator('IsaacReadSimulationTime')
+frame_time.attach([str(demo.camera.render_product.GetPath())])
+await app_utils.update_app_async(steps=5)
+print('frame time', frame_time.get_data())

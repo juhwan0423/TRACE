@@ -1,0 +1,5 @@
+FROM ros2-jazzy-gazebo:latest
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ros-jazzy-navigation2 ros-jazzy-nav2-bringup \
+    && rm -rf /var/lib/apt/lists/*
+ENV ROS_DOMAIN_ID=173 ROS_LOCALHOST_ONLY=1 ROS_AUTOMATIC_DISCOVERY_RANGE=LOCALHOST

@@ -1,0 +1,5 @@
+inspection.cancel()
+await app_utils.update_app_async(steps=100)
+inspection.save()
+demo.save()
+print('cancelled', inspection.output)

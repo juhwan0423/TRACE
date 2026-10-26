@@ -1,0 +1,44 @@
+# Python and local environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+
+# Credentials and machine-local settings
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials*.json
+secrets*.json
+.vscode/
+.idea/
+
+# Generated runtime data: retain only selected verification evidence below
+artifacts/*
+!artifacts/occlusion/
+artifacts/occlusion/*
+!artifacts/occlusion/results.json
+!artifacts/occlusion/entry_FixedCamera.png
+!artifacts/occlusion/occluded_FixedCamera.png
+!artifacts/occlusion/before_move_MovingCamera.png
+!artifacts/occlusion/after_move_MovingCamera.png
+!artifacts/occlusion/after_move_FixedCamera.png
+!artifacts/vlm/
+artifacts/vlm/*
+!artifacts/vlm/cases.json
+!artifacts/vlm/captures/
+!artifacts/vlm/verification.json
+!artifacts/vlm/scene_restored.json
+!artifacts/vlm/unit_tests.log
+!artifacts/vlm/three_case_dry_run.log
+!artifacts/vlm/run_1792987006415864192/
+artifacts/vlm/captures/*
+!artifacts/vlm/captures/a2fa48d1-b7c8-4e01-a38a-2dbe63bd3644/
+!artifacts/vlm/captures/6815cc79-72fe-405b-bb83-768a7dfcec49/
+!artifacts/vlm/captures/0194eb3a-468e-42a8-b795-3f792d46d364/

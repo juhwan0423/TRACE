@@ -1,0 +1,6 @@
+print('odom publishers', len(ros_bridge.get_publishers_info_by_topic('/odom')))
+print('scan publishers', len(ros_bridge.get_publishers_info_by_topic('/scan')))
+print('own nodes', [n for n in ros_bridge.get_node_names_and_namespaces() if n[0]=='haiclaw_spot_bridge'])
+print('policy callbacks', demo._physics_callback_id, demo._timeline_stop_callback_id)
+print('zero command', demo._base_command.tolist(), 'mode', demo.mode, 'failure', demo.failure)
+print('inspection', inspection.run.status, inspection.run.evidence)
