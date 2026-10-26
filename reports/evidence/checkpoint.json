@@ -1,0 +1,328 @@
+{
+  "schema_version": 1,
+  "selection": "Selected development checkpoints, not a benchmark dataset.",
+  "limitations": [
+    "Historical runs predate the final post-arrival and viewpoint fixes.",
+    "No source commit was recorded per run; do not attribute these to the export commit.",
+    "Fixture perception/motion is not real vision or navigation validation.",
+    "completed includes escalated_unknown and does not mean correct resolution.",
+    "Absent fields were not recorded; raw images and model text are excluded.",
+    "Raw local result hashes support identification, not independent verification."
+  ],
+  "runs": [
+    {
+      "episode": "263c92fc-bb26-492b-869d-d822a8e2e2ab",
+      "mode": "live_simulation",
+      "model": "qwen3-vl:8b",
+      "evaluation_case": "lying_on_floor",
+      "completed": true,
+      "state": "escalated_unknown",
+      "family": "closed_loop",
+      "source": "artifacts/closed_loop/263c92fc-bb26-492b-869d-d822a8e2e2ab/result.json",
+      "source_sha256": "0031209380c3b03efcbd04ca0c484bd93a24f0f048308728529194b2906a6119",
+      "tool_results": [],
+      "incident_events": [
+        {
+          "time": 11.502,
+          "motion": "moving",
+          "attempt_id": 1,
+          "request_fresh_frame": false
+        },
+        {
+          "time": 40.242,
+          "motion": "arrived",
+          "attempt_id": 1,
+          "request_fresh_frame": true
+        },
+        {
+          "time": 81.502,
+          "state": "escalated_unknown",
+          "local_alert": true
+        }
+      ]
+    },
+    {
+      "episode": "2ea9500a-f344-465e-b250-8ed6845d4c10",
+      "mode": "fixture",
+      "planner": "ollama",
+      "model": "qwen3-vl:8b",
+      "evaluation_case": "fixture",
+      "completed": true,
+      "state": "escalated_unknown",
+      "wall_seconds": 180.00147842300066,
+      "family": "harness",
+      "source": "artifacts/harness/2ea9500a-f344-465e-b250-8ed6845d4c10/result.json",
+      "source_sha256": "de74bcc4ede84c1ba5632900653445bc7985d5dcb1de93150c2bde15a29c4c63",
+      "error_present": false,
+      "stop_error_present": false,
+      "tool_results": [],
+      "incident_events": [
+        {
+          "time": 180.00079431799895,
+          "state": "escalated_unknown",
+          "local_alert": true
+        }
+      ]
+    },
+    {
+      "episode": "505ab74c-3903-49cf-aedc-a27f8f7bdc70",
+      "mode": "fixture",
+      "planner": "ollama",
+      "model": "qwen3-vl:8b",
+      "evaluation_case": "fixture",
+      "completed": true,
+      "state": "danger_confirmed",
+      "wall_seconds": 8.071563019999303,
+      "agent_decisions": 4,
+      "executed_tools": 4,
+      "agent_cycle_exercised": true,
+      "family": "harness",
+      "source": "artifacts/harness/505ab74c-3903-49cf-aedc-a27f8f7bdc70/result.json",
+      "source_sha256": "952b33bed04a1403aca6e9564afa211eb78ca028b8cfa5a6c077148b8519e831",
+      "error_present": false,
+      "stop_error_present": false,
+      "tool_results": [
+        {
+          "wall_elapsed": 1.755148169999302,
+          "sim_time": 1.755143450000105,
+          "tool": "observe",
+          "target": "body",
+          "status": "ok",
+          "valid": true,
+          "accepted": false
+        },
+        {
+          "wall_elapsed": 3.7915188890001446,
+          "sim_time": 3.791559289000361,
+          "tool": "inspect",
+          "target": "east_inspection",
+          "status": "failed"
+        },
+        {
+          "wall_elapsed": 6.183514682999885,
+          "sim_time": 6.183554954999636,
+          "tool": "inspect",
+          "target": "southeast_inspection",
+          "status": "arrived"
+        },
+        {
+          "wall_elapsed": 8.07132060100048,
+          "sim_time": 8.071319128999676,
+          "tool": "observe",
+          "target": "body",
+          "status": "ok",
+          "valid": true,
+          "accepted": true
+        }
+      ],
+      "incident_events": [
+        {
+          "time": 3.7811994580006285,
+          "motion": "moving",
+          "attempt_id": 1,
+          "request_fresh_frame": false
+        },
+        {
+          "time": 3.791559289000361,
+          "motion": "failed",
+          "attempt_id": 1,
+          "request_fresh_frame": false
+        },
+        {
+          "time": 6.1729606250009965,
+          "motion": "moving",
+          "attempt_id": 2,
+          "request_fresh_frame": false
+        },
+        {
+          "time": 6.183554954999636,
+          "motion": "arrived",
+          "attempt_id": 2,
+          "request_fresh_frame": true
+        },
+        {
+          "time": 8.071319128999676,
+          "state": "danger_confirmed",
+          "local_alert": true
+        }
+      ]
+    },
+    {
+      "episode": "1d7ed205-0500-4626-b385-1e675d99f5df",
+      "mode": "live",
+      "planner": "ollama",
+      "model": "qwen3-vl:8b",
+      "evaluation_case": "lying_on_floor",
+      "completed": true,
+      "state": "escalated_unknown",
+      "wall_seconds": 223.1041296659987,
+      "agent_decisions": 2,
+      "executed_tools": 2,
+      "agent_cycle_exercised": true,
+      "family": "harness",
+      "source": "artifacts/harness/1d7ed205-0500-4626-b385-1e675d99f5df/result.json",
+      "source_sha256": "621e9422beaa02c13d93c4057efd56c89e5081360ddf57613e1c6b4f4c700a4d",
+      "error_present": false,
+      "stop_error_present": false,
+      "tool_results": [
+        {
+          "wall_elapsed": 39.87471713299965,
+          "sim_time": 11.942,
+          "tool": "observe",
+          "target": "body",
+          "status": "ok",
+          "valid": true,
+          "accepted": false
+        },
+        {
+          "wall_elapsed": 222.9567739039976,
+          "sim_time": 46.662,
+          "tool": "inspect",
+          "target": "east_inspection",
+          "status": "timeout"
+        }
+      ],
+      "incident_events": [
+        {
+          "time": 12.142,
+          "motion": "moving",
+          "attempt_id": 1,
+          "request_fresh_frame": false
+        },
+        {
+          "time": 46.662,
+          "motion": "failed",
+          "attempt_id": 1,
+          "request_fresh_frame": false
+        },
+        {
+          "time": 46.662,
+          "state": "escalated_unknown",
+          "local_alert": true
+        }
+      ]
+    },
+    {
+      "episode": "c83e19de-077a-42d6-a979-ccc113d34d1b",
+      "mode": "live",
+      "planner": "ollama",
+      "model": "qwen3-vl:8b",
+      "evaluation_case": "lying_on_floor",
+      "completed": true,
+      "state": "escalated_unknown",
+      "wall_seconds": 901.295728088,
+      "agent_decisions": 8,
+      "executed_tools": 8,
+      "agent_cycle_exercised": true,
+      "family": "harness",
+      "source": "artifacts/harness/c83e19de-077a-42d6-a979-ccc113d34d1b/result.json",
+      "source_sha256": "3e2b9b4456b517b4cbeb20349afd81532b70dbfd465484c12017c16de8c3f012",
+      "error_present": false,
+      "stop_error_present": false,
+      "tool_results": [
+        {
+          "wall_elapsed": 57.673967945000186,
+          "sim_time": 12.302,
+          "tool": "observe",
+          "target": "body",
+          "status": "ok",
+          "latency_wall_seconds": 54.201151579,
+          "valid": true,
+          "accepted": false
+        },
+        {
+          "wall_elapsed": 270.05912723000074,
+          "sim_time": 52.682,
+          "tool": "inspect",
+          "target": "east_inspection",
+          "status": "arrived"
+        },
+        {
+          "wall_elapsed": 671.095538308,
+          "sim_time": 127.722,
+          "tool": "inspect",
+          "target": "southeast_inspection",
+          "status": "failed"
+        },
+        {
+          "wall_elapsed": 706.802246913001,
+          "sim_time": 129.622,
+          "tool": "observe",
+          "target": "fixed",
+          "status": "ok",
+          "latency_wall_seconds": 32.034480878002796,
+          "valid": true,
+          "accepted": false
+        },
+        {
+          "wall_elapsed": 750.311335757,
+          "sim_time": 131.882,
+          "tool": "observe",
+          "target": "body",
+          "status": "ok",
+          "latency_wall_seconds": 39.896472633001395,
+          "valid": true,
+          "accepted": false
+        },
+        {
+          "wall_elapsed": 808.4261678949988,
+          "sim_time": 134.822,
+          "tool": "observe",
+          "target": "body",
+          "status": "ok",
+          "latency_wall_seconds": 53.644287914001325,
+          "valid": true,
+          "accepted": false
+        },
+        {
+          "wall_elapsed": 866.2030426009987,
+          "sim_time": 137.762,
+          "tool": "observe",
+          "target": "fixed",
+          "status": "ok",
+          "latency_wall_seconds": 53.0100582069972,
+          "valid": true,
+          "accepted": false
+        },
+        {
+          "wall_elapsed": 900.4050962049987,
+          "sim_time": 139.562,
+          "tool": "observe",
+          "target": "body",
+          "status": "timeout"
+        }
+      ],
+      "incident_events": [
+        {
+          "time": 12.502,
+          "motion": "moving",
+          "attempt_id": 1,
+          "request_fresh_frame": false
+        },
+        {
+          "time": 52.682,
+          "motion": "arrived",
+          "attempt_id": 1,
+          "request_fresh_frame": true
+        },
+        {
+          "time": 52.882,
+          "motion": "moving",
+          "attempt_id": 2,
+          "request_fresh_frame": false
+        },
+        {
+          "time": 127.722,
+          "motion": "failed",
+          "attempt_id": 2,
+          "request_fresh_frame": false
+        },
+        {
+          "time": 139.562,
+          "state": "escalated_unknown",
+          "local_alert": true
+        }
+      ]
+    }
+  ]
+}

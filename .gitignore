@@ -42,3 +42,6 @@ artifacts/vlm/captures/*
 !artifacts/vlm/captures/a2fa48d1-b7c8-4e01-a38a-2dbe63bd3644/
 !artifacts/vlm/captures/6815cc79-72fe-405b-bb83-768a7dfcec49/
 !artifacts/vlm/captures/0194eb3a-468e-42a8-b795-3f792d46d364/
+
+# Independently managed Sites checkout; native desktop sources are in scripts/.
+/dashboard/

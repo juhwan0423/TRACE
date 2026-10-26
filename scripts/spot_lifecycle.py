@@ -75,6 +75,10 @@ class SpotDemo(QuadrupedExample):
         self.velocity_lease.reset()
 
     def start(self, mode='validation'):
+        # Re-arm controller/actuator history after a long zero-command hold.
+        # Public initialize() retains the measured pose; reset() would teleport.
+        if mode in ('nav2', 'waypoints', 'validation') and self._physics_ready:
+            self._runner.initialize()
         self.records = []
         self.elapsed = 0.
         self.ticks = 0

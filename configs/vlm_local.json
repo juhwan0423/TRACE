@@ -1,0 +1,7 @@
+{
+  "provider": "ollama",
+  "endpoint": "http://127.0.0.1:11434/api/chat",
+  "model": "qwen3-vl:8b",
+  "timeout_seconds": 180,
+  "safe_closure_from_single_frame": false
+}
