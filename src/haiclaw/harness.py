@@ -27,13 +27,15 @@ def validate_action(value, catalog):
 class Harness:
     def __init__(self, episode, planner: Planner, tools: InspectionTools, *, budget=180., wall_budget=900.,
                  operation_timeout=180., motion_timeout=600., max_steps=12, max_age=45., emit=None,
-                 goal="Resolve an observed person-loss incident with fresh evidence within budget."):
+                 view_retry_budget=2, goal="Resolve an observed person-loss incident with fresh evidence within budget."):
         for value in (budget, wall_budget, operation_timeout, motion_timeout, max_age):
             if not math.isfinite(value) or value <= 0:
                 raise ValueError('finite positive limits required')
         if type(max_steps) is not int or not 1 <= max_steps <= 100:
             raise ValueError('max_steps must be 1..100')
         self.episode, self.planner, self.tools = episode, planner, tools
+        if type(view_retry_budget) is not int or view_retry_budget<1:raise ValueError('positive view retry budget required')
+        self.view_retry_budget=view_retry_budget
         self.goal = goal
         self.budget, self.wall_budget, self.operation_timeout = budget, wall_budget, operation_timeout
         self.max_steps, self.max_age = max_steps, max_age
@@ -55,6 +57,8 @@ class Harness:
         self._pending = set()
         self._last_action = None
         self._repeat = 0
+        self.view_epoch = 0
+        self.view_observations = {}
 
     def log(self, kind, **fields):
         if kind in ('tool_start', 'tool_result') and self.active_question:
@@ -106,9 +110,25 @@ class Harness:
                 # A transport may suppress cancellation; never apply its late output.
                 await asyncio.wait({task}, timeout=.05)
 
+    def observation_feedback(self):
+        """Camera-local evidence, never scene truth or an inferred absence claim."""
+        feedback={}
+        now=self.incident.now if self.incident else 0
+        for camera, record in self.view_observations.items():
+            same_view = camera == 'fixed' or record['view_epoch'] == self.view_epoch
+            feedback[camera]=dict(record, same_view=same_view,
+                age_sim_seconds=max(0,now-record['capture_time']),
+                fresh=now-record['capture_time']<self.max_age,
+                retry_note=('A new timestamp alone does not change camera coverage. Consider another view if visibility was limited.'
+                    if same_view and not record['clear_subject'] else 'View changed or prior observation clearly showed the subject.'))
+        return feedback
+
     def catalog(self):
+        feedback=self.observation_feedback()
+        suppressed={camera for camera,r in feedback.items() if r['same_view'] and r['fresh']
+            and not r['clear_subject'] and r['same_view_attempts']>=self.view_retry_budget}
         result = [dict(tool='observe', target=c, description='Capture and analyze a NEW frame')
-                  for c in ('fixed', 'body')]
+                  for c in getattr(self.tools, 'cameras', ('fixed', 'body')) if c not in suppressed]
         result += [dict(tool='inspect', target=k, description=v['description'])
                    for k, v in self.tools.locations.items()
                    if k not in self.failed_targets and k != self.last_target
@@ -120,6 +140,8 @@ class Harness:
         if self._repeat >= 2:
             result = [x for x in result if (x['tool'], x['target']) != self._last_action]
         for item in result:
+            if item['tool']=='inspect':
+                item['previous_observations']=[o for o in self.memory if o.get('viewpoint')==item['target']][-2:]
             item.update(question_ids=['presence', 'lying'],
                 expected_evidence=('new image' if item['tool']=='observe' else
                     'new viewpoint; subsequent image required' if item['tool']=='inspect' else None),
@@ -137,6 +159,12 @@ class Harness:
                     required_next_evidence=('fresh body observation at the arrived viewpoint'
                         if self.awaiting_body_observation else None),
                     observations=self.memory[-8:],
+                    observation_status='observed' if self.memory else 'not_observed',
+                    camera_feedback=self.observation_feedback(),
+                    view_retry_policy=dict(max_ineffective_observations_per_unchanged_view=self.view_retry_budget,
+                        reset='successful body viewpoint change or evidence expiry',
+                        selection='host limits repeated ineffective tools; model still chooses among remaining tools'),
+                    evidence_semantics='A person visible in one camera and not visible in another is not a contradiction without complete coverage. Standing is not proof of overall safety.',
                     recent_events=[e for e in self.trace if e['kind'] in ('tool_result','rejected','planner_error')][-8:],
                     available_tools=self.catalog(), context_graph=self.questions.planning())
 
@@ -164,8 +192,21 @@ class Harness:
                 if target == 'body' and record['status'] == 'ok' and self.viewpoint_arrived_at is not None and evidence.capture_time > self.viewpoint_arrived_at:
                     self.awaiting_body_observation = False
                 self.memory.append(dict(evidence_id=evidence.id, camera=target,
+                    viewpoint=self.last_target if target=='body' else 'fixed',
                     capture_time=evidence.capture_time, status=record['status'],
                     observation=asdict(observation)))
+            prior=self.view_observations.get(target)
+            same_view=prior is not None and (target=='fixed' or prior['view_epoch']==self.view_epoch)
+            clear_subject=(valid and record['status']=='ok' and observation.person_visible=='yes'
+                and not observation.observation_limitations and not observation.needs_more_observation)
+            self.view_observations[target]=dict(view_epoch=self.view_epoch,
+                capture_time=evidence.capture_time,valid=valid,status=record['status'],
+                person_visible=observation.person_visible if valid else 'uncertain',
+                posture=observation.posture if valid else 'unknown',
+                limitations=list(observation.observation_limitations) if valid else ['invalid or stale evidence'],
+                clear_subject=clear_subject,
+                same_view_attempts=(0 if clear_subject else prior['same_view_attempts']+1
+                    if same_view and not prior['clear_subject'] else 1))
             self.evidence_records.append(dict(evidence=asdict(evidence), inference=record, valid=valid, accepted=accepted))
             self.log('tool_result', tool=tool, target=target, status=record['status'],
                      latency_wall_seconds=record.get('latency_wall_seconds'),
@@ -182,6 +223,7 @@ class Harness:
                 self.incident.motion(status, self.incident.now, attempt_id=attempt)
                 if status == 'arrived':
                     self.last_target = target
+                    self.view_epoch += 1
                     self.awaiting_body_observation = True
                     self.viewpoint_arrived_at = self.incident.now
                 else:

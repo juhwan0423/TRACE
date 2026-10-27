@@ -111,3 +111,26 @@ scenarios, evidence/closure rules, decision budgets and starting conditions cons
 Compare success/unknown rates, stale-evidence rejection, latency, model/tool calls,
 and interruption recovery. Current inspection baseline has no durable crash-resume
 or autonomous incident detector; those are explicit future comparison dimensions.
+
+## View-aware planning and controlled sensor ablation
+
+The native planner now receives camera-local visibility limitations, freshness,
+unchanged-view attempt counts and prior observations associated with each inspection
+viewpoint. Two ineffective observations from the same unchanged view temporarily
+remove that observation tool until the evidence expires or the body viewpoint changes.
+Clear subject observations reset that counter. Stop, handoff and alternative tools
+remain available; this is an explicit host retry policy, not an LLM-selected action.
+The effective retry budget and planning-policy version are saved in the run manifest.
+
+```bash
+# Normal sensor availability (default):
+PYTHONPATH=src .venv/bin/python scripts/run_real2sim_harness.py --camera-policy all
+# Explicit experimental ablation, not a naturally detected camera failure:
+PYTHONPATH=src .venv/bin/python scripts/run_real2sim_harness.py --camera-policy body-only
+```
+
+Body-only excludes fixed-camera observation from both the catalog and executor.
+It does not alter the scene, hide the person, or falsify an observation. Compare
+runs only with matched sensor policies, budgets, initial conditions and code versions.
+New runs archive source files alongside hashes to distinguish live-tested revisions
+from subsequent prompt/context replay experiments.

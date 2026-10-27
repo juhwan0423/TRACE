@@ -28,7 +28,9 @@ async def remote(code, *, timeout=10, **args):
     return await asyncio.wait_for(call(),timeout)
 
 class Real2SimTools:
-    def __init__(self, adapter, locations, output, requester=remote):
+    def __init__(self, adapter, locations, output, requester=remote, cameras=('fixed','body')):
+        if not cameras or any(c not in ('fixed','body') for c in cameras):raise ValueError('Invalid camera capability')
+        self.cameras=tuple(cameras)
         self.adapter,self.locations,self.output,self.remote=adapter,locations,Path(output),requester
         self.latest={};self.arrived_at=-1.;self.motion_records=[];self.action_id=None
         self.output.mkdir(parents=True,exist_ok=True)
@@ -37,7 +39,7 @@ class Real2SimTools:
         return await self.remote('real2sim_navigation.guard(); print(json.dumps(real2sim_navigation.snapshot()))')
 
     async def observe(self,camera,episode):
-        if camera not in ('fixed','body'):raise ValueError('Unknown camera')
+        if camera not in self.cameras:raise ValueError('Unavailable camera')
         state=await self.snapshot()
         after=max(state['now'],self.latest.get(camera,-1),self.arrived_at if camera=='body' else -1)
         for _ in range(40):
