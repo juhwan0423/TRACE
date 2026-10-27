@@ -153,3 +153,12 @@ Distillation: classified the long-hold policy re-arm issue as a project-specific
 - CPU 테스트와 fixture smoke용 GitHub Actions 추가. 로컬 검증 통과이며 원격 CI 결과는 별도 확인해야 함.
 - 공개 clone 사용자의 EULA 동의를 자동으로 가정하지 않도록 env_spark에서 자동 동의 설정 제거. README에 명시적 동의 후 실행 명령 기록. 실행 중인 시뮬레이터는 변경하지 않음.
 - `git diff --cached --check` 통과; staged 파일에 대형 파일 및 일반적인 비밀키 패턴 없음. 새 live simulation이나 성능 benchmark는 실행하지 않음.
+
+## 2026-10-27 — Question resolution prototype
+
+- `context.py`에 고정 presence/lying 질문, 조건부 해소, 만료/충돌/철회 재개방, visible-lying 파생 판단, 변경 이력과 JSON snapshot hash 구현.
+- 기존 하네스 context/action/tool 결과에 question_id 연결. 새 planner schema에 질문 선택 추가; 기존 3필드 planner는 명시적 host fallback으로 구분. 상충한 근거로 context가 해소되지 않으면 사건 위험 종료를 차단.
+- `python3 scripts/demo_context_resolution.py > /tmp/trace-context-demo.json`: 해소 → 충돌 → 철회 → 만료 → 새 근거 해소 확인.
+- `PYTHONPATH=src python3 -B -m unittest discover -s tests -v`: 97 tests, OK. 신규 11개는 조건·의존성·재개방·해시·하네스 연결/충돌 gate를 검증.
+- `reports/CONTEXT_METHOD_DECISIONS.md`에 임시 가정, 사용자의 연구 선택 사항, 원 논문 확인을 바탕으로 한 문헌 조사 출발점, 미구현/미검증 범위 기록.
+- 이번 검증은 CPU fixture만 수행. 새 Qwen schema 및 live Isaac 재검증, LLM 자유 질문 생성, episode 종료 뒤 지속 관측 서비스는 미완료. 실행 중인 GUI/scene은 변경하지 않음.

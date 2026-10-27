@@ -1,6 +1,8 @@
 # TRACE
 
-**An experimental agent harness for active visual inspection in simulation.**
+**Task-Relevant Active Context and Evidence**
+
+An experimental agent harness for active visual inspection in simulation.
 
 TRACE maintains unresolved person-loss incidents and lets a local model select observations and robot inspection actions within a bounded budget. Isaac Sim supplies images and physics, ROS 2/Nav2 supplies navigation, and Qwen3-VL supplies visual observations and structured action choices. Host-side evidence checks and deadlines control incident closure.
 
@@ -102,3 +104,7 @@ Historical reports and captures remain available; the [previous README](reports/
 Start with bounded pilot/debug experiments. Before publication-grade comparison, complete the gates in [RESEARCH_CHECKPOINT.md](reports/RESEARCH_CHECKPOINT.md). Do not interpret `completed=true` as task correctness: an unresolved handoff is a completed incident too.
 
 A project license has not yet been selected. Do not infer open-source reuse permissions from repository visibility; dependencies and assets retain their respective licenses.
+
+## Question resolution prototype
+
+The current development version adds two registered question templates, conditional evidence resolution, expiry/conflict reopening, dependent judgment updates, question-linked actions, and hashed JSON snapshots. Run `python3 scripts/demo_context_resolution.py` for a CPU-only lifecycle demonstration. See [implementation decisions and research questions](reports/CONTEXT_METHOD_DECISIONS.md) for assumptions and missing work. This is not yet general LLM question generation or continuous post-incident monitoring.

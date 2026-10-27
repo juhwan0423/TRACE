@@ -5,13 +5,14 @@ import json
 import math
 import time
 from .core import Incident, State, TERMINAL
+from .context import ContextGraph
 from .providers.single_frame_vlm import incident_decision
 
 ACTIONS = {'observe', 'inspect', 'wait', 'stop', 'escalate'}
 
 
 def validate_action(value, catalog):
-    if not isinstance(value, dict) or set(value) != {'tool', 'target', 'reason'}:
+    if not isinstance(value, dict) or set(value) not in ({'tool', 'target', 'reason'}, {'tool', 'target', 'reason', 'question_id'}):
         raise ValueError('expected tool, target, reason only')
     if any(type(value[k]) is not str for k in value):
         raise ValueError('action fields must be strings')
@@ -41,6 +42,8 @@ class Harness:
         self.awaiting_body_observation = False
         self.viewpoint_arrived_at = None
         self.evidence_records = []
+        self.questions = ContextGraph(episode, max_age=max_age)
+        self.active_question = None
         self.started = time.monotonic()
         self.wall_end = self.started + wall_budget
         self.completed = False
@@ -51,6 +54,8 @@ class Harness:
         self._repeat = 0
 
     def log(self, kind, **fields):
+        if kind in ('tool_start', 'tool_result') and self.active_question:
+            fields.setdefault('question_id', self.active_question)
         event = dict(kind=kind, episode=self.episode,
                      wall_elapsed=time.monotonic()-self.started,
                      sim_time=self.incident.now if self.incident else None, **fields)
@@ -68,6 +73,7 @@ class Harness:
         if not math.isfinite(now) or not snapshot['playing']:
             raise RuntimeError('simulation stopped or clock invalid')
         if self.incident:
+            self.questions.advance(now)
             self.incident.tick(now)  # rejects reset/backwards clock
         return snapshot
 
@@ -110,6 +116,12 @@ class Harness:
             ('escalate','Local unresolved handoff; never a safe/danger assertion'))]
         if self._repeat >= 2:
             result = [x for x in result if (x['tool'], x['target']) != self._last_action]
+        for item in result:
+            item.update(question_ids=['presence', 'lying'],
+                expected_evidence=('new image' if item['tool']=='observe' else
+                    'new viewpoint; subsequent image required' if item['tool']=='inspect' else None),
+                estimated_seconds=None,
+                availability='host catalog; reachability not guaranteed')
         return result
 
     def context(self):
@@ -123,10 +135,11 @@ class Harness:
                         if self.awaiting_body_observation else None),
                     observations=self.memory[-8:],
                     recent_events=[e for e in self.trace if e['kind'] in ('tool_result','rejected','planner_error')][-8:],
-                    available_tools=self.catalog())
+                    available_tools=self.catalog(), context_graph=self.questions.planning())
 
     async def execute(self, action):
         tool, target = action['tool'], action['target']
+        self.active_question = action['question_id']
         self.log('tool_start', action=action)
         if tool == 'observe':
             evidence, observation, record = await self.guarded(self.tools.observe(target, self.episode))
@@ -141,7 +154,9 @@ class Harness:
                      and evidence.capture_time > self.incident.latest_by_source.get(evidence.source, -math.inf))
             accepted = False
             if valid:
-                accepted = self.incident.accept(evidence, incident_decision(observation), now, self.max_age)
+                self.questions.observe(evidence, observation, now)
+                accepted = (self.questions.supports_danger() and
+                            self.incident.accept(evidence, incident_decision(observation), now, self.max_age))
                 # Observation memory never includes local file names, scenario labels or human truth.
                 if target == 'body' and record['status'] == 'ok' and self.viewpoint_arrived_at is not None and evidence.capture_time > self.viewpoint_arrived_at:
                     self.awaiting_body_observation = False
@@ -151,7 +166,7 @@ class Harness:
             self.evidence_records.append(dict(evidence=asdict(evidence), inference=record, valid=valid, accepted=accepted))
             self.log('tool_result', tool=tool, target=target, status=record['status'],
                      latency_wall_seconds=record.get('latency_wall_seconds'),
-                     evidence_id=evidence.id, valid=valid, accepted=accepted,
+                     evidence_id=evidence.id, question_id=action['question_id'], valid=valid, accepted=accepted,
                      observation=asdict(observation) if valid else None)
         elif tool == 'inspect':
             attempt = self.incident.motion('moving', self.incident.now)
@@ -196,6 +211,7 @@ class Harness:
             snapshot = await self.refresh()
             self.incident = Incident(self.episode, snapshot['now'], snapshot['now']+self.budget)
             self.incident.tick(snapshot['now'])
+            self.questions.advance(snapshot['now'])
             self.memory = list(initial_observations or [])
             self.log('opened', deadline=self.incident.deadline)
             for step in range(self.max_steps):
@@ -209,13 +225,15 @@ class Harness:
                 try:
                     action = await self.guarded(self.planner.choose(state))
                     validate_action(action, state['available_tools'])
+                    binding_source = 'planner' if 'question_id' in action else 'host_legacy_fallback'
+                    action = self.questions.bind(action)
                 except TimeoutError as e:
                     self.log('planner_error', error=str(e));self.escalate(str(e));break
                 except (ValueError, KeyError, TypeError, json.JSONDecodeError) as e:
                     errors += 1;self.log('rejected', error=str(e))
                     if errors >= 3:self.escalate('invalid planner output limit');break
                     continue
-                self.log('decision', action=action)
+                self.log('decision', action=action, question_binding_source=binding_source)
                 pair = (action['tool'], action['target'])
                 self._repeat = self._repeat+1 if pair == self._last_action else 1
                 self._last_action = pair
@@ -262,4 +280,5 @@ class Harness:
                     stop_error=self.stop_error, state=self.incident.state.value if self.incident else None,
                     incident_events=self.incident.events if self.incident else [],
                     trace=self.trace, observations=self.memory, evidence_records=self.evidence_records,
+                    context_snapshot=self.questions.snapshot() if math.isfinite(self.questions.now) else None,
                     wall_seconds=time.monotonic()-self.started)
