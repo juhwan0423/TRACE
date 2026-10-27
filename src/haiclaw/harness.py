@@ -6,6 +6,7 @@ import math
 import time
 from .core import Incident, State, TERMINAL
 from .context import ContextGraph
+from .tool_contracts import Planner, InspectionTools
 from .providers.single_frame_vlm import incident_decision
 
 ACTIONS = {'observe', 'inspect', 'wait', 'stop', 'escalate'}
@@ -24,14 +25,16 @@ def validate_action(value, catalog):
 
 
 class Harness:
-    def __init__(self, episode, planner, tools, *, budget=180., wall_budget=900.,
-                 operation_timeout=180., motion_timeout=600., max_steps=12, max_age=45., emit=None):
+    def __init__(self, episode, planner: Planner, tools: InspectionTools, *, budget=180., wall_budget=900.,
+                 operation_timeout=180., motion_timeout=600., max_steps=12, max_age=45., emit=None,
+                 goal="Resolve an observed person-loss incident with fresh evidence within budget."):
         for value in (budget, wall_budget, operation_timeout, motion_timeout, max_age):
             if not math.isfinite(value) or value <= 0:
                 raise ValueError('finite positive limits required')
         if type(max_steps) is not int or not 1 <= max_steps <= 100:
             raise ValueError('max_steps must be 1..100')
         self.episode, self.planner, self.tools = episode, planner, tools
+        self.goal = goal
         self.budget, self.wall_budget, self.operation_timeout = budget, wall_budget, operation_timeout
         self.max_steps, self.max_age = max_steps, max_age
         self.motion_timeout = motion_timeout
@@ -126,7 +129,7 @@ class Harness:
 
     def context(self):
         i = self.incident
-        return dict(goal='Resolve an observed person-loss incident with fresh evidence within budget.',
+        return dict(goal=self.goal,
                     episode=self.episode, state=i.state.value,
                     remaining_sim_seconds=max(0, i.deadline-i.now),
                     remaining_wall_seconds=max(0, self.wall_end-time.monotonic()),

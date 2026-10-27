@@ -2,6 +2,7 @@
 """Native GTK monitor. Read camera buffers without advancing/resetting Isaac Sim."""
 import base64
 import json
+import os
 import socket
 import subprocess
 import threading
@@ -11,7 +12,10 @@ import gi
 gi.require_version('Gtk','3.0')
 from gi.repository import Gtk, Gdk, GdkPixbuf, GLib
 ROOT = Path(__file__).resolve().parents[1]
-LIVE = ROOT/'artifacts/live'
+REAL2SIM = os.environ.get('TRACE_SCENE', 'real2sim') == 'real2sim'
+ISAAC_PORT = int(os.environ.get('TRACE_ISAAC_PORT', '8227' if REAL2SIM else '8226'))
+ISAAC_CONTEXT = 'real2sim' if REAL2SIM else 'spot'
+LIVE = ROOT/('artifacts/live_real2sim' if REAL2SIM else 'artifacts/live')
 LIVE.mkdir(parents=True, exist_ok=True)
 EVENTS = LIVE/'qwen.jsonl'
 CAMERA_CODE = """
@@ -37,10 +41,10 @@ for monitor_key, monitor_array, monitor_stamp in [
 print(json.dumps(dict(frames=monitor_frames, snapshot=trace_snapshot())))
 """
 
-def remote_request(code, args=None):
-    with socket.create_connection(('127.0.0.1',8226),timeout=4) as sock:
-        sock.settimeout(8)
-        sock.sendall(json.dumps({'context':'spot','code':code,'args':args or {}}).encode())
+def remote_request(code, args=None, timeout=8):
+    with socket.create_connection(('127.0.0.1',ISAAC_PORT),timeout=4) as sock:
+        sock.settimeout(timeout)
+        sock.sendall(json.dumps({'context':ISAAC_CONTEXT,'code':code,'args':args or {}}).encode())
         sock.shutdown(socket.SHUT_WR)
         chunks=[]
         size=0
@@ -55,12 +59,15 @@ def remote_request(code, args=None):
     return json.loads(result['output'].strip().splitlines()[-1])
 
 def remote_camera(source=None, follow=False):
+    if REAL2SIM:
+        return remote_request('print(json.dumps(real2sim_monitor_frames()))')
     return remote_request(CAMERA_CODE, {'monitor_follow':follow})
 
 
 class Window(Gtk.ApplicationWindow):
     def __init__(self,app):
         super().__init__(application=app,title='TRACE — Isaac Sim / Qwen')
+        if REAL2SIM:self.set_title('TRACE — Real2Sim / Spark Qwen')
         self.set_default_size(1540,940)
         self.stop_event=threading.Event();self.source='body';self.frame=None;self.pixbuf=None
         self.worker=None;self.offset=0;self.last_frame_received=0;self.last_stamp=None
@@ -84,13 +91,21 @@ class Window(Gtk.ApplicationWindow):
         self.system_tab=SystemTab();self.tabs.append_page(self.system_tab,Gtk.Label(label='전체 시스템 / VSS 비교'))
         from monitor_harness_ui import HarnessTab
         self.harness_tab=HarnessTab();self.tabs.append_page(self.harness_tab,Gtk.Label(label='에이전트 실행'))
+        if REAL2SIM:
+            self.harness_tab.start.set_sensitive(True)
+            self.harness_tab.status.set_text('Real2Sim native 하네스 · 작업자 상태 확인 요청 실행 가능')
         self.tabs.set_current_page(3)
         left=Gtk.Box(orientation=Gtk.Orientation.VERTICAL,spacing=10);panes.pack1(left,True,False)
         camera_bar=Gtk.Box(spacing=10);left.pack_start(camera_bar,False,False,0)
         camera_bar.pack_start(Gtk.Label(label='전체 장면 · 분석 카메라:'),False,False,0)
         combo=Gtk.ComboBoxText();combo.append('body','로봇 몸통');combo.append('fixed','고정 카메라');combo.set_active_id('body');combo.connect('changed',self.change_source);camera_bar.pack_start(combo,False,False,0)
         follow=Gtk.CheckButton(label='로봇 따라가기');follow.connect('toggled',lambda b:setattr(self,'follow',b.get_active()));camera_bar.pack_start(follow,False,False,0)
+        if REAL2SIM:follow.set_sensitive(False)
         self.analyze=Gtk.Button(label='현재 프레임 Qwen 분석');self.analyze.connect('clicked',self.analyze_frame);camera_bar.pack_end(self.analyze,False,False,0)
+        if REAL2SIM:
+            navigation_bar=Gtk.Box(spacing=8);left.pack_start(navigation_bar,False,False,0)
+            for label,target in [('전체 순찰','patrol'),('서쪽 이동','west'),('케이지 이동','cage'),('입구 복귀','entrance'),('정지','stop'),('입구 재배치','reset')]:
+                button=Gtk.Button(label=label);button.connect('clicked',lambda b,t=target:self.navigation_command(t));navigation_bar.pack_start(button,False,False,0)
         self.canvas=Gtk.DrawingArea();self.canvas.set_size_request(500,350);self.canvas.connect('draw',self.draw);left.pack_start(self.canvas,True,True,0)
         self.frame_status=Gtk.Label(label='영상 수신 대기');self.frame_status.set_xalign(0);left.pack_start(self.frame_status,False,False,0)
         self.nav_status=Gtk.Label(label='');self.nav_status.set_xalign(0);left.pack_start(self.nav_status,False,False,0)
@@ -115,7 +130,7 @@ class Window(Gtk.ApplicationWindow):
         GLib.timeout_add(120,self.poll_events)
         GLib.timeout_add(1000,self.check_worker)
         self.show_all()
-        self.tabs.set_current_page(3)
+        self.tabs.set_current_page(0 if REAL2SIM else 3)
     def close_monitor(self,*args):
         self.stop_event.set()
         self.harness_tab.shutdown()
@@ -123,6 +138,9 @@ class Window(Gtk.ApplicationWindow):
     def change_source(self,combo):
         self.source=combo.get_active_id();self.frame=None;self.pixbuf=None;self.last_stamp=None;self.canvas.queue_draw();self.frame_status.set_text('선택한 카메라 수신 중');self.analyze.set_sensitive(False)
     def graph_loop(self):
+        if REAL2SIM:
+            GLib.idle_add(self.graph_tab.error,'Real2Sim 영상 모드: ROS/Spot 이동 연결 전입니다.')
+            return
         from monitor_ros import GRAPH_CODE
         while not self.stop_event.is_set():
             try:
@@ -132,13 +150,30 @@ class Window(Gtk.ApplicationWindow):
             except Exception as e:GLib.idle_add(self.graph_tab.error,str(e))
             self.stop_event.wait(5)
     def camera_loop(self):
-        try:remote_request((ROOT/'scripts/monitor_scene.py').read_text())
+        try:
+            if REAL2SIM:
+                remote_request((ROOT/'scripts/real2sim_monitor_scene.py').read_text(),
+                    {'real2sim_root':os.environ.get('REAL2SIM_ROOT',str(ROOT.parent/'HAI-Real2Sim'))})
+                remote_request((ROOT/'scripts/real2sim_navigation.py').read_text(),
+                    {'real2sim_root':os.environ.get('REAL2SIM_ROOT',str(ROOT.parent/'HAI-Real2Sim'))}, timeout=120)
+            else:remote_request((ROOT/'scripts/monitor_scene.py').read_text())
         except Exception as e:GLib.idle_add(self.camera_error,str(e))
         while not self.stop_event.is_set():
             source=self.source
             try:GLib.idle_add(self.update_camera,source,remote_camera(source,self.follow))
             except Exception as e:GLib.idle_add(self.camera_error,str(e))
             self.stop_event.wait(.12 if self.tabs.get_current_page()==0 else 1)
+    def navigation_command(self, target):
+        def send():
+            try:
+                code='print(json.dumps(real2sim_navigation.stop()))' if target=='stop' else 'print(json.dumps(real2sim_navigation.navigate(target)))'
+                if target=='reset':code='print(json.dumps(real2sim_navigation.reset_to_entrance()))'
+                result=remote_request(code, {'target':target})
+                with (LIVE/'navigation.jsonl').open('a') as log:log.write(json.dumps(dict(action=target,result=result))+'\n')
+            except Exception as error:
+                GLib.idle_add(self.nav_status.set_text, '이동 명령 오류: '+str(error))
+        threading.Thread(target=send,daemon=True).start()
+
     def camera_error(self,error):
         self.status.set_text('Isaac Sim 연결/센서 오류');self.frame_status.set_text(error[:150]);self.analyze.set_sensitive(False)
         return False
@@ -156,7 +191,12 @@ class Window(Gtk.ApplicationWindow):
         snap=record['snapshot'];stamp=self.frame[1];stale=self.last_stamp==stamp;self.last_stamp=stamp
         self.status.set_text('Isaac Sim 실행 중' if snap['playing'] else 'Isaac Sim 일시정지')
         self.frame_status.set_text(f"화면 수신 {fps:.1f} FPS  ·  전체 장면 1280×720  ·  분석 카메라 센서 {stamp:.3f}s"+(' · 동일 센서 프레임' if stale else ''))
-        nav=snap.get('navigation') or {};self.nav_status.set_text(f"시뮬레이션 {snap['now']:.3f}s  |  Nav2: {nav.get('status','대기')}  |  위치: {snap['pose'][0]:.2f}, {snap['pose'][1]:.2f} m")
+        if REAL2SIM:
+            nav=snap.get('navigation') or {};pose=snap.get('pose')
+            position=f"{pose[0]:.2f}, {pose[1]:.2f}m" if pose else '초기화 중'
+            self.nav_status.set_text(f"Real2Sim · Spot {nav.get('status','연결 중')} · 위치 {position} · 남은 경유점 {nav.get('remaining',0)} · {nav.get('reason','')}")
+        else:
+            nav=snap.get('navigation') or {};self.nav_status.set_text(f"시뮬레이션 {snap['now']:.3f}s  |  Nav2: {nav.get('status','대기')}  |  위치: {snap['pose'][0]:.2f}, {snap['pose'][1]:.2f} m")
         self.analyze.set_sensitive(self.worker is None or self.worker.poll() is not None);self.canvas.queue_draw()
         (LIVE/'camera_status.json').write_text(json.dumps(dict(source=source,fps=fps,snapshot=snap,capture_time=stamp)))
         return False
@@ -171,6 +211,9 @@ class Window(Gtk.ApplicationWindow):
         self.paint_image(widget,cr,self.overview_pixbuf)
     def analyze_frame(self,*args):
         if not self.frame or time.monotonic()-self.last_frame_received>5:return
+        if REAL2SIM and not self.spark_ready():
+            self.footer.set_text('Spark SSH 터널(127.0.0.1:11435) 연결이 필요합니다.')
+            return
         # Freeze the exact displayed evidence; subsequent polling cannot overwrite it.
         path=LIVE/f'preview-{time.time_ns()}.png';self.frame[0].savev(str(path),'png',[],[]);self.analyze.set_sensitive(False)
         self.worker=subprocess.Popen([str(ROOT/'.venv/bin/python'),str(ROOT/'scripts/vlm_stream.py'),str(path),str(self.frame[1])],cwd=ROOT,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
@@ -179,7 +222,18 @@ class Window(Gtk.ApplicationWindow):
         if self.stop_event.is_set():return False
         if self.worker and self.worker.poll() is not None:
             code=self.worker.returncode;self.worker=None;self.footer.set_text('프레임 분석 완료' if code==0 else '프레임 분석 실패 — 추론 상태 확인');self.analyze.set_sensitive(bool(self.frame))
+        if REAL2SIM and self.worker is None:
+            ready = self.spark_ready()
+            if ready != getattr(self, '_spark_was_ready', None):
+                self.footer.set_text('영상 연결됨 · Spark 터널 연결됨 · 현재 프레임 Qwen 분석 가능' if ready else
+                    '영상 연결됨 · Spark SSH 터널(127.0.0.1:11435) 연결 대기')
+            self._spark_was_ready = ready
         return True
+    @staticmethod
+    def spark_ready():
+        with socket.socket() as sock:
+            sock.settimeout(.1)
+            return sock.connect_ex(('127.0.0.1',11435)) == 0
     def append(self,text):
         buf=self.text.get_buffer();buf.insert(buf.get_end_iter(),text)
         if self.autoscroll.get_active():self.text.scroll_to_iter(buf.get_end_iter(),0,False,0,1)
@@ -212,7 +266,7 @@ class Window(Gtk.ApplicationWindow):
         return True
 
 class App(Gtk.Application):
-    def __init__(self):super().__init__(application_id='local.trace.monitor')
+    def __init__(self):super().__init__(application_id='local.trace.monitor.real2sim' if REAL2SIM else 'local.trace.monitor')
     def do_activate(self):
         if self.get_active_window():self.get_active_window().present()
         else:Window(self)

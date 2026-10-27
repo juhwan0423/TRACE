@@ -1,5 +1,6 @@
 """Native UI for model decisions and tool execution; does not invent agent steps."""
 import json
+import os
 from pathlib import Path
 import signal
 import subprocess
@@ -17,7 +18,7 @@ class HarnessTab(Gtk.Box):
         self.start=Gtk.Button(label='하네스 실험 시작');self.start.connect('clicked',self.launch);bar.pack_start(self.start,False,False,0)
         self.stop=Gtk.Button(label='내 실행 중단');self.stop.connect('clicked',self.cancel);self.stop.set_sensitive(False);bar.pack_start(self.stop,False,False,0)
         self.status=Gtk.Label(label='실행 기록 대기');self.status.set_xalign(0);self.pack_start(self.status,False,False,0)
-        note=Gtk.Label(label='실제 모드는 TRACE 전용 장면에서 초기 관측·가림 실험을 시작합니다.\n이후 카메라·이동·대기·인계는 모델이 선택하며, 종료 판정은 근거 규칙이 검증합니다. 기존 baseline과 동시 실행 불가.');note.set_xalign(0);self.pack_start(note,False,False,0)
+        note=Gtk.Label(label='Real2Sim 실제 모드는 현재 장면에서 운영자 요청에 따른 작업자 상태 확인을 시작합니다.\n이후 카메라·이동·대기·인계는 모델이 선택하며, 종료 판정은 근거 규칙이 검증합니다. LangGraph 없는 native 하네스 · 동시 실행 불가.');note.set_xalign(0);self.pack_start(note,False,False,0)
         self.view=Gtk.TextView();self.view.set_editable(False);self.view.set_wrap_mode(Gtk.WrapMode.WORD_CHAR);self.view.set_left_margin(14);self.view.set_right_margin(14)
         sc=Gtk.ScrolledWindow();sc.add(self.view);self.pack_start(sc,True,True,0)
         self.footer=Gtk.Label(label='기록의 fixture/live 구분은 실행 결과 JSON을 기준으로 확인하세요.');self.footer.set_xalign(0);self.pack_start(self.footer,False,False,0)
@@ -25,7 +26,10 @@ class HarnessTab(Gtk.Box):
     def launch(self,*args):
         if self.process and self.process.poll() is None:return
         mode=self.mode.get_active_id();path=ROOT/'artifacts/logs/harness-desktop.log';self.logfile=path.open('a')
-        self.process=subprocess.Popen([str(ROOT/'.venv/bin/python'),str(ROOT/'scripts/run_harness.py'),'--mode',mode,'--planner','ollama'],cwd=ROOT,stdout=self.logfile,stderr=subprocess.STDOUT)
+        real2sim=os.environ.get('TRACE_SCENE','real2sim')=='real2sim' and mode=='live'
+        command=[str(ROOT/'.venv/bin/python'),str(ROOT/'scripts/run_real2sim_harness.py')] if real2sim else [str(ROOT/'.venv/bin/python'),str(ROOT/'scripts/run_harness.py'),'--mode',mode,'--planner','ollama']
+        self.event_path=ROOT/('artifacts/live_real2sim/harness.jsonl' if real2sim else 'artifacts/live/harness.jsonl')
+        self.process=subprocess.Popen(command,cwd=ROOT,stdout=self.logfile,stderr=subprocess.STDOUT)
         self.start.set_sensitive(False);self.stop.set_sensitive(True);self.status.set_text('시작 요청: '+mode+' · 초기 관측 중에는 Qwen 탭 확인')
     def cancel(self,*args):
         if self.process and self.process.poll() is None:
@@ -40,7 +44,7 @@ class HarnessTab(Gtk.Box):
             self.footer.set_text('실행 프로세스 종료 코드 '+str(self.process.returncode)+' · 상세: artifacts/logs/harness-desktop.log / artifacts/harness' )
             self.process=None;self.start.set_sensitive(True);self.stop.set_sensitive(False)
             if self.logfile:self.logfile.close();self.logfile=None
-        path=ROOT/'artifacts/live/harness.jsonl'
+        path=getattr(self,'event_path',ROOT/('artifacts/live_real2sim/harness.jsonl' if os.environ.get('TRACE_SCENE','real2sim')=='real2sim' else 'artifacts/live/harness.jsonl'))
         if not path.exists():return True
         try:
             if path.stat().st_size<self.offset:self.offset=0

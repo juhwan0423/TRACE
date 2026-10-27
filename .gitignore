@@ -45,3 +45,4 @@ artifacts/vlm/captures/*
 
 # Independently managed Sites checkout; native desktop sources are in scripts/.
 /dashboard/
+/.venv

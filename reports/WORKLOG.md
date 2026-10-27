@@ -162,3 +162,61 @@ Distillation: classified the long-hold policy re-arm issue as a project-specific
 - `PYTHONPATH=src python3 -B -m unittest discover -s tests -v`: 97 tests, OK. 신규 11개는 조건·의존성·재개방·해시·하네스 연결/충돌 gate를 검증.
 - `reports/CONTEXT_METHOD_DECISIONS.md`에 임시 가정, 사용자의 연구 선택 사항, 원 논문 확인을 바탕으로 한 문헌 조사 출발점, 미구현/미검증 범위 기록.
 - 이번 검증은 CPU fixture만 수행. 새 Qwen schema 및 live Isaac 재검증, LLM 자유 질문 생성, episode 종료 뒤 지속 관측 서비스는 미완료. 실행 중인 GUI/scene은 변경하지 않음.
+
+## 2026-10-27 — RTX 5090 PC setup
+
+- Host `jude-X870E-AORUS-PRO`; RTX 5090 32 GB, driver 580.178.04. This is not DGX Spark.
+- Fresh latest checkout `be8f480` at `/home/jude/Documents/ChatGPT/ROSCLAW/TRACE`; previous `/home/jude/isaac_ws_61/haiclaw_ws` preserved.
+- Reused `/home/jude/isaac_ws_61/IsaacLab/.venv` (Isaac Sim 6.2.0) via local `.venv` symlink. Added `scripts/env_5090.sh`; do not source ARM-only `env_spark.sh` on this machine.
+- Skills read: installed `isaac-sim-orchestrator`, `isaac-sim-remote` and workflows, `isaac-sim-troubleshooting`, `isaac-sim-validator`. Remote tool workflow uses file-based skill loading.
+- `PYTHONPATH=src python3 -B -m unittest discover -s tests -q`: 86 tests passed. `python3 scripts/run_harness.py --mode fixture --planner fixture --fail-first`: completed `danger_confirmed`, fixture only.
+- `source scripts/env_5090.sh; HAICLAW_HEADLESS=0 python scripts/prepare_closed_loop.py`: new owned GUI stage, Spot policy, camera, ROS bridge, and Nav2 container prepared. First cold shader compilation took roughly three minutes. Initial 15-second health probe timed out during compilation; retry after compilation returned Health OK.
+- Official health check: Isaac 6.2.0, 115 prims, Z-up, meters/unit 1.0, timeline playing, DISPLAY :1. Nav2 `inspection.client.server_is_ready()` true, `ros_bridge.failure` null. An initial diagnostic used nonexistent `inspection.navigator`; corrected to actual `inspection.client` API without changing simulation state.
+- Real viewport capture `artifacts/trace-5090-viewport.png`: 1280x720, 252158 bytes, RGB mean [187.48, 200.09, 209.63], stddev [54.72, 32.78, 18.76]. Visually inspected rendered fixed-camera obstacle scene. This is not an end-to-end live harness result.
+- Graphviz packages extracted into `artifacts/graphviz` without system changes; `bash scripts/trace_desktop_5090.sh` runs the native monitor with local Graphviz libraries. Optional neato plugin warns about missing dependency; dot layout is configured.
+- Ollama amd64 official archive downloading into `artifacts/ollama`; Qwen live inference remains pending.
+- Ollama 0.40.11 amd64 installed locally; `qwen3-vl:8b` downloaded and served on RTX 5090 (37/37 layers offloaded). Native monitor architecture graph rendered successfully with dot (113193 bytes).
+- `source scripts/env_5090.sh; python -u scripts/run_harness.py --mode live --planner ollama --budget 60`: completed live episode `ae2e55b2-68e7-47af-b0bd-7daa3d72bb0c` in 127.86 wall seconds, with 5 actual Qwen decisions. Initial visible person and subsequent loss were inferred from rendered images. First east inspection arrived; new body-camera observation reported a person lying on the floor, but host evidence policy did not accept it for closure. Model requested southeast inspection; the 60-second simulation budget expired during that move, resulting in `escalated_unknown`, completed=true, error=null. This verifies live integration, not correct hazard resolution or benchmark performance.
+- Exact result: `artifacts/harness/ae2e55b2-68e7-47af-b0bd-7daa3d72bb0c/result.json`; console log: `artifacts/logs/harness-live-5090.log`. Isaac GUI, native monitor, localhost Ollama and the owned Nav2 container remain running; the experiment itself has finished.
+- Rerun entry point: `bash scripts/start_trace_5090.sh`; all new shell scripts pass `bash -n`. See `reports/RTX5090_SETUP.md`.
+
+## 2026-10-27 — latest TRACE and Real2Sim monitor integration on RTX 5090
+
+- Fast-forwarded main from be8f480 to e80f30a (evidence-grounded question resolution and reopening); preserved 5090 setup scripts and work log additions. 97 CPU tests passed.
+- Added a selectable Real2Sim desktop source (`TRACE_SCENE=real2sim`, dedicated port 8227/context real2sim). Cameras attach to the existing owned scene in its USD session layer; no stage reset or physics stepping is performed by the monitor. Real2Sim and the original TRACE simulator remain separate processes.
+- Verified three live RGB feeds: overview 1280x720, fixed and cage-side 640x360; approximately 6 monitor updates per second with advancing sensor timestamps. Visually inspected the worker and cage image. Cage-side is explicitly labeled as a stationary camera, not a robot-mounted camera.
+- No Spot is attached to Real2Sim yet. Its autonomous harness start is disabled, and its ROS tab reports the missing connection. Separate `artifacts/live_real2sim` records prevent confusion with baseline logs.
+- Changed configs/vlm_local.json to Spark tunnel endpoint http://127.0.0.1:11435/api/chat. Removed automatic local Ollama startup from the standard 5090 launcher. No local-model fallback. Added foreground SSH tunnel launcher and combined Real2Sim monitor launcher.
+- Initial sudo check required a password; pkexec authentication returned 'Request dismissed'. User then installed Tailscale 1.104.2; observed NeedsLogin. Tailscale account authentication, Spark peer discovery, SSH tunnel, and Spark image inference remain pending.
+- Verification: 97 tests pass after edits, shell syntax and Python syntax checks pass, git diff --check passes. This does not claim Real2Sim navigation or remote Qwen inference succeeded.
+
+## 2026-10-27 — Spark Qwen connected
+
+- Spark Tailscale address updated to 100.73.59.16 (spark-0a58), same tailnet as this PC 100.120.65.107. Direct Tailscale route established.
+- First SSH key authentication failed; authenticated through a local Zenity password dialog passed directly to OpenSSH. No password saved. Host key pinned in ignored artifacts/ssh/known_hosts.
+- Running SSH tunnel: 127.0.0.1:11435 → juhwan@100.73.59.16 → 127.0.0.1:11434. /api/tags confirmed qwen3-vl:8b; /api/ps confirmed GPU model residency.
+- Captured a fresh Real2Sim fixed-camera frame, then ran the TRACE Ollama adapter against the Spark endpoint. Status ok, schema validated; person_visible=yes, posture=standing; 96.23 seconds wall latency. This is image-inference validation, not an autonomous incident/navigation run.
+- Evidence: artifacts/live_real2sim/spark-frame.json, spark-verification.png, spark-verification.json. Response events emitted to the Real2Sim monitor.
+- Tunnel remains running. Shell syntax and modified desktop Python syntax passed.
+
+### 2026-10-27 — Real2Sim is the default 5090 environment
+- Replaced the primary start_trace_5090.sh entry point with the Real2Sim launcher; desktop, event routing and environment defaults now select Real2Sim.
+- Guarded live harness against silently running the old demo while Real2Sim navigation remains unimplemented.
+- Exported the owned old demo stage to artifacts/baseline-retired/stage.usda, closed its monitor and simulator, and stopped haiclaw-nav2. Restarted the Real2Sim monitor using the primary launcher.
+- Kept Real2Sim at 8227 and the Spark SSH tunnel at 11435; verified qwen3-vl:8b availability. All 97 CPU tests pass; launcher shell syntax passes.
+
+### 2026-10-27 — Live TRACE → Real2Sim Spot navigation
+- Attached RobotPolicyRunner/get_spot_spec to the owned Real2Sim GUI at port 8227, without replacing the lab scene. Worker animation, capsule colliders and door driver remain active.
+- Added desktop patrol/west/cage/entrance/stop and explicit simulation reset buttons, plus scripts/real2sim_control.py. The body RGB camera now follows Spot; snapshots expose pose, goal status and remaining waypoints.
+- Verified actual movement, cancellation and entrance arrival through TRACE commands. Initial full patrol exceeded 45-degree tilt near the final segment and failed safely. Reduced maximum speed to 0.45 m/s and waypoint radius to 0.15m; rerun completed all 23 targets in 65.726 simulation seconds, with the worker visible. Spot is holding at entrance.
+- Evidence: artifacts/live_real2sim/navigation-validation.json, navigation.jsonl, spot-camera-evidence.json, spot-overview.jpg and spot-body.jpg. Spark qwen3-vl:8b tunnel remains available. Existing 97 CPU tests pass; changed scripts compile, including remote top-level await, and git diff --check passes.
+- This is manual waypoint-command integration. The autonomous incident harness remains disabled pending adaptation to Real2Sim observations and locations; old Nav2 is not used.
+
+### 2026-10-27 — Framework-free Real2Sim harness baseline
+- Kept the existing native asyncio Harness. Added framework-independent Planner/InspectionTools protocols and a Real2Sim tool adapter; no LangChain/LangGraph dependency was added.
+- Added operator-requested inspection runner, explicit Real2Sim viewpoint config, final-heading alignment, request-scoped cancellation, current-request duplicate suppression, and globally consistent simulation arrival timestamps.
+- Live Spark Qwen run a5f12343-81cb-4a53-9e27-2b1e5ef0e4f2: 3 actual model decisions/tools over 131.142 wall seconds. Model selected body/fixed/body observation, detected a standing worker in the fixed view, and reached the explicit three-step budget. Terminal result escalated_unknown; no runtime or stop error. This is a completed unresolved handoff, not a successful diagnosis, and no model-selected movement occurred in this run.
+- Per-episode manifest stores effective budgets, model config, starting state and source hashes for future runtime comparisons. Existing evidence-age limits were not loosened to accommodate inference latency.
+- 102 tests pass including stale-frame rejection, scoped cancellation, replacement-goal rejection and arrival clock handling. Native scripts compile and git diff --check passes.
+- Durable crash recovery and automatic incident triggering remain outside this baseline. No disappearance or ground-truth worker state was injected into the planner.
+- Separate scripted live tool validation (not a model decision): entrance arrival at simulation 580.756s, duplicate request retained the same action ID, and post-arrival snapshot at 580.920s confirmed global-clock consistency and heading tolerance. Evidence: artifacts/live_real2sim/tool-validation/result.json. Heading can drift during a prolonged idle hold; downstream inspection must rely on the actual fresh image rather than assume permanent framing from the arrival event.

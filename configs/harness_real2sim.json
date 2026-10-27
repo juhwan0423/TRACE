@@ -1,0 +1,14 @@
+{
+  "runtime": "native_asyncio",
+  "trigger": "operator_inspection_request",
+  "budget_seconds": 300,
+  "wall_budget_seconds": 900,
+  "operation_timeout_seconds": 180,
+  "motion_timeout_seconds": 240,
+  "max_steps": 6,
+  "max_evidence_age_seconds": 45,
+  "locations": {
+    "cage": {"yaw": -1.5707963267948966, "description": "Cage-side corridor viewpoint, facing into the cage work area; visibility must be verified with a new body-camera frame."},
+    "entrance": {"yaw": -1.5707963267948966, "description": "Entrance viewpoint facing south into the lab; visibility is not guaranteed."}
+  }
+}
