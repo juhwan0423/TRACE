@@ -19,7 +19,7 @@ def request(code, args=None, timeout=15):
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('action',choices=['state','go','stop','reset'])
-    p.add_argument('target',nargs='?',choices=['patrol','west','cage','entrance'],default='patrol')
+    p.add_argument('target',nargs='?',choices=['patrol','west','cage','entrance','door'],default='patrol')
     a=p.parse_args()
     code={'reset':'real2sim_navigation.reset_to_entrance()','state':'real2sim_navigation.snapshot()','stop':'real2sim_navigation.stop()','go':'real2sim_navigation.navigate(target)'}[a.action]
     result=request('print(json.dumps('+code+'))',{'target':a.target})

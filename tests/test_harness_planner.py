@@ -24,3 +24,17 @@ class PlannerTests(unittest.IsolatedAsyncioTestCase):
     def test_unvalidated_model_template_is_rejected(self):
         with self.assertRaises(ValueError):
             OllamaPlanner(dict(model='different',endpoint='http://127.0.0.1:11434/api/chat',timeout_seconds=10))
+
+    async def test_considered_evidence_schema_is_bound_to_context(self):
+        captured=[]
+        class Transport:
+            def __init__(self,*args):pass
+            async def __call__(self,payload):
+                captured.append(payload)
+                return json.dumps({'response':json.dumps(dict(tool='escalate',target='',reason='Limited evidence.',question_id='presence',evidence_ids=['current']))})
+        with patch('haiclaw.providers.harness_planner.LocalChatTransport',Transport):
+            planner=OllamaPlanner(dict(model='qwen3-vl:8b',endpoint='http://127.0.0.1:11435/api/chat',timeout_seconds=10))
+            await planner.choose(dict(available_tools=[dict(tool='escalate',target='')],observations=[dict(evidence_id='current')]))
+        refs=captured[0]['format']['properties']['evidence_ids']
+        self.assertEqual(refs['minItems'],1)
+        self.assertEqual(refs['items']['enum'],['current'])

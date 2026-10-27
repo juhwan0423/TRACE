@@ -104,7 +104,7 @@ class Window(Gtk.ApplicationWindow):
         self.analyze=Gtk.Button(label='현재 프레임 Qwen 분석');self.analyze.connect('clicked',self.analyze_frame);camera_bar.pack_end(self.analyze,False,False,0)
         if REAL2SIM:
             navigation_bar=Gtk.Box(spacing=8);left.pack_start(navigation_bar,False,False,0)
-            for label,target in [('전체 순찰','patrol'),('서쪽 이동','west'),('케이지 이동','cage'),('입구 복귀','entrance'),('정지','stop'),('입구 재배치','reset')]:
+            for label,target in [('전체 순찰','patrol'),('서쪽 이동','west'),('문 앞 관측점','door'),('입구 복귀','entrance'),('정지','stop'),('입구 재배치','reset')]:
                 button=Gtk.Button(label=label);button.connect('clicked',lambda b,t=target:self.navigation_command(t));navigation_bar.pack_start(button,False,False,0)
         self.canvas=Gtk.DrawingArea();self.canvas.set_size_request(500,350);self.canvas.connect('draw',self.draw);left.pack_start(self.canvas,True,True,0)
         self.frame_status=Gtk.Label(label='영상 수신 대기');self.frame_status.set_xalign(0);left.pack_start(self.frame_status,False,False,0)
@@ -166,9 +166,10 @@ class Window(Gtk.ApplicationWindow):
     def navigation_command(self, target):
         def send():
             try:
-                code='print(json.dumps(real2sim_navigation.stop()))' if target=='stop' else 'print(json.dumps(real2sim_navigation.navigate(target)))'
+                code='print(json.dumps(real2sim_navigation.stop()))' if target=='stop' else 'print(json.dumps(real2sim_navigation.navigate(target,final_yaw=heading)))'
                 if target=='reset':code='print(json.dumps(real2sim_navigation.reset_to_entrance()))'
-                result=remote_request(code, {'target':target})
+                locations=json.loads((ROOT/'configs/harness_real2sim.json').read_text())['locations']
+                result=remote_request(code, {'target':target,'heading':locations.get(target,{}).get('yaw')})
                 with (LIVE/'navigation.jsonl').open('a') as log:log.write(json.dumps(dict(action=target,result=result))+'\n')
             except Exception as error:
                 GLib.idle_add(self.nav_status.set_text, '이동 명령 오류: '+str(error))

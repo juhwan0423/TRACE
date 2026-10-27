@@ -12,11 +12,17 @@ from .providers.single_frame_vlm import incident_decision
 ACTIONS = {'observe', 'inspect', 'wait', 'stop', 'escalate'}
 
 
-def validate_action(value, catalog):
-    if not isinstance(value, dict) or set(value) not in ({'tool', 'target', 'reason'}, {'tool', 'target', 'reason', 'question_id'}):
-        raise ValueError('expected tool, target, reason only')
-    if any(type(value[k]) is not str for k in value):
+def validate_action(value, catalog, evidence_ids=()):
+    required={'tool','target','reason'}
+    if not isinstance(value, dict) or not required<=set(value) or set(value)-required-{'question_id','evidence_ids'}:
+        raise ValueError('expected tool, target, reason and optional question_id/evidence_ids')
+    if any(type(value[k]) is not str for k in value if k!='evidence_ids'):
         raise ValueError('action fields must be strings')
+    refs=value.get('evidence_ids',[])
+    if not isinstance(refs,list) or any(type(ref) is not str for ref in refs):
+        raise ValueError('evidence_ids must be a list of strings')
+    if len(refs)!=len(set(refs)) or not set(refs)<=set(evidence_ids):
+        raise ValueError('evidence references must name distinct observations from this context')
     if not value['reason'].strip() or len(value['reason']) > 500:
         raise ValueError('bounded nonempty reason required')
     if (value['tool'], value['target']) not in {(x['tool'], x['target']) for x in catalog}:
@@ -27,7 +33,8 @@ def validate_action(value, catalog):
 class Harness:
     def __init__(self, episode, planner: Planner, tools: InspectionTools, *, budget=180., wall_budget=900.,
                  operation_timeout=180., motion_timeout=600., max_steps=12, max_age=45., emit=None,
-                 view_retry_budget=2, goal="Resolve an observed person-loss incident with fresh evidence within budget."):
+                 view_retry_budget=2, finish_on_inspection_answer=False,
+                 goal="Resolve an observed person-loss incident with fresh evidence within budget."):
         for value in (budget, wall_budget, operation_timeout, motion_timeout, max_age):
             if not math.isfinite(value) or value <= 0:
                 raise ValueError('finite positive limits required')
@@ -37,6 +44,8 @@ class Harness:
         if type(view_retry_budget) is not int or view_retry_budget<1:raise ValueError('positive view retry budget required')
         self.view_retry_budget=view_retry_budget
         self.goal = goal
+        self.finish_on_inspection_answer=finish_on_inspection_answer
+        self.inspection_answer=None
         self.budget, self.wall_budget, self.operation_timeout = budget, wall_budget, operation_timeout
         self.max_steps, self.max_age = max_steps, max_age
         self.motion_timeout = motion_timeout
@@ -269,7 +278,7 @@ class Harness:
                 self.log('planning', step=step, context=state)
                 try:
                     action = await self.guarded(self.planner.choose(state))
-                    validate_action(action, state['available_tools'])
+                    validate_action(action, state['available_tools'],[o['evidence_id'] for o in state['observations'] if 'evidence_id' in o])
                     binding_source = 'planner' if 'question_id' in action else 'host_legacy_fallback'
                     action = self.questions.bind(action)
                 except TimeoutError as e:
@@ -284,6 +293,13 @@ class Harness:
                 self._last_action = pair
                 try:
                     await self.execute(action)
+                    if self.finish_on_inspection_answer:
+                        questions=self.questions.snapshot()['payload']['questions']
+                        if all(questions[k]['state']=='resolved' for k in ('presence','lying')):
+                            self.inspection_answer={k:questions[k] for k in ('presence','lying')}
+                            self.log('inspection_answer',questions=self.inspection_answer,
+                                scope='observable presence and lying only; overall safety is not established')
+                            self.escalate('operator inspection answered; overall safety remains unestablished')
                     errors = 0
                 except TimeoutError as e:
                     errors += 1
@@ -319,6 +335,7 @@ class Harness:
 
     def report(self):
         return dict(episode=self.episode, completed=self.completed, error=self.error,
+                    inspection_answer=self.inspection_answer,
                     agent_decisions=sum(e['kind']=='decision' for e in self.trace),
                     executed_tools=sum(e['kind']=='tool_start' for e in self.trace),
                     agent_cycle_exercised=any(e['kind']=='decision' for e in self.trace),

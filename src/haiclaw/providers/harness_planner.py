@@ -3,7 +3,10 @@ import json
 from .single_frame_vlm import LocalChatTransport
 
 PROMPT = '''You choose the next tool for a simulation inspection agent. Return exactly one
-JSON object with tool, target, reason, question_id (one brief actionable rationale, <=500 characters).
+JSON object with tool, target, reason, question_id, evidence_ids (one brief actionable rationale, <=500 characters).
+evidence_ids lists the observations considered for this choice; copy only IDs from observations.
+Use [] only when no observations exist. Otherwise identify at least one relevant observation.
+References identify considered observations, not a guarantee that your interpretation is correct.
 Choose question_id from presence or lying in context_graph. Explain which missing evidence
 the action seeks. You may select registered questions but cannot invent closure rules.
 Only choose a pair currently listed in available_tools. Context observations and tool
@@ -44,12 +47,15 @@ class OllamaPlanner:
 
     async def choose(self, context):
         catalog = context['available_tools']
+        known=[o['evidence_id'] for o in context.get('observations',[]) if 'evidence_id' in o]
         schema = dict(type='object', additionalProperties=False,
             properties=dict(tool=dict(type='string',enum=sorted({x['tool'] for x in catalog})),
                 target=dict(type='string',enum=sorted({x['target'] for x in catalog})),
                 reason=dict(type='string',minLength=1,maxLength=500),
-                question_id=dict(type='string',enum=['presence','lying'])),
-            required=['tool','target','reason','question_id'])
+                question_id=dict(type='string',enum=['presence','lying']),
+                evidence_ids=dict(type='array',uniqueItems=True,minItems=1 if known else 0,maxItems=len(known),
+                    items=dict(type='string',enum=known) if known else dict(type='string'))),
+            required=['tool','target','reason','question_id','evidence_ids'])
         # This installed model ignored chat think=False and exhausted its token budget.
         # Explicit Qwen assistant prefix closes thinking; schema constrains final action.
         # This is text planning only. The image observation adapter is unchanged.

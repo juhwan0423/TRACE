@@ -28,7 +28,7 @@ if not globals().get('real2sim_monitor_sensors'):
     views = {
         'overview': ((-.3, 3.4, 2.8), (-3.4, -1., 1.), 14., (1280,720)),
         'fixed': ((1.188, .404, 2.5), (-1.512, -1.246, .8), 11., (640,360)),
-        'body': ((-2.712, .454, 2.4), (-1.012, -1.546, .8), 14., (640,360)),
+        'body': ((-2.712, .454, 2.4), (-1.012, -1.546, .8), 8., (640,360)),
     }
     for key, (eye, target, focal, resolution) in views.items():
         camera = UsdGeom.Camera.Define(monitor_stage, '/World/TraceReal2Sim/'+key)

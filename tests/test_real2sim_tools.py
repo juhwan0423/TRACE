@@ -48,6 +48,13 @@ class Real2SimToolsTests(unittest.IsolatedAsyncioTestCase):
         remote=AsyncMock();tools=Real2SimTools(None,{},self.temp.name,remote)
         with self.assertRaises(ValueError):await tools.inspect('arbitrary')
         remote.assert_not_called()
+    async def test_replaced_or_moving_body_view_cannot_be_labeled_as_arrived(self):
+        adapter=AsyncMock()
+        for navigation in (dict(id='ours',status='moving'),dict(id='ours',status='failed'),dict(id='other',status='arrived')):
+            remote=AsyncMock(return_value=dict(now=100,navigation=navigation))
+            tools=Real2SimTools(adapter,{},self.temp.name,remote);tools.action_id='ours'
+            with self.assertRaises(RuntimeError):await tools.observe('body','episode')
+        adapter.infer.assert_not_called()
     async def test_observation_requires_frame_newer_than_arrival(self):
         data=io.BytesIO();Image.new('RGB',(2,2),'white').save(data,format='JPEG')
         image=base64.b64encode(data.getvalue()).decode();frames=iter([99,101])

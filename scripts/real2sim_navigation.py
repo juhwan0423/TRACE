@@ -14,6 +14,20 @@ from isaacsim.core.simulation_manager.impl.isaac_events import IsaacEvents
 from isaacsim.core.rendering_manager import RenderingManager
 from isaacsim.robot.policy.examples import RobotPolicyRunner, get_spot_spec
 
+def corridor_indices(points, start, end):
+    """Shortest of the two existing paths only when the patrol closes on itself."""
+    if math.dist(points[0],points[-1])>.05:
+        direction=1 if end>=start else -1
+        return list(range(start,end+direction,direction))
+    count=len(points)-1
+    start,end=start%count,end%count
+    candidates=[]
+    for direction in (1,-1):
+        route=[start]
+        while route[-1]!=end:route.append((route[-1]+direction)%count)
+        candidates.append(route)
+    return min(candidates,key=lambda route:sum(math.dist(points[a],points[b]) for a,b in zip(route,route[1:])))
+
 class Real2SimNavigation:
     def __init__(self, root):
         self.stage = omni.usd.get_context().get_stage()
@@ -28,6 +42,7 @@ class Real2SimNavigation:
         self.elapsed = 0.0
         self.command = dict(status='idle')
         self.route = []
+        self.hold_pose = None
         self.callback = None
         tl = omni.timeline.get_timeline_interface()
         tl.stop()
@@ -45,7 +60,8 @@ class Real2SimNavigation:
             raise RuntimeError('Real2Sim stage changed')
 
     def snapshot(self):
-        return dict(now=SimulationManager.get_simulation_time(),playing=omni.timeline.get_timeline_interface().is_playing(),pose=self.pose,navigation=dict(self.command),scene='real2sim',spot_attached=True,ready=self.ready)
+        return dict(now=SimulationManager.get_simulation_time(),playing=omni.timeline.get_timeline_interface().is_playing(),pose=self.pose,navigation=dict(self.command),scene='real2sim',spot_attached=True,ready=self.ready,
+                    runtime_revision='corridor-stance-wide-view/2',hold_pose=self.hold_pose)
 
     def stop(self, reason='operator stop', request_id=None):
         self.guard()
@@ -54,6 +70,7 @@ class Real2SimNavigation:
         if request_id is not None and self.command['status']!='moving':
             return self.snapshot()
         self.route=[]
+        self.hold_pose = list(self.pose) if self.pose else None
         self.command.update(status='cancelled',reason=reason,remaining=0)
         return self.snapshot()
 
@@ -62,6 +79,7 @@ class Real2SimNavigation:
         if self.command['status']=='moving':
             raise RuntimeError('Stop the active goal before simulation reset')
         self.route=[]
+        self.hold_pose = None
         self.runner.articulation.reset_to_default_state()
         self.runner.initialize()
         self.elapsed=0.0
@@ -87,16 +105,16 @@ class Real2SimNavigation:
         nearest=int(np.argmin([np.linalg.norm(np.array(p)-self.pose[:2]) for p in self.points]))
         if np.linalg.norm(np.array(self.points[nearest])-self.pose[:2]) > .6:
             raise RuntimeError('Spot is outside the validated path corridor')
-        targets={'entrance':0,'west':7,'cage':18}
+        targets={'entrance':0,'west':7,'cage':18,'door':21}
         if target=='patrol':
             if nearest not in (0,23):raise RuntimeError('Return to entrance before starting the full patrol')
             indices=list(range(1,len(self.points)))
         elif target in targets:
             end=targets[target]
-            direction=1 if end>=nearest else -1
-            indices=list(range(nearest,end+direction,direction))
+            indices=corridor_indices(self.points,nearest,end)
         else:raise ValueError('Unknown destination')
         self.route=[self.points[i] for i in indices]
+        self.hold_pose = None
         self.command=dict(id=request_id or str(uuid.uuid4()),status='moving',target=target,remaining=len(self.route),started=SimulationManager.get_simulation_time(),final_yaw=final_yaw)
         self.best=float('inf');self.progress=self.elapsed;self.deadline=time.monotonic()+240
         self.runner.initialize()
@@ -114,6 +132,8 @@ class Real2SimNavigation:
             p=p.numpy()[0];w,x,y,z=q.numpy()[0]
             yaw=math.atan2(2*(w*z+x*y),1-2*(y*y+z*z))
             self.pose=[float(p[0]),float(p[1]),float(yaw)]
+            if self.hold_pose is None and self.command['status'] in ('idle','arrived','cancelled'):
+                self.hold_pose=list(self.pose)
             tilt=math.degrees(math.acos(float(np.clip(1-2*(x*x+y*y),-1,1))))
             cmd=np.zeros(3,dtype=np.float32)
             if tilt>45:
@@ -141,10 +161,20 @@ class Real2SimNavigation:
                 elif self.elapsed-self.progress>15 or time.monotonic()>self.deadline:
                     self.command.update(status='failed',reason='Viewpoint heading timeout')
                 else:cmd[2]=np.clip(1.5*err,-.6,.6)
+            if self.hold_pose is not None and self.command['status'] in ('idle','arrived','cancelled'):
+                # Closed-loop stance correction through the locomotion policy; no teleport.
+                delta=np.array(self.hold_pose[:2])-p[:2]
+                if float(np.linalg.norm(delta))>.5:
+                    self.command.update(status='failed',reason='Idle stance drift exceeded 0.5m')
+                else:
+                    cmd[0]=np.clip(.8*(math.cos(yaw)*delta[0]+math.sin(yaw)*delta[1]),-.12,.12)
+                    cmd[1]=np.clip(.8*(-math.sin(yaw)*delta[0]+math.cos(yaw)*delta[1]),-.12,.12)
+                    err=(self.hold_pose[2]-yaw+math.pi)%(2*math.pi)-math.pi
+                    cmd[2]=np.clip(1.5*err,-.4,.4)
             self.runner.step(dt,cmd)
             camera=self.stage.GetPrimAtPath('/World/TraceReal2Sim/body')
             if camera:
-                fwd=np.array([math.cos(yaw),math.sin(yaw),0]);eye=p+.30*fwd+np.array([0,0,.15]);target=eye+2*fwd+np.array([0,0,-.25])
+                fwd=np.array([math.cos(yaw),math.sin(yaw),0]);eye=p+.30*fwd+np.array([0,0,.15]);target=eye+2*fwd+np.array([0,0,.35])
                 UsdGeom.Xformable(camera).GetOrderedXformOps()[0].Set(Gf.Matrix4d().SetLookAt(Gf.Vec3d(*eye),Gf.Vec3d(*target),Gf.Vec3d(0,0,1)).GetInverse())
         except Exception as error:
             self.route=[];self.command.update(status='failed',reason=str(error))

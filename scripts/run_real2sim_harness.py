@@ -19,12 +19,14 @@ async def run(args):
     cfg=json.loads((ROOT/'configs/harness_real2sim.json').read_text())
     model=json.loads((ROOT/'configs/vlm_local.json').read_text())
     if args.max_steps is not None:cfg['max_steps']=args.max_steps
+    if getattr(args,'finish_on_inspection_answer',None) is not None:
+        cfg['finish_on_inspection_answer']=args.finish_on_inspection_answer
     cfg['camera_policy']=args.camera_policy
     cfg['enabled_cameras']=['body'] if args.camera_policy=='body-only' else ['fixed','body']
     episode=str(uuid.uuid4());out=ROOT/'artifacts/harness'/episode;out.mkdir(parents=True)
     live=ROOT/'artifacts/live_real2sim';live.mkdir(parents=True,exist_ok=True)
     def emit(event):
-        event=dict(event,mode='real2sim',planner='ollama',runtime='native_asyncio',trigger=cfg['trigger'])
+        event=dict(event,mode='real2sim',planner='ollama',runtime='native_asyncio',trigger=cfg['trigger'],camera_policy=cfg['camera_policy'])
         line=json.dumps(event,ensure_ascii=False)+'\n'
         for path in (out/'events.jsonl',live/'harness.jsonl'):
             with path.open('a') as f:f.write(line)
@@ -33,7 +35,7 @@ async def run(args):
     initial=await tools.snapshot()
     if not initial['playing'] or not initial.get('ready'):raise RuntimeError('Start the Real2Sim monitor and wait for Spot')
     if initial['navigation']['status'] in ('moving','failed'):raise RuntimeError('Resolve active movement or navigation fault before starting')
-    files=['src/haiclaw/harness.py','src/haiclaw/context.py','src/haiclaw/tool_contracts.py','src/haiclaw/providers/harness_planner.py','src/haiclaw/providers/ollama.py','scripts/real2sim_navigation.py','scripts/real2sim_harness_tools.py','scripts/run_real2sim_harness.py']
+    files=['src/haiclaw/harness.py','src/haiclaw/context.py','src/haiclaw/tool_contracts.py','src/haiclaw/providers/harness_planner.py','src/haiclaw/providers/ollama.py','scripts/real2sim_navigation.py','scripts/real2sim_monitor_scene.py','scripts/real2sim_harness_tools.py','scripts/run_real2sim_harness.py']
     manifest=dict(runtime='native_asyncio',config=cfg,model_config=model,initial_snapshot=initial,
         files={p:hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in files})
     (out/'manifest.json').write_text(json.dumps(manifest,indent=2))
@@ -45,6 +47,7 @@ async def run(args):
     harness=Harness(episode,planner,tools,budget=cfg['budget_seconds'],wall_budget=cfg['wall_budget_seconds'],
         operation_timeout=cfg['operation_timeout_seconds'],motion_timeout=cfg['motion_timeout_seconds'],
         max_steps=cfg['max_steps'],max_age=cfg['max_evidence_age_seconds'],emit=emit,view_retry_budget=cfg['view_retry_budget'],
+        finish_on_inspection_answer=cfg.get('finish_on_inspection_answer',False),
         goal='An operator requests inspection of the worker. Determine presence and observable posture using fresh camera evidence; no person-loss event has been asserted. Move to another viewpoint if needed, or hand off unresolved uncertainty.')
     try:
         await harness.run()
@@ -60,6 +63,8 @@ async def run(args):
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--max-steps',type=int)
     p.add_argument('--camera-policy',choices=['all','body-only'],default='all',help='Explicit sensor ablation; body-only hides the fixed-camera tool, not the worker')
+    p.add_argument('--finish-on-inspection-answer',action=argparse.BooleanOptionalAction,default=None,
+        help='Finish the operator request once fresh presence/posture answers exist; does not establish overall safety')
     args=p.parse_args()
     if args.max_steps is not None and not 1<=args.max_steps<=100:p.error('max-steps must be in 1..100')
     lock=ROOT/'artifacts/closed_loop/runner.lock';lock.parent.mkdir(parents=True,exist_ok=True)

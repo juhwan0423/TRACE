@@ -38,12 +38,21 @@ class Real2SimTools:
     async def snapshot(self):
         return await self.remote('real2sim_navigation.guard(); print(json.dumps(real2sim_navigation.snapshot()))')
 
+    def check_body_view(self,state):
+        navigation=state.get('navigation',{})
+        if navigation.get('status') in ('moving','failed'):
+            raise RuntimeError('Body observation requires a settled, non-faulted viewpoint')
+        if self.action_id and navigation.get('id')!=self.action_id:
+            raise RuntimeError('Inspection viewpoint replaced by another operator')
+
     async def observe(self,camera,episode):
         if camera not in self.cameras:raise ValueError('Unavailable camera')
         state=await self.snapshot()
+        if camera=='body':self.check_body_view(state)
         after=max(state['now'],self.latest.get(camera,-1),self.arrived_at if camera=='body' else -1)
         for _ in range(40):
             result=await self.remote('print(json.dumps(real2sim_monitor_frames()))')
+            if camera=='body':self.check_body_view(result['snapshot'])
             frame=result['frames'][camera];received=result['snapshot']['now'];stamp=frame['capture_time']
             if not result['snapshot']['playing']:raise RuntimeError('Simulation paused')
             if all(math.isfinite(v) for v in (stamp,received)) and after<stamp<=received:break
@@ -54,6 +63,7 @@ class Real2SimTools:
         self.latest[camera]=stamp
         evidence=Evidence(eid,episode,camera,stamp,received,str(path))
         obs,record=await self.adapter.infer(evidence)
+        record=dict(record,capture_snapshot=result['snapshot'])
         return evidence,obs,record
 
     async def inspect(self,target):

@@ -134,3 +134,44 @@ It does not alter the scene, hide the person, or falsify an observation. Compare
 runs only with matched sensor policies, budgets, initial conditions and code versions.
 New runs archive source files alongside hashes to distinguish live-tested revisions
 from subsequent prompt/context replay experiments.
+
+## Validated observation locations and request completion
+
+The agent now uses `door` (the existing corridor's index 21, heading -2.0 radians)
+and `entrance`. The former cage endpoint failed a live stance/visibility check and
+is excluded from the agent catalog. The body camera has a wider lens and slight
+upward aim; position holding uses bounded locomotion-policy commands. These are
+explicit sensor/controller changes and must be held constant in runtime comparisons.
+
+The desktop **에이전트 실행** tab offers all/body-only camera selection, actual
+camera feedback, considered observation IDs, model rationale and tool-start status.
+The **내 실행 중단** button sends SIGINT; the harness performs request-scoped stop.
+An external runner owns the same experiment lock, so a second start fails rather
+than replacing its movement. Manual navigation can still interrupt an experiment;
+body observation rejects a replaced inspection goal.
+
+For operator-requested inspection, `finish_on_inspection_answer` is enabled. A fresh
+resolved presence/posture answer ends that request and is stored in
+`result.json.inspection_answer`. It does **not** establish overall safety; standing
+still terminates with an unresolved safety handoff. Confirmed visible lying retains
+the existing danger verdict. Disable this host completion rule explicitly for an ablation:
+
+```bash
+PYTHONPATH=src .venv/bin/python scripts/run_real2sim_harness.py --no-finish-on-inspection-answer
+
+# Explicitly resets Spot between trials; do not use during another operator's movement.
+PYTHONPATH=src .venv/bin/python scripts/repeat_real2sim_trials.py \
+  --repetitions 2 --camera-policy body-only \
+  --output artifacts/trials/body-only.json
+
+.venv/bin/python scripts/summarize_real2sim_harness.py \
+  artifacts/harness/EPISODE_1 artifacts/harness/EPISODE_2 \
+  --output artifacts/trials/summary.json
+```
+
+Repeat trials reset Spot, settle it, and align authored worker/door animation phase.
+They preserve the running physics scene, so this is not exact full-state replay.
+The summary separates different source/config/model conditions. A completed run,
+a VLM clear-subject claim and correct ground-truth diagnosis are different metrics.
+Normal/lying labeled scenario evaluation and durable crash recovery remain future
+work; these trials alone do not establish false-safe or detection accuracy.
