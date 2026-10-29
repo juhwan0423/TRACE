@@ -253,3 +253,11 @@ Distillation: classified the long-hold policy re-arm issue as a project-specific
 - Default all-camera smoke trial `e6c58a9c-7e79-474d-b78d-e1230c63fa97`: 47.2s, one model-selected fixed-camera observation, no movement required, clear presence/standing answer, no tool errors. The latest event format explicitly records camera policy.
 - Comparison artifact: `artifacts/view-validation/comparison.json`. Each two-run group has matching source/config fingerprints and verified source archives. This is a small engineering comparison, not a statistical or pure single-factor ablation: completion rule, planner reference schema and observation ownership guards changed between groups, and initialization does not restore all PhysX state. No diagnostic accuracy, false-safe rate, or LangGraph advantage is claimed.
 - Final validation: `PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -q` passes 122 tests; remote navigation compiles with `ast.PyCF_ALLOW_TOP_LEVEL_AWAIT`; `git diff --check` passes. Real capture `67e32711.../frames/af7fc38d-6605-49e7-b5bb-244af55b44dc.png` is 250695 bytes, mean RGB approximately (119,118,105), and was visually inspected. Normal animated lab scene only; fallen-worker live validation and durable crash recovery remain unimplemented.
+
+## 2026-10-29 — GitHub research overview
+
+Replaced the stale Nav2-first README with the current Real2Sim inspection path,
+actual body-camera evidence, bounded-tool architecture and a scoped validation
+summary. Preserved the preceding README in `reports/README_BEFORE_REAL2SIM.md`.
+Validation: `PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -q`
+passed 122 tests. No simulator state or runtime configuration was changed.

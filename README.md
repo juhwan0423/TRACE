@@ -2,109 +2,86 @@
 
 **Task-Relevant Active Context and Evidence**
 
-An experimental agent harness for active visual inspection in simulation.
+TRACE is an agent harness for robot-assisted visual inspection. A local vision-language model chooses where to look and when to move; the host tracks which questions the resulting images actually answer.
 
-TRACE maintains unresolved person-loss incidents and lets a local model select observations and robot inspection actions within a bounded budget. Isaac Sim supplies images and physics, ROS 2/Nav2 supplies navigation, and Qwen3-VL supplies visual observations and structured action choices. Host-side evidence checks and deadlines control incident closure.
+The current implementation connects **Spot in HAI-Real2Sim**, **Isaac Sim 6.2**, and **Qwen3-VL 8B**. Simulation runs on an RTX 5090 PC and model inference runs on DGX Spark. The orchestration is native Python `asyncio`, with separate planner and inspection-tool interfaces. TRACE was previously called HAI-CLAW; the Python package is still named `haiclaw`.
 
-> Research prototype, not a validated safety system. Simulation only; no real robot or external emergency service. The Python package remains `haiclaw` for compatibility with the earlier HAI-CLAW code.
+![Spot body-camera observation during a live worker inspection](docs/assets/spot-inspection.png)
 
-## Current status
+*An actual body-camera frame from the October 27 development runs. Scene reconstruction is provided by [HAI-Real2Sim](https://github.com/sayhee-kim/HAI-Real2Sim); TRACE adds the inspection loop and evidence handling.*
 
-| Component | Evidence / limitation |
+## What it does
+
+An operator asks the robot to check a worker. The model can observe a configured camera, inspect a named viewpoint, wait, stop, or hand off an unresolved request. Each observation carries its source, capture time and frame reference. The host rejects stale or unrelated evidence and keeps the execution within movement, tool-call and time budgets.
+
+Finding a person is not enough to declare the workplace safe. Presence and visible posture are separate questions. A completed inspection request can still leave the overall incident unresolved. The model cannot directly assign a safety verdict or send arbitrary coordinates to the robot.
+
+```mermaid
+flowchart LR
+  Request[Operator request] --> Context[Questions and evidence]
+  Context --> Planner[Local Qwen planner]
+  Planner --> Guard[Validate tool and target]
+  Guard --> Tools[Observe / inspect / wait / stop]
+  Tools --> Sim[HAI-Real2Sim + Spot]
+  Sim --> Context
+  Context --> Host[Freshness, deadlines and resolution]
+  Host --> Result[Inspection answer or unresolved handoff]
+```
+
+Spot follows configured corridors using Isaac Sim's locomotion policy. This Real2Sim path does not use Nav2. The older ROS 2/Nav2 experiment remains available as a separate integration.
+
+## Verified so far
+
+| Check | Observed result |
 |---|---|
-| Model-directed harness | Observe, inspect, wait, stop and unresolved handoff; bounded memory, tool validation, replanning, cancellation and logs |
-| Live integration | Real Qwen selected 8 actions in one completed Isaac/Nav2 run; one viewpoint reached, another navigation failed, then re-observation and budget-triggered unresolved handoff |
-| Latest guards | Post-arrival observation gate and failed-viewpoint correction have contract/model-probe verification; a full live rerun of the final version is pending |
-| Tests | 86 local CPU contract/regression tests passed; these do not establish perception accuracy or physical safety |
-| Baseline | Fixed-sequence runner preserved separately from the agent harness |
-| Research conclusions | No controlled baseline superiority result, no validated normal-case safe closure, no VSS runtime benchmark |
+| Spot patrol in the reconstructed lab | 23/23 waypoints completed; movement cancellation and entrance arrival also exercised |
+| Model-directed, body-camera-only inspection | Two final development runs: one viewpoint move and one new observation each; 42.4 s and 54.3 s wall time; no tool errors |
+| Fixed and body cameras available | One final run answered the inspection questions from a fixed-camera observation in 47.2 s |
+| Evidence and execution contracts | 122 CPU regression tests at the October 27 checkpoint |
 
-Selected development evidence is summarized in [checkpoint.json](reports/evidence/checkpoint.json). These runs are not a benchmark dataset. Detailed readiness assessment: [research checkpoint](reports/RESEARCH_CHECKPOINT.md).
+These are integration checks in a standing-worker scene, not a perception benchmark. Live fallen-worker validation, controlled comparisons and durable crash recovery remain open. Earlier and later timing runs also changed prompts and guards, so they do not establish a single-factor speedup. See [validation notes](reports/RTX5090_SETUP.md) and the [work log](reports/WORKLOG.md).
 
-## Quick start: no GPU, model or simulator required
-
-Python 3.10+:
+## Try the core without a simulator
 
 ```bash
 git clone https://github.com/juhwan0423/TRACE.git
 cd TRACE
 PYTHONPATH=src python3 -B -m unittest discover -s tests -v
 python3 scripts/run_harness.py --mode fixture --planner fixture --fail-first
+python3 scripts/demo_context_resolution.py
 ```
 
-This uses a fixture planner and fixture tools. It validates software contracts, not real model reasoning or navigation. Runs are written to `artifacts/harness/<episode>/`.
+The fixture exercises failure handling and context resolution without a GPU or model. Its outputs are software checks, not live robot results.
 
-## Local model and live simulation
+## Run with Real2Sim
 
-Validated development machine: DGX Spark / Ubuntu 24.04 ARM64, Isaac Sim 6.2.0, ROS 2 Jazzy/Nav2, Ollama with `qwen3-vl:8b`. Installation is separate: see [Spark setup](reports/SPARK_SETUP.md). Model weights, Isaac Sim, Docker images and the local Python environment are not bundled.
-
-With the environment already prepared:
+First prepare the scene assets, Isaac Sim environment and model endpoint described in [RTX 5090 setup](reports/RTX5090_SETUP.md). They are not included in this repository. The launch scripts currently target the development workstation; review paths before using another machine.
 
 ```bash
-source scripts/env_spark.sh
-# Review NVIDIA's Isaac Sim EULA and set this only after accepting it:
-export OMNI_KIT_ACCEPT_EULA=YES
-python scripts/prepare_closed_loop.py
-python scripts/run_harness.py --mode live --planner ollama
+bash scripts/start_spark_tunnel.sh <Spark-Tailscale-IP>
+bash scripts/start_trace_real2sim_5090.sh
 ```
 
-The live runner starts a new scenario in the owned TRACE experiment stage. It refuses unrelated workspaces and concurrent baseline/harness runs. Save any experiment edits before starting. Current live scenario coverage is limited; see [harness verification](reports/HARNESS.md).
-
-Real Qwen with simulated tools:
+The desktop monitor's **agent execution** tab starts and stops the harness. For a terminal run, after the monitor reports that Spot is ready:
 
 ```bash
-source scripts/env_spark.sh
-python scripts/run_harness.py --mode fixture --planner ollama --fail-first
+PYTHONPATH=src .venv/bin/python scripts/run_real2sim_harness.py --camera-policy body-only
 ```
 
-This is still **fixture-assisted**, not a live robotics experiment. The text planner uses a template validated specifically for the installed `qwen3-vl:8b`; changing models requires adapter validation.
+Each run saves events, images, a result and a source/configuration snapshot under `artifacts/harness/`. Full run artifacts stay local. A run can finish by handing off uncertainty; `completed=true` alone does not mean a successful safety assessment.
 
-## Desktop monitor
+## Read the implementation
 
-```bash
-./scripts/trace_desktop.sh
-```
+| Area | Entry point |
+|---|---|
+| Bounded execution and host decisions | [harness.py](src/haiclaw/harness.py) |
+| Questions and evidence lifecycle | [context.py](src/haiclaw/context.py) |
+| Local model planner | [harness_planner.py](src/haiclaw/providers/harness_planner.py) |
+| Real2Sim tool adapter | [real2sim_harness_tools.py](scripts/real2sim_harness_tools.py) |
+| Corridor navigation | [real2sim_navigation.py](scripts/real2sim_navigation.py) |
+| Repeated trials | [repeat_real2sim_trials.py](scripts/repeat_real2sim_trials.py) |
+| Research assumptions | [Context method decisions](reports/CONTEXT_METHOD_DECISIONS.md) |
 
-Uses system Python with GTK 3/PyGObject, GdkPixbuf/cairo and Graphviz (`dot`), a desktop display, and a prepared Isaac session. Tabs show the scene/Qwen output, discovered ROS graph, system architecture, and agent execution. The agent tab provides start/stop controls; it does not install missing runtime dependencies.
+[Original requirements](implementation_guide.md) · [Earlier Nav2 setup](reports/SPARK_SETUP.md) · [Previous README](reports/README_BEFORE_REAL2SIM.md)
 
-The earlier browser presentation is a separately managed Sites checkout and is not included in this repository snapshot. The native monitor is included.
-
-## Architecture
-
-```mermaid
-flowchart LR
-  State[Incident state and observations] --> Planner[Local Qwen action planner]
-  Planner --> Gate[Tool and target validation]
-  Gate --> Tools[Observe / inspect / wait / stop / escalate]
-  Tools --> Sim[Isaac Sim and ROS 2 / Nav2]
-  Sim --> Evidence[Fresh evidence and tool outcomes]
-  Evidence --> State
-  Evidence --> Policy[Host evidence policy]
-  Clock[Simulation deadline + wall watchdog] --> Policy
-  Policy --> Result[Terminal state or unresolved handoff]
-```
-
-The planner does not execute arbitrary code or arbitrary coordinates and cannot directly declare safe/danger. Candidate viewpoints are configured in `configs/harness.json`. Camera inference is Python/local HTTP, not a ROS camera topic pipeline. Robot localization uses simulator ground truth and obstacle scans use PhysX collision rays.
-
-## Repository guide
-
-- `src/haiclaw/harness.py`: state, bounded tool loop and host guards.
-- `src/haiclaw/providers/harness_planner.py`: local structured action planner.
-- `scripts/harness_live_tools.py`: owned Isaac/ROS tool implementations.
-- `scripts/run_harness.py`: fixture/live experiment entry point.
-- `scripts/run_closed_loop.py`: fixed-sequence baseline.
-- `scripts/trace_desktop.py`: GTK monitor.
-- `tests/`: CPU contract/regression tests; CI does not run Isaac, Ollama or GTK.
-- [Requirements](implementation_guide.md), [harness](reports/HARNESS.md), [baseline](reports/CLOSED_LOOP.md), [work log](reports/WORKLOG.md), [VSS desk comparison](reports/VSS_COMPARISON.md).
-
-Historical reports and captures remain available; the [previous README](reports/LEGACY_README_2026-10-27.md) records earlier-machine commands and superseded status. Local-only artifact links in reports will not resolve in a fresh clone. Selected checkpoint summaries are tracked; full execution images/logs remain local.
-
-## Research and reuse
-
-Start with bounded pilot/debug experiments. Before publication-grade comparison, complete the gates in [RESEARCH_CHECKPOINT.md](reports/RESEARCH_CHECKPOINT.md). Do not interpret `completed=true` as task correctness: an unresolved handoff is a completed incident too.
-
-A project license has not yet been selected. Do not infer open-source reuse permissions from repository visibility; dependencies and assets retain their respective licenses.
-
-## Question resolution prototype
-
-The current development version adds two registered question templates, conditional evidence resolution, expiry/conflict reopening, dependent judgment updates, question-linked actions, and hashed JSON snapshots. Run `python3 scripts/demo_context_resolution.py` for a CPU-only lifecycle demonstration. See [implementation decisions and research questions](reports/CONTEXT_METHOD_DECISIONS.md) for assumptions and missing work. This is not yet general LLM question generation or continuous post-incident monitoring.
+TRACE is a simulation research prototype. No real robot or emergency service is connected. A repository license has not yet been selected; dependencies and scene assets retain their own terms.
