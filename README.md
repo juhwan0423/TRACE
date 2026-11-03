@@ -84,4 +84,6 @@ Each run saves events, images, a result and a source/configuration snapshot unde
 
 [Original requirements](implementation_guide.md) · [Earlier Nav2 setup](reports/SPARK_SETUP.md) · [Previous README](reports/README_BEFORE_REAL2SIM.md)
 
+[Dated architecture proposals](docs/architecture/README.md) track design changes separately from implementation and validation status.
+
 TRACE is a simulation research prototype. No real robot or emergency service is connected. A repository license has not yet been selected; dependencies and scene assets retain their own terms.

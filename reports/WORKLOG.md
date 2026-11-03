@@ -261,3 +261,16 @@ actual body-camera evidence, bounded-tool architecture and a scoped validation
 summary. Preserved the preceding README in `reports/README_BEFORE_REAL2SIM.md`.
 Validation: `PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -q`
 passed 122 tests. No simulator state or runtime configuration was changed.
+
+## 2026-10-30 — Harness readiness inspection
+
+Read-only review of harness, planner, fixture provider, current README and stored Real2Sim results; no policy or simulator changes. No Isaac SDK or GUI operation; no Isaac skills needed.
+
+- `PYTHONPATH=src python3 -B -m unittest discover -s tests -q`: 122 tests passed (1.115 s). CPU contracts only.
+- `curl --max-time 3 --silent --show-error http://127.0.0.1:11435/api/tags`: exit 7, connection refused. Configured local model endpoint unavailable during this check; no fresh Qwen inference performed.
+- Stored Real2Sim results e6c58a9c, ae3b30f2 and 67e32711 show observe(fixed) or inspect(door) -> observe(body) decisions. Historical integration evidence only; not a new live run or proof of diagnostic accuracy.
+- Fastest proposed next experiment: actual planner with controlled tool responses, comparing fixed verification against adaptive selection under matched catalogs/budgets. Existing FixtureTools is a contract fixture, not yet a labeled fault-diagnosis benchmark.
+
+## 2026-10-30 — Dated architecture proposal archive
+
+Created `docs/architecture/README.md` and `docs/architecture/2026-10-30-pump-episode-proposal.md` at the user's request. Saved the pump episode design as a proposed, unimplemented snapshot and linked the archive from the project README. Runtime and original requirements unchanged. An initial multi-file patch failed context matching; reapplied the README change and appended this entry. Documentation verification: `git diff --check` and local Markdown link existence checks. No runtime tests required.
