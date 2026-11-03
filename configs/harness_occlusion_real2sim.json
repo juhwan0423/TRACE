@@ -1,0 +1,27 @@
+{
+  "runtime": "native_asyncio",
+  "trigger": "observed_fixed_camera_visibility_loss",
+  "budget_seconds": 300,
+  "wall_budget_seconds": 900,
+  "operation_timeout_seconds": 180,
+  "motion_timeout_seconds": 240,
+  "max_steps": 8,
+  "max_evidence_age_seconds": 45,
+  "finish_on_inspection_answer": true,
+  "locations": {
+    "west": {
+      "yaw": -1.5707963267948966,
+      "description": "West aisle viewpoint facing south along the west side of the central equipment. It provides a different line of sight from the east fixed camera. Worker visibility and posture must be determined from a new image."
+    },
+    "door": {
+      "yaw": -2.0,
+      "description": "Door-approach corridor viewpoint facing the work area. Worker visibility is not guaranteed."
+    },
+    "entrance": {
+      "yaw": -1.5707963267948966,
+      "description": "Entrance viewpoint facing south into the lab. Worker visibility is not guaranteed."
+    }
+  },
+  "view_retry_budget": 2,
+  "planning_policy": "camera-feedback-and-view-retry/1"
+}

@@ -274,3 +274,31 @@ Read-only review of harness, planner, fixture provider, current README and store
 ## 2026-10-30 — Dated architecture proposal archive
 
 Created `docs/architecture/README.md` and `docs/architecture/2026-10-30-pump-episode-proposal.md` at the user's request. Saved the pump episode design as a proposed, unimplemented snapshot and linked the archive from the project README. Runtime and original requirements unchanged. An initial multi-file patch failed context matching; reapplied the README change and appended this entry. Documentation verification: `git diff --check` and local Markdown link existence checks. No runtime tests required.
+
+## 2026-11-03 — Occluded worker scenario implementation and validation
+
+User authorized moving the existing worker into a blind spot and implementing the inspection scenario, with a Git checkpoint first. System updates/installations and global configuration changes require separate user approval. Checkpoint commit: `82b5600`; HAI-Real2Sim checkout clean at `cd88dc6`.
+
+Feature/skill mapping: existing-stage operation → installed `isaac-sim-remote` and Python-server workflows; scene integration → `isaac-sim-orchestrator`; camera evidence → `isaac-camera`; rendered output verification → `isaac-sim-validator`. Skills loaded from the installed Isaac Sim 6.2 tree (file-based loading, no native skill invocation available). Preserve current stage and its original USD files; use reversible session-layer scenario overrides. No inference of runtime success from code inspection.
+
+Additional loaded skills: `isaac-sim-sensor` (diagnostic instance segmentation), `physics-simulation` (kinematic colliders), `isaac-sim-assets` (existing asset access), `spatial-reasoning` (asset geometry review by subagent), `skill-distillation` (lessons below). No official skill, system package, asset root, driver, model or global configuration changed.
+
+Foundation checks: installed remote `isaacsim_send.py --port 8227 --timeout 20 --file .../health_check.py` reports Isaac Sim 6.2.0, owned 1064-prim Z-up meter stage, playing; `python3 scripts/real2sim_control.py state` reports ready/idle Spot. `curl --max-time 5 --silent --show-error http://127.0.0.1:11435/api/tags` confirms Qwen3-VL 8B. GPU initially 8143/32607 MiB. Exported current session layer to ignored `artifacts/worker_scenario/session-before.usda` before mutations; did not replace/open/reset stage.
+
+Implemented reversible worker pose controller + CLI, separate fixed-camera loss runner, separate west-view inspection config, and one-command demo wrapper. Worker skin and precomputed kinematic collider endpoints transform together. Original animation is restored by removing only the owned scenario layer. Scene truth and diagnostic segmentation remain outside planner inputs. Demo setup/runner share an inherited locked FD; cancellation reports recover the owned child's result.
+
+Commands exercised:
+- `python3 scripts/real2sim_worker.py apply --position -1.05 -0.45 0.03 --rotation 0 0 0`
+- `python3 scripts/real2sim_worker.py apply --position -5.5 -0.3 0.03 --rotation 0 90 90`
+- `python3 scripts/real2sim_worker.py capture --measure --output artifacts/worker_scenario/<capture>`
+- `python3 scripts/real2sim_worker.py restore` (live restore succeeded before reapplying the scenario).
+- `PYTHONPATH=src .venv/bin/python -u scripts/run_real2sim_loss_inspection.py --config configs/harness_occlusion_real2sim.json --loss-grace 3 --monitor-sim-timeout 300 --monitor-wall-timeout 900`
+- `PYTHONPATH=src .venv/bin/python -B -m unittest discover -s tests -q`: 138 tests passed, 3.801 s, including actual USD in-memory skin/collider/restore checks and process-lock tests. These tests do not establish rendered or locomotion performance.
+
+Live episode `22b5f9d2-408b-41ec-ad06-ebeea4caeb1a` completed `danger_confirmed` with a local alert. Five tool actions; actual corridor navigation to west arrived; fresh rendered body evidence confirmed lying. Harness wall time 273.33 s. Ground-truth diagnostic counts: initial fixed 6136, hidden fixed/body-at-entrance 0/0, found body 6860. Capture files passed applicable validator image checks (>150 KB, mean RGB >30, nonflat) and were visually inspected. This is existing-stage remote integration, not a standalone SimulationApp validation or ROS/Nav2 test.
+
+Failed/limited iterations retained: first position (-4.3,-0.9) left 103 fixed-camera human pixels and poor body visibility; rejected. Final pose (-5.5,-0.3), rotation (0,90,90), west yaw -pi/2 keeps cameras/environment unchanged. Qwen produced a false person-positive on one empty fixed frame and a false standing interpretation from the entrance; the latter had limitations and did not close the incident. First west lying interpretation included limitations and was rejected; a subsequent fresh frame was accepted. These variability and latency issues prevent claims of reliable or faster discovery. No YOLO or fixed-patrol comparison was performed.
+
+Distillation: (1) moving a skinned actor requires transforming its precomputed kinematic collision endpoints, (2) put scenario overrides in a removable session sublayer and test exact restoration, (3) separate read-only state guards from movement-mutation guards, (4) transfer execution locks atomically via inherited file descriptors, (5) measure physical occlusion using evaluator-only render labels, not forced invisibility or fake detections. Classified as project procedures, preserved in source/tests/report. No skill-library edits were needed for this task.
+
+One-command live reproduction: `PYTHONPATH=src .venv/bin/python -u scripts/demo_real2sim_occlusion.py` → episode `9578103e-e5ff-4516-943f-a7af2f27418f`, evaluator `dc2bf2d2-2046-4c28-8c0b-e692083d69f8`, wrapper/child exit 0, `completed=true`, `danger_confirmed`; six actions, harness wall 334.28 s. Real positive fixed observation gated the authored hidden transition; no synthetic perception event. Final worker remains in occluded lying pose and Spot holds west. Source HAI-Real2Sim checkout unchanged. Review confirmed lock handoff and abort-result recovery fixes; all 138 tests and `git diff --check` pass. Final VRAM 7948/32607 MiB.

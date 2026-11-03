@@ -70,6 +70,15 @@ PYTHONPATH=src .venv/bin/python scripts/run_real2sim_harness.py --camera-policy 
 
 Each run saves events, images, a result and a source/configuration snapshot under `artifacts/harness/`. Full run artifacts stay local. A run can finish by handing off uncertainty; `completed=true` alone does not mean a successful safety assessment.
 
+For an authored **visible → occluded worker → Spot inspection** development scenario,
+with the monitor and Spark tunnel already running:
+
+```bash
+PYTHONPATH=src .venv/bin/python scripts/demo_real2sim_occlusion.py
+```
+
+This uses actual Qwen camera observations to trigger inspection and preserves the original scene through reversible runtime overrides. See the [scenario instructions and validation limits](reports/OCCLUDED_WORKER_SCENARIO.md). It is not a YOLO baseline or a fixed-patrol speed comparison.
+
 ## Read the implementation
 
 | Area | Entry point |
