@@ -9,10 +9,10 @@ import sys
 import uuid
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'src'))
-from haiclaw.harness import Harness
-from haiclaw.providers.harness_planner import OllamaPlanner
-from haiclaw.providers.ollama import make_adapter
-from haiclaw.providers.person_gate import detector_config, with_person_gate, configure_detector_environment
+from tracebot.harness import Harness
+from tracebot.providers.harness_planner import OllamaPlanner
+from tracebot.providers.ollama import make_adapter
+from tracebot.providers.person_gate import detector_config, with_person_gate, configure_detector_environment
 from real2sim_harness_tools import Real2SimTools
 from qwen_events import emit as qwen_emit
 
@@ -42,8 +42,8 @@ async def run(args):
     initial=await tools.snapshot()
     if not initial['playing'] or not initial.get('ready'):raise RuntimeError('Start the Real2Sim monitor and wait for Spot')
     if initial['navigation']['status'] in ('moving','failed'):raise RuntimeError('Resolve active movement or navigation fault before starting')
-    files=['src/haiclaw/harness.py','src/haiclaw/context.py','src/haiclaw/tool_contracts.py','src/haiclaw/providers/harness_planner.py','src/haiclaw/providers/ollama.py','scripts/real2sim_navigation.py','scripts/real2sim_monitor_scene.py','scripts/real2sim_harness_tools.py','scripts/run_real2sim_harness.py']
-    files += ['src/haiclaw/providers/person_gate.py','src/haiclaw/providers/person_detector.py']
+    files=['src/tracebot/harness.py','src/tracebot/context.py','src/tracebot/tool_contracts.py','src/tracebot/providers/harness_planner.py','src/tracebot/providers/ollama.py','scripts/real2sim_navigation.py','scripts/real2sim_monitor_scene.py','scripts/real2sim_harness_tools.py','scripts/run_real2sim_harness.py']
+    files += ['src/tracebot/providers/person_gate.py','src/tracebot/providers/person_detector.py']
     manifest=dict(runtime='native_asyncio',config=cfg,model_config=model,initial_snapshot=initial,
         files={p:hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in files})
     (out/'manifest.json').write_text(json.dumps(manifest,indent=2))

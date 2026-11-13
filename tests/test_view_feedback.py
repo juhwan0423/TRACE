@@ -1,7 +1,7 @@
 import unittest
-from haiclaw.harness import Harness
-from haiclaw.core import Incident
-from haiclaw.providers.harness_fixture import FixtureTools
+from tracebot.harness import Harness
+from tracebot.core import Incident
+from tracebot.providers.harness_fixture import FixtureTools
 
 class ViewFeedbackTests(unittest.TestCase):
     def make(self):

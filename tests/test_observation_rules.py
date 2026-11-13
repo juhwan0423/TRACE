@@ -1,9 +1,9 @@
 import unittest
 from dataclasses import replace
-from haiclaw.observation_rules import posture_limitations_block, RULE_VERSION
-from haiclaw.context import ContextGraph
-from haiclaw.providers.single_frame_vlm import incident_decision, Interpretation
-from haiclaw.core import Evidence
+from tracebot.observation_rules import posture_limitations_block, RULE_VERSION
+from tracebot.context import ContextGraph
+from tracebot.providers.single_frame_vlm import incident_decision, Interpretation
+from tracebot.core import Evidence
 from test_comparison_records import report, normalize
 
 

@@ -20,12 +20,12 @@ import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
-from haiclaw.comparison_metrics import evaluate
-from haiclaw.comparison_policies import CameraOnlyPlanner, FixedOrderVerificationPlanner
-from haiclaw.harness import Harness
-from haiclaw.providers.harness_planner import OllamaPlanner
-from haiclaw.providers.ollama import make_adapter
-from haiclaw.providers.person_gate import detector_config, with_person_gate, configure_detector_environment
+from tracebot.comparison_metrics import evaluate
+from tracebot.comparison_policies import CameraOnlyPlanner, FixedOrderVerificationPlanner
+from tracebot.harness import Harness
+from tracebot.providers.harness_planner import OllamaPlanner
+from tracebot.providers.ollama import make_adapter
+from tracebot.providers.person_gate import detector_config, with_person_gate, configure_detector_environment
 from real2sim_harness_tools import Real2SimTools, remote
 
 POLICIES = ('fixed_order', 'trace', 'camera_only', 'agent_gate_off', 'agent_gate_on')
@@ -54,7 +54,7 @@ def digest(path):
 
 
 def source_files():
-    files = list((ROOT / 'src/haiclaw').rglob('*.py'))
+    files = list((ROOT / 'src/tracebot').rglob('*.py'))
     files += [ROOT / 'scripts' / name for name in (
         'run_real2sim_comparison.py', 'real2sim_harness_tools.py',
         'real2sim_navigation.py', 'real2sim_monitor_scene.py',
@@ -370,7 +370,7 @@ def external_truth(scene, config, role):
 
 
 async def run_trial(out, frozen, entry):
-    from haiclaw.comparison_records import normalize_report
+    from tracebot.comparison_records import normalize_report
     cfg = frozen['config']
     scene = next(s for s in frozen['manifest']['scenarios'] if s['scenario_id'] == entry['scene_id'])
     trial = out / 'trials' / entry['trial_id']
@@ -520,7 +520,7 @@ def summarize(out, *, verify=True):
             missing.append(entry)
     summary = evaluate(records, truth, expected_policies=frozen['manifest']['policies'])
     if set(frozen['manifest']['policies']) == {'agent_gate_off','agent_gate_on'}:
-        from haiclaw.detector_gate_metrics import evaluate_gate
+        from tracebot.detector_gate_metrics import evaluate_gate
         annotation_path = out / 'support_annotations.json'
         annotations = read_json(annotation_path) if annotation_path.exists() else {}
         if frozen['config'].get('evaluator_capture'):

@@ -1,5 +1,5 @@
 import unittest
-from haiclaw.navigation import InspectionRun, VelocityLease, ZERO
+from tracebot.navigation import InspectionRun, VelocityLease, ZERO
 
 
 class NavigationSafety(unittest.TestCase):
@@ -61,7 +61,7 @@ class NavigationSafety(unittest.TestCase):
 
 class ScanCadence(unittest.TestCase):
     def test_clock_reset_publishes_without_waiting_for_old_episode_time(self):
-        from haiclaw.navigation import SimulationCadence
+        from tracebot.navigation import SimulationCadence
         cadence = SimulationCadence(.1)
         self.assertTrue(cadence.due(150.))
         self.assertFalse(cadence.due(150.05))

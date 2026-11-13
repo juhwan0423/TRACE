@@ -20,7 +20,7 @@ from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from haiclaw.providers.single_frame_vlm import LocalChatTransport, PROMPT, validate
+from tracebot.providers.single_frame_vlm import LocalChatTransport, PROMPT, validate
 
 CONDITIONS = ("chat_think_true", "raw_closed_think")
 CALIBRATION = (
@@ -30,8 +30,8 @@ CALIBRATION = (
     "door_north2_lying/body.png",
 )
 SOURCE_PATHS = ("scripts/probe_qwen_vision.py",
-                "src/haiclaw/providers/single_frame_vlm.py",
-                "src/haiclaw/providers/ollama.py")
+                "src/tracebot/providers/single_frame_vlm.py",
+                "src/tracebot/providers/ollama.py")
 
 
 def sha(data):

@@ -10,8 +10,8 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
-from haiclaw.core import Evidence
-from haiclaw.providers.person_detector import LocalPersonDetector, _ultralytics_factory, DetectorUnavailable
+from tracebot.core import Evidence
+from tracebot.providers.person_detector import LocalPersonDetector, _ultralytics_factory, DetectorUnavailable
 
 try:
     from PIL import Image

@@ -121,7 +121,7 @@ class FreezeIntegrityTests(unittest.TestCase):
         self.out = Path(self.temp) / 'frozen'
         self.sources = [self.root / name for name in (
             'scripts/real2sim_navigation.py', 'scripts/real2sim_monitor_scene.py',
-            'src/haiclaw/harness.py')]
+            'src/tracebot/harness.py')]
         for i, path in enumerate(self.sources):
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(f'# immutable fixture source {i}\n')
@@ -231,7 +231,7 @@ class FailureAndResumeTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_normalization_failure_preserves_actual_execution_costs(self):
         captures = self.mock_execution()
-        with patch('haiclaw.comparison_records.normalize_report', side_effect=ValueError('fixture malformed report')):
+        with patch('tracebot.comparison_records.normalize_report', side_effect=ValueError('fixture malformed report')):
             with self.assertRaisesRegex(ValueError, 'fixture malformed report'):
                 await runner.run_trial(self.out, self.frozen, self.entry)
         trial = self.out / 'trials' / self.entry['trial_id']
@@ -287,7 +287,7 @@ class FailureAndResumeTests(unittest.IsolatedAsyncioTestCase):
         self.mock_execution()
         self.remote.side_effect = RuntimeError('fixture restore failed')
         record = dict(self.entry, status='completed')
-        with patch('haiclaw.comparison_records.normalize_report', return_value=record):
+        with patch('tracebot.comparison_records.normalize_report', return_value=record):
             with self.assertRaises(RuntimeError):
                 await runner.run_trial(self.out, self.frozen, self.entry)
         trial = self.out / 'trials' / self.entry['trial_id']

@@ -2,9 +2,9 @@ import hashlib
 import json
 import unittest
 from dataclasses import replace
-from haiclaw.context import ContextGraph
-from haiclaw.core import Evidence
-from haiclaw.providers.single_frame_vlm import Interpretation
+from tracebot.context import ContextGraph
+from tracebot.core import Evidence
+from tracebot.providers.single_frame_vlm import Interpretation
 
 
 def frame(eid='e1', t=0., visible='yes', posture='lying', limits=()):
@@ -67,8 +67,8 @@ class ContextTests(unittest.TestCase):
 
 class IntegratedContext(unittest.IsolatedAsyncioTestCase):
     async def test_harness_actions_and_results_link_to_questions(self):
-        from haiclaw.harness import Harness
-        from haiclaw.providers.harness_fixture import FixtureTools,FixturePlanner
+        from tracebot.harness import Harness
+        from tracebot.providers.harness_fixture import FixtureTools,FixturePlanner
         result=await Harness('ep',FixturePlanner(),FixtureTools(fail_first=True)).run()
         self.assertEqual(result['context_snapshot']['payload']['questions']['risk']['state'],'resolved')
         actions=[e['action'] for e in result['trace'] if e['kind']=='decision']
@@ -76,8 +76,8 @@ class IntegratedContext(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(any(e.get('question_id') for e in result['trace'] if e['kind']=='tool_result'))
 
     async def test_conflicting_posture_blocks_incident_danger_close(self):
-        from haiclaw.harness import Harness
-        from haiclaw.providers.harness_fixture import FixtureTools
+        from tracebot.harness import Harness
+        from tracebot.providers.harness_fixture import FixtureTools
         class Tools(FixtureTools):
             async def observe(self,camera,episode):
                 self.current='east_inspection'

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from haiclaw.core import Action
+from tracebot.core import Action
 
 
 @dataclass(frozen=True)

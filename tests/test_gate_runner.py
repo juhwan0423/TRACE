@@ -129,7 +129,7 @@ class GatePlannerParityTests(unittest.IsolatedAsyncioTestCase):
              patch.object(runner, 'FixedOrderVerificationPlanner') as fixed, \
              patch.object(runner, 'CameraOnlyPlanner') as camera, \
              patch.object(runner, 'Harness', return_value=harness) as host, \
-             patch('haiclaw.comparison_records.normalize_report', side_effect=lambda report, **kwargs: dict(kwargs)):
+             patch('tracebot.comparison_records.normalize_report', side_effect=lambda report, **kwargs: dict(kwargs)):
             for entry in entries:
                 await runner.run_trial(Path(temp), frozen, entry)
             self.assertEqual(planner.call_count, 2)

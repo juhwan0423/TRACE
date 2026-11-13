@@ -1,8 +1,8 @@
 import asyncio
 from dataclasses import replace
 import unittest
-from haiclaw.harness import Harness,validate_action
-from haiclaw.providers.harness_fixture import FixtureTools,FixturePlanner
+from tracebot.harness import Harness,validate_action
+from tracebot.providers.harness_fixture import FixtureTools,FixturePlanner
 
 class SequencePlanner:
     def __init__(self,actions):self.actions=list(actions);self.states=[]

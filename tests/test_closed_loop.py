@@ -1,8 +1,8 @@
 import asyncio
 import unittest
-from haiclaw.closed_loop import ClosedLoop
-from haiclaw.core import Evidence, Observation, State
-from haiclaw.providers.single_frame_vlm import Interpretation
+from tracebot.closed_loop import ClosedLoop
+from tracebot.core import Evidence, Observation, State
+from tracebot.providers.single_frame_vlm import Interpretation
 
 
 class Adapter:

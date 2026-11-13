@@ -10,7 +10,7 @@ from nav2_msgs.action import NavigateToPose
 from isaacsim.core.simulation_manager import SimulationManager
 import omni.replicator.core as rep
 import omni.timeline
-from haiclaw.navigation import InspectionRun
+from tracebot.navigation import InspectionRun
 
 
 class Nav2Inspection:

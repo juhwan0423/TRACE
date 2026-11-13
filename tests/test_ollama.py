@@ -3,8 +3,8 @@ from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
-from haiclaw.core import Evidence
-from haiclaw.providers.ollama import make_adapter
+from tracebot.core import Evidence
+from tracebot.providers.ollama import make_adapter
 
 
 class OllamaTests(unittest.IsolatedAsyncioTestCase):
@@ -21,7 +21,7 @@ class OllamaTests(unittest.IsolatedAsyncioTestCase):
         with tempfile.TemporaryDirectory() as directory:
             image = Path(directory) / 'hidden_truth_lying.png'
             image.write_bytes(b'\x89PNG\r\n\x1a\nfixture')
-            with patch('haiclaw.providers.ollama.LocalChatTransport', Transport):
+            with patch('tracebot.providers.ollama.LocalChatTransport', Transport):
                 adapter = make_adapter(dict(endpoint='http://127.0.0.1:11434/api/chat',
                                             timeout_seconds=1, model='qwen3-vl:8b'))
                 _, record = await adapter.infer(Evidence('opaque', 'secret_episode', 'body', 1, 1, str(image)))

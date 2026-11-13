@@ -12,7 +12,7 @@ async def main(source_trial):
  entry=next(x for x in cfg['schedule'] if x['trial_id']==source_trial);entry=dict(entry,trial_id='demo01')
  cfg['manifest']['archive_all_detector_frames']=False
  initial=await remote('print(json.dumps(real2sim_navigation.snapshot()))')
- write_json(OUT/'demo_manifest.json',dict(kind='separate_live_demonstration_not_evaluation',source_trial=source_trial+' condition only; fresh decisions',entry=entry,config=cfg['config'],model=cfg['model_config'],initial=initial,capture_target_hz=2,source_hashes={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (ROOT/'src/haiclaw').rglob('*.py')}))
+ write_json(OUT/'demo_manifest.json',dict(kind='separate_live_demonstration_not_evaluation',source_trial=source_trial+' condition only; fresh decisions',entry=entry,config=cfg['config'],model=cfg['model_config'],initial=initial,capture_target_hz=2,source_hashes={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (ROOT/'src/tracebot').rglob('*.py')}))
  stop=asyncio.Event();started=time.monotonic()
  async def capture():
   folder=OUT/'camera_samples';folder.mkdir();i=0

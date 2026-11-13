@@ -134,8 +134,8 @@ SYSTEM_TEXT='''현재 구현된 통신
 scripts/run_closed_loop.py
 scripts/nav2_inspection.py
 scripts/spot_ros_bridge.py
-src/haiclaw/closed_loop.py
-src/haiclaw/providers/ollama.py'''
+src/tracebot/closed_loop.py
+src/tracebot/providers/ollama.py'''
 TOOLS_TEXT='''현재 자동화 수준
 
 정해진 Python 실행기 + 규칙 기반 사건 상태 머신 + VLM 관측 공급자입니다. Qwen이 계획을 세우거나 다음 도구를 선택하는 자율 에이전트는 아직 없습니다.

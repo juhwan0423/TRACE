@@ -1,7 +1,7 @@
 """Live tools on the owned Isaac context; independent of agent choice policy."""
 import asyncio
 import uuid
-from haiclaw.core import Evidence
+from tracebot.core import Evidence
 from run_closed_loop import remote
 
 CAPTURE = '''

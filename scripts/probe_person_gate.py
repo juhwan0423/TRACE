@@ -12,9 +12,9 @@ import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
-from haiclaw.core import Evidence
-from haiclaw.providers.ollama import make_adapter
-from haiclaw.providers.person_gate import detector_config, with_person_gate, configure_detector_environment
+from tracebot.core import Evidence
+from tracebot.providers.ollama import make_adapter
+from tracebot.providers.person_gate import detector_config, with_person_gate, configure_detector_environment
 
 
 async def run(args):
@@ -30,7 +30,7 @@ async def run(args):
         selection_note=args.selection_note,
         packages={n:version(n) for n in ('ultralytics','torch','torchvision','Pillow')},
         source_sha256={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest()
-                      for p in [Path(__file__), *sorted((ROOT/'src/haiclaw/providers').glob('*.py'))]},
+                      for p in [Path(__file__), *sorted((ROOT/'src/tracebot/providers').glob('*.py'))]},
         comparison='one fresh Qwen call per image; raw and gated interpretations of that same call; no adaptive-agent effect measured')
     (args.output/'protocol.json').write_text(json.dumps(protocol,indent=2))
     configure_detector_environment(ROOT)

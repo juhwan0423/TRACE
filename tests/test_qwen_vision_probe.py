@@ -34,7 +34,7 @@ needs_calibration_images = unittest.skipUnless(
 class ProbeTests(unittest.TestCase):
     @needs_calibration_images
     def test_chat_request_exactly_matches_frozen_adapter(self):
-        from haiclaw.providers import ollama
+        from tracebot.providers import ollama
         calls = []
 
         class Transport:

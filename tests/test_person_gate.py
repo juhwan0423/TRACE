@@ -10,12 +10,12 @@ import unittest
 import zlib
 from unittest.mock import patch
 
-from haiclaw.core import Evidence
-from haiclaw.harness import Harness
-from haiclaw.providers.harness_fixture import FixtureTools
-from haiclaw.providers.person_detector import PersonBox, PersonDetectionResult
-from haiclaw.providers.person_gate import PersonGateAdapter, detector_config, with_person_gate
-from haiclaw.providers.single_frame_vlm import Interpretation
+from tracebot.core import Evidence
+from tracebot.harness import Harness
+from tracebot.providers.harness_fixture import FixtureTools
+from tracebot.providers.person_detector import PersonBox, PersonDetectionResult
+from tracebot.providers.person_gate import PersonGateAdapter, detector_config, with_person_gate
+from tracebot.providers.single_frame_vlm import Interpretation
 
 
 def png_bytes():
@@ -294,7 +294,7 @@ class PersonGateConfigurationTests(unittest.TestCase):
 
     def test_archive_config_is_passed_to_detector_unchanged(self):
         config = self.read(dict(self.config, archive_confidence=.05, nms_iou=.7, max_det=300))
-        with patch('haiclaw.providers.person_detector.LocalPersonDetector') as constructor:
+        with patch('tracebot.providers.person_detector.LocalPersonDetector') as constructor:
             gate = with_person_gate(RawAdapter(), config)
         constructor.assert_called_once_with(str(self.weights), confidence=.6, image_size=640,
             device='cpu', archive_confidence=.05, nms_iou=.7, max_det=300)

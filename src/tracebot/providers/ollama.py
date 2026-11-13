@@ -1,6 +1,6 @@
 """Local Ollama vision adapter shared by offline and live runners."""
 import json
-from haiclaw.providers.single_frame_vlm import LocalChatTransport, SingleFrameVLM
+from tracebot.providers.single_frame_vlm import LocalChatTransport, SingleFrameVLM
 
 def make_adapter(config, event_sink=None):
     transport = LocalChatTransport(config["endpoint"], config["timeout_seconds"])
