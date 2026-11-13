@@ -6,13 +6,16 @@ app. Camera footage is the recorded 2 Hz samples, time-compressed. Every card
 line paraphrases a saved structured event of demo01 (asserted below); nothing
 is taken from model-internal reasoning. No new simulation or inference.
 """
-import bisect, hashlib, json, subprocess
+import argparse, bisect, hashlib, json, subprocess
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / 'artifacts/demo_video_20261110_standing/live'
-OUT = ROOT / 'artifacts/demo_video_20261112_monitor'
+_ap = argparse.ArgumentParser()
+_ap.add_argument('--lang', choices=('ko', 'en'), default='ko')
+LANG = _ap.parse_args().lang
+OUT = ROOT / ('artifacts/demo_video_20261112_monitor' + ('_en' if LANG == 'en' else ''))
 OUT.mkdir(exist_ok=True)
 FPS = 24
 W, H = 1920, 1080
@@ -115,8 +118,10 @@ def chip(d, xy, text, fg=TEXT, bg='#0d1114', size=22, bold=False, anchor='la'):
 
 
 def pill(d, x, y, text, color):
+    """Status pill whose right edge sits at x."""
     font = f(22, True)
     w = d.textlength(text, font=font)
+    x -= w + 28
     d.rounded_rectangle([x, y, x + w + 28, y + 38], 19, fill=color)
     d.text((x + 14, y + 4), text, font=font, fill='#101418')
     return x + w + 28
@@ -127,9 +132,68 @@ def row(d, x, y, label, value, color=TEXT):
     d.text((x + 132, y), value, font=f(24), fill=color)
 
 
+# English card text for --lang en. Keys are the Korean strings drawn below.
+EN = {
+    '관측': 'Observe',
+    'VLM 판독': 'VLM read',
+    '근거 확인': 'Check',
+    '확정': 'Answer',
+    '재관측': 'Re-observe',
+    '인계': 'Hand off',
+    'TRACE 점검 모니터': 'TRACE inspection monitor',
+    '별도 시뮬레이션 시연 · 저장된 실행 기록의 시간 압축 재생': 'Separate simulation demo · time-compressed replay of a saved run',
+    '점검 요청': 'Inspection request',
+    '작업자가 있는지, 어떤 자세인지 확인하라': 'Is a worker there, and in what posture?',
+    '① 고정 카메라 관측': '① Fixed camera observation',
+    '무효 처리': 'Rejected',
+    'VLM 응답이 형식 오류 → 근거로 쓰지 않음': 'VLM reply was malformed → not used as evidence',
+    'VLM 판독 중…': 'VLM reading…',
+    '② 로봇 카메라 관측 · 입구': '② Robot camera observation · entrance',
+    '근거 불충분': 'Insufficient',
+    '사람 불확실 · 자세 미확인 · 추가 관측 필요': 'person uncertain · posture unknown · needs more observation',
+    '기록된 제한': 'Limits',
+    '구조물에 일부 가림 · 대상과 거리가 멂': 'partly hidden by cage structure · far from subject',
+    '사람 검출': 'Detector',
+    '검출 안 됨': 'no person detected',
+    '→ 이 화면으로는 답할 수 없다. 답을 확정하지 않는다.': '→ This frame cannot support an answer. No answer is given.',
+    '③ 재관측 결정 · 서쪽 관측 위치로 이동': '③ Re-observe · move to the west viewpoint',
+    '도착': 'Arrived',
+    '이동 중': 'Moving',
+    '선택 도구': 'Tool',
+    '선택 설명': 'Reason',
+    '로봇 카메라 화면이 일부 가려짐 → 새 시선에서 본다': 'robot camera view partly obstructed → take a new line of sight',
+    '④ 로봇 카메라 관측 · 서쪽': '④ Robot camera observation · west',
+    '근거 채택': 'Accepted',
+    '사람 보임 · 서 있음 · 추가 관측 불필요': 'person visible · standing · no further observation needed',
+    '얼굴 안 보임 · 뒷모습 (자세 질의에는 지장 없음)': 'face not visible · rear view (does not block the posture question)',
+    '1명 검출': 'one person detected',
+    '→ 이 프레임을 근거로 답할 수 있다.': '→ This frame can support the answer.',
+    '답변': 'Answer',
+    '작업자 있음 · 서 있음': 'Worker present · standing',
+    '근거 프레임 ': 'Cited frame ',
+    '자세 질의만 해결 · 전체 안전은 미확정': 'Posture only · overall safety not established',
+    'VLM 판독 중': 'VLM reading',
+    '이동 전 · 입구에서 본 화면': 'Before moving · view from the entrance',
+    '답하지 않음': 'No answer',
+    '이동 후 · 서쪽에서 본 화면': 'After moving · view from the west',
+    '답의 근거': 'Cited evidence',
+    '실험실 전경': 'Lab overview',
+    '로봇 이동 중': 'Robot moving',
+    '고정 카메라': 'Fixed camera',
+    '로봇 카메라 · 판독에 쓴 프레임': 'Robot camera · frame sent to the VLM',
+    '로봇 카메라': 'Robot camera',
+    '실제 경과 %d:%02d / %d:%02d': 'Real elapsed %d:%02d / %d:%02d',
+    '   ·   약 %.0f배속': '   ·   about %.0fx speed',
+}
+
+
+def t(text):
+    return EN[text] if LANG == 'en' else text
+
+
 # ------------------------------------------------------------- right column
 ORDER = [s[0] for s in SEGMENTS]
-FLOW = ['관측', 'VLM 판독', '근거 확인', '확정', '재관측', '인계']
+FLOW = [t('관측'), t('VLM 판독'), t('근거 확인'), t('확정'), t('재관측'), t('인계')]
 FLOW_AT = dict(intro=None, fixed_wait=1, fixed_done=2, body1_wait=1, body1_done=2, move=4,
                body2_wait=1, body2_done=2, final=3)
 
@@ -148,13 +212,13 @@ def panel(key):
     d = ImageDraw.Draw(im)
     # header
     d.rectangle([0, 0, W, 80], fill=PANEL)
-    d.text((LX, 20), 'TRACE 점검 모니터', font=f(32, True), fill=TEXT)
-    d.text((W - 24, 28), '별도 시뮬레이션 시연 · 저장된 실행 기록의 시간 압축 재생', font=f(21), anchor='ra', fill=MUTED)
+    d.text((LX, 20), t('TRACE 점검 모니터'), font=f(32, True), fill=TEXT)
+    d.text((W - 24, 28), t('별도 시뮬레이션 시연 · 저장된 실행 기록의 시간 압축 재생'), font=f(21), anchor='ra', fill=MUTED)
     # question
     d.rounded_rectangle([RX, 96, RX + RW, 212], 12, fill=PANEL, outline=TEAL if key == 'intro' else EDGE,
                         width=3 if key == 'intro' else 1)
-    d.text((RX + 22, 108), '점검 요청', font=f(22), fill=TEAL)
-    d.text((RX + 22, 142), '작업자가 있는지, 어떤 자세인지 확인하라', font=f(40, True), fill=TEXT)
+    d.text((RX + 22, 108), t('점검 요청'), font=f(22), fill=TEAL)
+    d.text((RX + 22, 142), t('작업자가 있는지, 어떤 자세인지 확인하라'), font=f(40, True), fill=TEXT)
     # flow strip
     x = RX
     for n, name in enumerate(FLOW):
@@ -172,58 +236,58 @@ def panel(key):
     # 1. fixed camera
     if at('fixed_wait'):
         done = at('fixed_done')
-        card(d, im, y, 88, '① 고정 카메라 관측', key == 'fixed_wait', 'bad' if key == 'fixed_done' else None)
+        card(d, im, y, 88, t('① 고정 카메라 관측'), key == 'fixed_wait', 'bad' if key == 'fixed_done' else None)
         if done:
-            pill(d, RX + RW - 150, y + 12, '무효 처리', BAD)
-            d.text((tx, y + 50), 'VLM 응답이 형식 오류 → 근거로 쓰지 않음', font=f(24), fill=TEXT)
+            pill(d, RX + RW - 16, y + 12, t('무효 처리'), BAD)
+            d.text((tx, y + 50), t('VLM 응답이 형식 오류 → 근거로 쓰지 않음'), font=f(24), fill=TEXT)
         else:
-            d.text((tx, y + 50), 'VLM 판독 중…', font=f(24), fill=AMBER)
+            d.text((tx, y + 50), t('VLM 판독 중…'), font=f(24), fill=AMBER)
         y += 88 + 10
     # 2. robot camera at entrance
     if at('body1_wait'):
         done = at('body1_done')
-        card(d, im, y, 200, '② 로봇 카메라 관측 · 입구', key == 'body1_wait', 'bad' if key == 'body1_done' else None)
+        card(d, im, y, 200, t('② 로봇 카메라 관측 · 입구'), key == 'body1_wait', 'bad' if key == 'body1_done' else None)
         if done:
-            pill(d, RX + RW - 172, y + 12, '근거 불충분', BAD)
-            row(d, tx, y + 54, 'VLM 판독', '사람 불확실 · 자세 미확인 · 추가 관측 필요')
-            row(d, tx, y + 88, '기록된 제한', '구조물에 일부 가림 · 대상과 거리가 멂')
-            row(d, tx, y + 122, '사람 검출', '검출 안 됨')
-            d.text((tx, y + 158), '→ 이 화면으로는 답할 수 없다. 답을 확정하지 않는다.', font=f(25, True), fill=BAD)
+            pill(d, RX + RW - 16, y + 12, t('근거 불충분'), BAD)
+            row(d, tx, y + 54, t('VLM 판독'), t('사람 불확실 · 자세 미확인 · 추가 관측 필요'))
+            row(d, tx, y + 88, t('기록된 제한'), t('구조물에 일부 가림 · 대상과 거리가 멂'))
+            row(d, tx, y + 122, t('사람 검출'), t('검출 안 됨'))
+            d.text((tx, y + 158), t('→ 이 화면으로는 답할 수 없다. 답을 확정하지 않는다.'), font=f(25, True), fill=BAD)
         else:
-            d.text((tx, y + 54), 'VLM 판독 중…', font=f(24), fill=AMBER)
+            d.text((tx, y + 54), t('VLM 판독 중…'), font=f(24), fill=AMBER)
         y += 200 + 10
     # 3. re-observation decision
     if at('move'):
         arrived = at('body2_wait')
-        card(d, im, y, 124, '③ 재관측 결정 · 서쪽 관측 위치로 이동', key == 'move')
+        card(d, im, y, 124, t('③ 재관측 결정 · 서쪽 관측 위치로 이동'), key == 'move')
         if arrived:
-            pill(d, RX + RW - 108, y + 12, '도착', TEAL)
+            pill(d, RX + RW - 16, y + 12, t('도착'), TEAL)
         else:
-            pill(d, RX + RW - 136, y + 12, '이동 중', AMBER)
-        row(d, tx, y + 52, '선택 도구', 'inspect / west')
-        row(d, tx, y + 86, '선택 설명', '로봇 카메라 화면이 일부 가려짐 → 새 시선에서 본다')
+            pill(d, RX + RW - 16, y + 12, t('이동 중'), AMBER)
+        row(d, tx, y + 52, t('선택 도구'), 'inspect / west')
+        row(d, tx, y + 86, t('선택 설명'), t('로봇 카메라 화면이 일부 가려짐 → 새 시선에서 본다'))
         y += 124 + 10
     # 4. robot camera at west
     if at('body2_wait'):
         done = at('body2_done')
-        card(d, im, y, 200, '④ 로봇 카메라 관측 · 서쪽', key == 'body2_wait', 'good' if key == 'body2_done' else None)
+        card(d, im, y, 200, t('④ 로봇 카메라 관측 · 서쪽'), key == 'body2_wait', 'good' if key == 'body2_done' else None)
         if done:
-            pill(d, RX + RW - 150, y + 12, '근거 채택', GOOD)
-            row(d, tx, y + 54, 'VLM 판독', '사람 보임 · 서 있음 · 추가 관측 불필요')
-            row(d, tx, y + 88, '기록된 제한', '얼굴 안 보임 · 뒷모습 (자세 질의에는 지장 없음)')
-            row(d, tx, y + 122, '사람 검출', '1명 검출')
-            d.text((tx, y + 158), '→ 이 프레임을 근거로 답할 수 있다.', font=f(25, True), fill=GOOD)
+            pill(d, RX + RW - 16, y + 12, t('근거 채택'), GOOD)
+            row(d, tx, y + 54, t('VLM 판독'), t('사람 보임 · 서 있음 · 추가 관측 불필요'))
+            row(d, tx, y + 88, t('기록된 제한'), t('얼굴 안 보임 · 뒷모습 (자세 질의에는 지장 없음)'))
+            row(d, tx, y + 122, t('사람 검출'), t('1명 검출'))
+            d.text((tx, y + 158), t('→ 이 프레임을 근거로 답할 수 있다.'), font=f(25, True), fill=GOOD)
         else:
-            d.text((tx, y + 54), 'VLM 판독 중…', font=f(24), fill=AMBER)
+            d.text((tx, y + 54), t('VLM 판독 중…'), font=f(24), fill=AMBER)
         y += 200 + 10
     # answer bar
     if at('body2_done'):
         hot = key == 'final'
         d.rounded_rectangle([RX, y, RX + RW, y + 96], 12, fill='#17301f' if hot else PANEL, outline=GOOD, width=4 if hot else 2)
-        d.text((tx, y + 10), '답변', font=f(22), fill=GOOD)
-        d.text((tx, y + 36), '작업자 있음 · 서 있음', font=f(38, True), fill=TEXT)
-        d.text((RX + RW - 22, y + 20), '근거 프레임 ' + r_body2['evidence_id'][:8], font=f(21), anchor='ra', fill=MUTED)
-        d.text((RX + RW - 22, y + 52), '자세 질의만 해결 · 전체 안전은 미확정', font=f(21), anchor='ra', fill=MUTED)
+        d.text((tx, y + 10), t('답변'), font=f(22), fill=GOOD)
+        d.text((tx, y + 36), t('작업자 있음 · 서 있음'), font=f(38, True), fill=TEXT)
+        d.text((RX + RW - 22, y + 20), t('근거 프레임 ') + r_body2['evidence_id'][:8], font=f(21), anchor='ra', fill=MUTED)
+        d.text((RX + RW - 22, y + 52), t('자세 질의만 해결 · 전체 안전은 미확정'), font=f(21), anchor='ra', fill=MUTED)
     return im
 
 
@@ -237,8 +301,8 @@ def view(base, d, y, img, label, tone=None, note=None):
         chip(d, (LX + LW - 12, y + 12), note, fg=fg, bg=color, bold=True, anchor='ra')
 
 
-BODY_TONE = dict(body1_wait=('wait', 'VLM 판독 중'), body1_done=('bad', '근거 불충분'),
-                 body2_wait=('wait', 'VLM 판독 중'), body2_done=('good', '근거 채택'))
+BODY_TONE = dict(body1_wait=('wait', t('VLM 판독 중')), body1_done=('bad', t('근거 불충분')),
+                 body2_wait=('wait', t('VLM 판독 중')), body2_done=('good', t('근거 채택')))
 _panels = {}
 
 
@@ -249,11 +313,11 @@ def compose(key, sim, speed):
     d = ImageDraw.Draw(im)
     s = sample_at(sim)
     if key == 'final':
-        view(im, d, V1Y, fit(F_BODY1, (LW, LH)), '이동 전 · 입구에서 본 화면', 'bad', '답하지 않음')
-        view(im, d, V2Y, fit(F_BODY2, (LW, LH)), '이동 후 · 서쪽에서 본 화면', 'good', '답의 근거')
+        view(im, d, V1Y, fit(F_BODY1, (LW, LH)), t('이동 전 · 입구에서 본 화면'), 'bad', t('답하지 않음'))
+        view(im, d, V2Y, fit(F_BODY2, (LW, LH)), t('이동 후 · 서쪽에서 본 화면'), 'good', t('답의 근거'))
     else:
-        view(im, d, V1Y, fit(s['frames']['overview']['path'], (LW, LH)), '실험실 전경',
-             'wait' if key == 'move' else None, '로봇 이동 중' if key == 'move' else None)
+        view(im, d, V1Y, fit(s['frames']['overview']['path'], (LW, LH)), t('실험실 전경'),
+             'wait' if key == 'move' else None, t('로봇 이동 중') if key == 'move' else None)
         # fixed camera inset
         iw, ih = 272, 153
         ix, iy = LX + 12, V1Y + LH - ih - 12
@@ -261,22 +325,23 @@ def compose(key, sim, speed):
         im.paste(fixed_img, (ix, iy))
         tone = {'fixed_wait': AMBER, 'fixed_done': BAD}.get(key, EDGE)
         d.rectangle([ix, iy, ix + iw - 1, iy + ih - 1], outline=tone, width=4 if key.startswith('fixed') else 1)
-        chip(d, (ix + 6, iy + 6), '고정 카메라', size=17)
+        chip(d, (ix + 6, iy + 6), t('고정 카메라'), size=17)
         # robot camera: live sample, or the exact evidence frame while its verdict is shown
         frozen = {'body1_done': F_BODY1, 'body2_done': F_BODY2}.get(key)
         tone, note = BODY_TONE.get(key, (None, None))
-        label = '로봇 카메라 · 판독에 쓴 프레임' if frozen else '로봇 카메라'
+        label = t('로봇 카메라 · 판독에 쓴 프레임') if frozen else t('로봇 카메라')
         view(im, d, V2Y, fit(frozen or s['frames']['body']['path'], (LW, LH)), label, tone, note)
     wall = max(0.0, min(TOTAL_WALL, s['wall_elapsed'] - WALL0)) if key != 'final' else TOTAL_WALL
-    clock = '실제 경과 %d:%02d / %d:%02d' % (wall // 60, wall % 60, TOTAL_WALL // 60, TOTAL_WALL % 60)
+    clock = t('실제 경과 %d:%02d / %d:%02d') % (wall // 60, wall % 60, TOTAL_WALL // 60, TOTAL_WALL % 60)
     if speed:
-        clock += '   ·   약 %.0f배속' % speed
-    d.text((430, 28), clock, font=f(21), fill=MUTED)
+        clock += t('   ·   약 %.0f배속') % speed
+    title_end = LX + d.textlength(t('TRACE 점검 모니터'), font=f(32, True))
+    d.text((max(430, title_end + 32), 28), clock, font=f(21), fill=MUTED)
     return im
 
 
 # -------------------------------------------------------------------- render
-video = OUT / 'trace_demo_monitor.mp4'
+video = OUT / ('trace_demo_monitor_en.mp4' if LANG == 'en' else 'trace_demo_monitor.mp4')
 proc = subprocess.Popen(['ffmpeg', '-y', '-v', 'error', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', f'{W}x{H}',
                          '-r', str(FPS), '-i', '-', '-an', '-c:v', 'libx264', '-preset', 'fast', '-crf', '18',
                          '-pix_fmt', 'yuv420p', '-movflags', '+faststart', str(video)], stdin=subprocess.PIPE)
@@ -311,7 +376,7 @@ for i, key in enumerate(keys):
     sheet.paste(stills[key].resize((640, 360), Image.Resampling.LANCZOS), ((i % 3) * 640, (i // 3) * 360))
 sheet.save(OUT / 'storyboard.jpg', quality=90)
 (OUT / 'edit_manifest.json').write_text(json.dumps(dict(
-    source=str(SOURCE), duration_seconds=DURATION, fps=FPS,
+    source=str(SOURCE), duration_seconds=DURATION, fps=FPS, language=LANG,
     style='Offline PIL rendering in the TRACE monitor look; not a screen recording of the GTK app',
     segments=manifest,
     card_basis=dict(decisions=[d['action'] for d in dec],
