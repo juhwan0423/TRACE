@@ -1,7 +1,7 @@
 import io
 import json
 import unittest
-from haiclaw.providers.ollama_stream import read_stream
+from tracebot.providers.ollama_stream import read_stream
 
 class StreamTests(unittest.TestCase):
     def test_chunks_preserve_thinking_and_final_content(self):

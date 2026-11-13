@@ -1,8 +1,8 @@
 import json
 from pathlib import Path
 import unittest
-from haiclaw.spot_commands import validation_command, WaypointFollower
-from haiclaw.spot_validation import evaluate
+from tracebot.spot_commands import validation_command, WaypointFollower
+from tracebot.spot_validation import evaluate
 
 
 class SpotCommands(unittest.TestCase):

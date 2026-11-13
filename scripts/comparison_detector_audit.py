@@ -6,8 +6,8 @@ import json
 from pathlib import Path
 import time
 
-from haiclaw.core import Evidence
-from haiclaw.providers.person_gate import configure_detector_environment, with_person_gate
+from tracebot.core import Evidence
+from tracebot.providers.person_gate import configure_detector_environment, with_person_gate
 
 
 def bound(record, evidence):

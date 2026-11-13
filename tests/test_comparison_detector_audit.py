@@ -10,7 +10,7 @@ import tempfile
 import unittest
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from haiclaw.core import Evidence
+from tracebot.core import Evidence
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
@@ -237,7 +237,7 @@ class DetectorArchiveRunnerTests(unittest.IsolatedAsyncioTestCase):
              patch.object(runner, 'TrackedTools', return_value=tools), \
              patch.object(runner, 'OllamaPlanner', return_value=policy), \
              patch.object(runner, 'Harness', return_value=host), \
-             patch('haiclaw.comparison_records.normalize_report',
+             patch('tracebot.comparison_records.normalize_report',
                    side_effect=lambda report, **kwargs: dict(kwargs, status='completed', wall_latency_s=7)), \
              patch.object(audit, 'archive_frames', AsyncMock(side_effect=RuntimeError('archive fixture failure'))):
             with self.assertRaisesRegex(RuntimeError, 'archive fixture failure'):

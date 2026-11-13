@@ -16,9 +16,9 @@ import uuid
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'src'))
-from haiclaw.core import Evidence, Incident, TERMINAL
-from haiclaw.providers.single_frame_vlm import SingleFrameVLM, IncidentVLM, request_payload
-from haiclaw.providers.gemini import GeminiTransport, MODEL, gemini_payload, response_text
+from tracebot.core import Evidence, Incident, TERMINAL
+from tracebot.providers.single_frame_vlm import SingleFrameVLM, IncidentVLM, request_payload
+from tracebot.providers.gemini import GeminiTransport, MODEL, gemini_payload, response_text
 
 
 def load_case(path):

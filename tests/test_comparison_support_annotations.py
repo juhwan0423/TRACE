@@ -13,7 +13,7 @@ from PIL import Image
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 from comparison_evaluator_capture import SCHEMA, paired_payload, save_evaluator_capture
 from comparison_support_annotations import build_support
-from haiclaw.core import Evidence
+from tracebot.core import Evidence
 
 
 class SupportAnnotationTests(unittest.TestCase):

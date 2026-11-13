@@ -4,9 +4,9 @@ import json
 from pathlib import Path
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
-from haiclaw.context import ContextGraph
-from haiclaw.core import Evidence
-from haiclaw.providers.single_frame_vlm import Interpretation
+from tracebot.context import ContextGraph
+from tracebot.core import Evidence
+from tracebot.providers.single_frame_vlm import Interpretation
 
 
 def main():

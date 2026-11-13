@@ -7,8 +7,8 @@ import carb.settings
 if (carb.settings.get_settings().get('/haiclaw/workspace') != str(root)
         or omni.usd.get_context().get_stage().GetRootLayer().identifier != spot_stage_id):
     raise RuntimeError('Refusing ROS attachment to a replaced or unowned stage')
-import haiclaw.navigation
-importlib.reload(haiclaw.navigation)
+import tracebot.navigation
+importlib.reload(tracebot.navigation)
 from pxr import Usd, UsdGeom
 bounds = UsdGeom.BBoxCache(Usd.TimeCode.Default(), ['default', 'render']).ComputeWorldBound(
     omni.usd.get_context().get_stage().GetPrimAtPath('/World/Equipment')).ComputeAlignedRange()

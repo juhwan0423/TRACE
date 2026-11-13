@@ -1,8 +1,8 @@
 import copy
 import unittest
 
-from haiclaw.comparison_metrics import evaluate
-from haiclaw.comparison_records import normalize_report
+from tracebot.comparison_metrics import evaluate
+from tracebot.comparison_records import normalize_report
 
 
 def report(posture="standing", origin=100):

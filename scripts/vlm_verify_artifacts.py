@@ -8,7 +8,7 @@ import struct
 
 root = Path(__file__).resolve().parents[1]
 files = list((root/'scripts').glob('vlm_*.py')) + [root/p for p in (
-    'src/haiclaw/providers/single_frame_vlm.py', 'src/haiclaw/providers/gemini.py',
+    'src/tracebot/providers/single_frame_vlm.py', 'src/tracebot/providers/gemini.py',
     'tests/test_single_frame_vlm.py')]
 for path in files:
     compile(path.read_text(), str(path), 'exec', flags=ast.PyCF_ALLOW_TOP_LEVEL_AWAIT)

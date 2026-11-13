@@ -6,8 +6,8 @@ import sys
 import uuid
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
-from haiclaw.core import Evidence
-from haiclaw.providers.ollama import make_adapter
+from tracebot.core import Evidence
+from tracebot.providers.ollama import make_adapter
 from qwen_events import emit
 async def main():
     adapter = make_adapter(json.loads((ROOT/'configs/vlm_local.json').read_text()), event_sink=emit)

@@ -19,11 +19,11 @@ import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
-from haiclaw.core import Observation
-from haiclaw.harness import Harness
-from haiclaw.providers.harness_planner import OllamaPlanner
-from haiclaw.providers.ollama import make_adapter
-from haiclaw.providers.perception import LossTracker
+from tracebot.core import Observation
+from tracebot.harness import Harness
+from tracebot.providers.harness_planner import OllamaPlanner
+from tracebot.providers.ollama import make_adapter
+from tracebot.providers.perception import LossTracker
 from qwen_events import emit as qwen_emit
 from real2sim_harness_tools import Real2SimTools
 
@@ -225,9 +225,9 @@ async def run(args):
 
     files = ['scripts/run_real2sim_loss_inspection.py', 'scripts/real2sim_harness_tools.py',
              'scripts/real2sim_navigation.py', 'scripts/real2sim_monitor_scene.py',
-             'src/haiclaw/providers/perception.py', 'src/haiclaw/harness.py',
-             'src/haiclaw/context.py', 'src/haiclaw/providers/harness_planner.py',
-             'src/haiclaw/providers/single_frame_vlm.py', 'src/haiclaw/providers/ollama.py']
+             'src/tracebot/providers/perception.py', 'src/tracebot/harness.py',
+             'src/tracebot/context.py', 'src/tracebot/providers/harness_planner.py',
+             'src/tracebot/providers/single_frame_vlm.py', 'src/tracebot/providers/ollama.py']
     manifest = dict(config=cfg, config_path=str(config_path),
                     config_sha256=hashlib.sha256(config_path.read_bytes()).hexdigest(),
                     monitor_config=vars(args), model_config=model,

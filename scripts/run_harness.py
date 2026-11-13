@@ -10,12 +10,12 @@ import sys
 import uuid
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/'src'))
-from haiclaw.harness import Harness
-from haiclaw.providers.harness_fixture import FixtureTools,FixturePlanner
-from haiclaw.providers.harness_planner import OllamaPlanner
-from haiclaw.providers.ollama import make_adapter
-from haiclaw.providers.perception import LossTracker
-from haiclaw.core import Observation
+from tracebot.harness import Harness
+from tracebot.providers.harness_fixture import FixtureTools,FixturePlanner
+from tracebot.providers.harness_planner import OllamaPlanner
+from tracebot.providers.ollama import make_adapter
+from tracebot.providers.perception import LossTracker
+from tracebot.core import Observation
 from qwen_events import emit as qwen_emit
 
 async def main(args):
@@ -25,7 +25,7 @@ async def main(args):
     model_cfg=json.loads((ROOT/'configs/vlm_local.json').read_text())
     episode=str(uuid.uuid4());out=ROOT/'artifacts/harness'/episode;out.mkdir(parents=True)
     import hashlib
-    paths=['src/haiclaw/harness.py','src/haiclaw/providers/harness_planner.py','scripts/run_harness.py','scripts/harness_live_tools.py','configs/harness.json']
+    paths=['src/tracebot/harness.py','src/tracebot/providers/harness_planner.py','scripts/run_harness.py','scripts/harness_live_tools.py','configs/harness.json']
     (out/'code_manifest.json').write_text(json.dumps({p:hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in paths},indent=2))
     latest=ROOT/'artifacts/live/harness.jsonl';latest.parent.mkdir(parents=True,exist_ok=True)
     def emit(event):

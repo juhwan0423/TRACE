@@ -4,7 +4,7 @@
 
 TRACE is an agent harness for robot-assisted visual inspection. A local vision-language model chooses where to look and when to move; the host tracks which questions the resulting images actually answer.
 
-The current implementation connects **Spot in HAI-Real2Sim**, **Isaac Sim 6.2**, and **Qwen3-VL 8B**. Simulation runs on an RTX 5090 PC and model inference runs on DGX Spark. The orchestration is native Python `asyncio`, with separate planner and inspection-tool interfaces. TRACE was previously called HAI-CLAW; the Python package is still named `haiclaw`.
+The current implementation connects **Spot in HAI-Real2Sim**, **Isaac Sim 6.2**, and **Qwen3-VL 8B**. Simulation runs on an RTX 5090 PC and model inference runs on DGX Spark. The orchestration is native Python `asyncio`, with separate planner and inspection-tool interfaces. The Python package is `tracebot` (`trace` is a standard-library module). TRACE was previously called HAI-CLAW, and that name survives in dated reports, saved run snapshots and some runtime identifiers.
 
 ![Spot body-camera observation during a live worker inspection](docs/assets/spot-inspection.png)
 
@@ -30,42 +30,50 @@ flowchart LR
 
 Spot follows configured corridors using Isaac Sim's locomotion policy. This Real2Sim path does not use Nav2. The older ROS 2/Nav2 experiment remains available as a separate integration.
 
-## Verified so far
+## Current status
 
-| Check | Observed result |
+Everything below is simulation in one reconstructed lab with authored worker poses. Counts are small development cohorts, not a benchmark.
+
+| What was checked | Result |
 |---|---|
-| Spot patrol in the reconstructed lab | 23/23 waypoints completed; movement cancellation and entrance arrival also exercised |
-| Model-directed, body-camera-only inspection | Two final development runs: one viewpoint move and one new observation each; 42.4 s and 54.3 s wall time; no tool errors |
-| Fixed and body cameras available | One final run answered the inspection questions from a fixed-camera observation in 47.2 s |
-| Evidence and execution contracts | 122 CPU regression tests at the October 27 checkpoint |
+| Spot patrol in the reconstructed lab | 23/23 waypoints; movement cancellation and entrance arrival exercised |
+| Model-directed inspection, live Isaac + Qwen | Runs end in an inspection answer or an explicit unresolved handoff |
+| Software contracts | 330 CPU tests, no GPU or model needed; CI on Python 3.11 and 3.12 |
+| Person-detector gate OFF vs ON, 20 conditions per arm | See below |
 
-These October checks are integration evidence in a standing-worker scene, not a perception benchmark. Earlier and later timing runs changed prompts and guards, so they do not establish a single-factor speedup. See [validation notes](reports/RTX5090_SETUP.md) and the [work log](reports/WORKLOG.md).
+### Does the cited frame support the answer?
 
-### November 7 development comparison
+A posture label can match the truth while the cited frame does not show the worker. The comparison therefore scores an answer only when it is correct **and** the cited frame contains the target. Both arms use the same Qwen planner, prompts, tools and budgets; the ON arm adds a YOLO11n person-detector veto (confidence 0.60).
 
-Ten live Isaac/Qwen executions compared fixed-order verification with TRACE across five posture/coverage variants in three placements of this lab. All planned executions were retained, including unresolved inspections and internal failures. This pilot **does not demonstrate an advantage for TRACE**.
-
-| Saved measure | Fixed order | TRACE |
+| November 9 rerun, 20 runs per arm | Gate OFF | Gate ON |
 |---|---:|---:|
-| Correct posture label in answerable cases | 2/3 | 1/3 |
-| Posture assertion in unanswerable cases | 1/2 | 1/2 |
-| Mean wall time, all five executions | 269.17 s | 418.33 s |
+| Correct and supported by the cited frame | 11/20 | 13/20 |
+| Posture asserted with the target absent from the frame | 3/20 | 0/20 |
+| Handoff in the four unanswerable conditions | 3/4 | 4/4 |
+| Mean wall time | 247.6 s | 286.1 s |
 
-Correct labels do not establish visual support: a separate, unblinded assistant visual audit found support for only two of the five asserted posture answers. One fixed-order label match came from a frame with no identifiable worker. This audit is not independent human annotation. Gate drive phase/physical state were not controlled, a later closure diagnostic failed, and the north route had a marginal-clearance failure, so the pilot is not a clean causal policy comparison.
+What this does and does not show:
 
-See the [comparison findings](reports/COMPARISON_FINDINGS_20261107.md), [frozen-run protocol](reports/COMPARISON_PROTOCOL.md), and [metric definitions](reports/COMPARISON_METRICS.md). Raw frames, source snapshots, records and rendered summaries remain local under `artifacts/comparisons/20261107_development_01/`. The runner is [run_real2sim_comparison.py](scripts/run_real2sim_comparison.py); it refuses silent overwrites and source/model changes during a cohort.
+- The 11 → 13 difference is within what 20 runs can produce by chance. The clearer change is that unsupported assertions disappeared, at the cost of longer runs.
+- This is a rerun on conditions already used for diagnosis, after a host-rule fix applied to both arms. It is not a held-out confirmation.
+- In the first 40-run cohort (November 8) the same measure was 4/20 vs 6/20: an over-strict host rule blocked readable frames in both arms. Those results are kept and reported separately.
+- The detector also fires on lab equipment and misses some lying poses, so it is a veto, not a verifier of identity or posture.
+- An earlier ten-run pilot (November 7) against fixed-order verification did not show an advantage for TRACE.
 
-Held-out, matched-reset comparisons, independent grounding assessment, repeated loss-triggered trials, dynamic fall validation and durable crash recovery remain open. The authored lying poses in this pilot are not physical falls or injury diagnoses.
+Dynamic falls, held-out scenes, independent grounding assessment and durable crash recovery remain open. Authored lying poses are not physical falls or injury diagnoses.
 
-### November 8 independent detector gate
+### Reports
 
-An opt-in RGB person detector now vetoes uncorroborated posture interpretations before they reach the host. The two new comparison arms, `agent_gate_off` and `agent_gate_on`, use the same Qwen planner, full-frame vision request, tools and existing evidence rules. Only the additional detector veto differs. Simulator truth is reserved for offline evaluation; detection does not verify identity or posture.
+| Date | Topic | Document |
+|---|---|---|
+| Oct 27 | Integration runs and setup | [RTX 5090 setup](reports/RTX5090_SETUP.md), [work log](reports/WORKLOG.md) |
+| Nov 7 | Pilot against fixed-order verification | [findings](reports/COMPARISON_FINDINGS_20261107.md), [protocol](reports/COMPARISON_PROTOCOL.md), [metrics](reports/COMPARISON_METRICS.md) |
+| Nov 8 | Detector gate and human audit of 61 frames | [findings](reports/DETECTOR_GATE_FINDINGS_20261108.md), [human audit](reports/PERSON_DETECTOR_HUMAN_AUDIT_20261108.md), [protocol](reports/DETECTOR_GATE_PROTOCOL.md) |
+| Nov 8 | First 40-run cohort | [pre-registered plan](reports/DETECTOR_GATE_COHORT_20261108.md) |
+| Nov 9 | Host-rule fix and paired rerun | [rerun protocol](reports/SCOPED_LIMITATIONS_RERUN_20261109.md) |
+| Nov 11 | Result figures and number sources | [presentation outline](reports/KSME_2026_SLIDE_CONTENTS_V2.md), [slide assets](artifacts/ksme_slide_package_20261111/) |
 
-**Human annotation update:** the researcher has now labeled all 61 frames. At confidence 0.25 and IoU ≥ 0.5, target-box recall is 6/7 (lying: 3/4), while 37/54 target-not-visible frames have person detections and 24/54 pass the single-candidate gate. One lying detection covers the worker but has an undersized box (IoU 0.422). This gate is not ready for the planned policy comparison. Confidence 0.60 reduces the cached-data false-positive count to 3/54 without further recall loss here, but needs new-frame validation. See the [completed human audit](reports/PERSON_DETECTOR_HUMAN_AUDIT_20261108.md). No runtime threshold was changed.
-
-The fixed YOLO11n development configuration processed all 61 archived frames: 31 had one person candidate, 13 had multiple candidates and 17 had none. No detector execution failed. However, laboratory equipment also produced false person candidates. A presence-only rule would pass all three previously audited unsupported assertions; the implemented single-candidate rule rejects their ambiguous detections. This is a development observation, not a measured reduction in online errors. Two fresh Qwen calls on saved images verified integration; no new closed-loop comparison has run.
-
-See [implementation and findings](reports/DETECTOR_GATE_FINDINGS_20261108.md) and the [two-arm evaluation protocol](reports/DETECTOR_GATE_PROTOCOL.md). The suite currently passes 265 tests. Paired scene reset, exact-frame evaluation labels, independent posture review and the proposed 40 executions remain to be completed.
+Raw frames, source snapshots and per-run records stay local under `artifacts/comparisons/`. The runner is [run_real2sim_comparison.py](scripts/run_real2sim_comparison.py); it refuses silent overwrites and source or model changes during a cohort.
 
 ## Try the core without a simulator
 
@@ -77,7 +85,7 @@ python3 scripts/run_harness.py --mode fixture --planner fixture --fail-first
 python3 scripts/demo_context_resolution.py
 ```
 
-The fixture exercises failure handling and context resolution without a GPU or model. Its outputs are software checks, not live robot results.
+The fixture exercises failure handling and context resolution without a GPU or model. Its outputs are software checks, not live robot results. Python 3.11 or newer is required; some tests also need `numpy` and `pillow`.
 
 ## Run with Real2Sim
 
@@ -109,9 +117,9 @@ This uses actual Qwen camera observations to trigger inspection and preserves th
 
 | Area | Entry point |
 |---|---|
-| Bounded execution and host decisions | [harness.py](src/haiclaw/harness.py) |
-| Questions and evidence lifecycle | [context.py](src/haiclaw/context.py) |
-| Local model planner | [harness_planner.py](src/haiclaw/providers/harness_planner.py) |
+| Bounded execution and host decisions | [harness.py](src/tracebot/harness.py) |
+| Questions and evidence lifecycle | [context.py](src/tracebot/context.py) |
+| Local model planner | [harness_planner.py](src/tracebot/providers/harness_planner.py) |
 | Real2Sim tool adapter | [real2sim_harness_tools.py](scripts/real2sim_harness_tools.py) |
 | Corridor navigation | [real2sim_navigation.py](scripts/real2sim_navigation.py) |
 | Repeated trials | [repeat_real2sim_trials.py](scripts/repeat_real2sim_trials.py) |
@@ -121,4 +129,4 @@ This uses actual Qwen camera observations to trigger inspection and preserves th
 
 [Dated architecture proposals](docs/architecture/README.md) track design changes separately from implementation and validation status.
 
-TRACE is a simulation research prototype. No real robot or emergency service is connected. A repository license has not yet been selected; dependencies and scene assets retain their own terms.
+TRACE is a simulation research prototype. No real robot or emergency service is connected. The code in this repository is released under the [MIT License](LICENSE). Dependencies, model weights and scene assets keep their own terms; in particular the optional person detector uses Ultralytics YOLO, which is AGPL-3.0.

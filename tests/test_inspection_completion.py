@@ -1,7 +1,7 @@
 from dataclasses import replace
 import unittest
-from haiclaw.harness import Harness
-from haiclaw.providers.harness_fixture import FixtureTools, FixturePlanner
+from tracebot.harness import Harness
+from tracebot.providers.harness_fixture import FixtureTools, FixturePlanner
 
 
 class StandingTools(FixtureTools):

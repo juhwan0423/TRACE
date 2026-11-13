@@ -1,5 +1,5 @@
 import unittest
-from haiclaw.harness import validate_action
+from tracebot.harness import validate_action
 
 class ActionEvidenceTests(unittest.TestCase):
     def check(self,refs,known=()):

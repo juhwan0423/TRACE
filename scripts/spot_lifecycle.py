@@ -11,8 +11,8 @@ from isaacsim.core.rendering_manager import ViewportManager
 from isaacsim.robot.policy.examples import get_spot_spec, RobotPolicyRunner
 from isaacsim.robot.policy.examples.interactive.quadruped.quadruped_example import QuadrupedExample
 from isaacsim.robot.policy.examples.interactive.utils import snapshot_physics_simulation_state
-from haiclaw.navigation import VelocityLease
-from haiclaw.spot_commands import validation_command, WaypointFollower
+from tracebot.navigation import VelocityLease
+from tracebot.spot_commands import validation_command, WaypointFollower
 from spot_scene import build_environment, attach_body_camera
 
 

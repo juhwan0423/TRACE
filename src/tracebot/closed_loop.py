@@ -1,8 +1,8 @@
 """Simulation-clock incident coordinator; adapters own transport and sensing."""
 import math
-from haiclaw.core import Incident, TERMINAL
-from haiclaw.providers.perception import LossTracker
-from haiclaw.providers.single_frame_vlm import IncidentVLM
+from tracebot.core import Incident, TERMINAL
+from tracebot.providers.perception import LossTracker
+from tracebot.providers.single_frame_vlm import IncidentVLM
 
 
 class ClosedLoop:

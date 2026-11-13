@@ -13,8 +13,8 @@ from unittest.mock import patch
 import uuid
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'scripts'))
-from haiclaw.core import Evidence
-from haiclaw.providers.single_frame_vlm import Interpretation
+from tracebot.core import Evidence
+from tracebot.providers.single_frame_vlm import Interpretation
 from run_real2sim_loss_inspection import FixedLossEvidence, load_harness_config, monitor_loss, open_runner_lock
 import demo_real2sim_occlusion as demo
 

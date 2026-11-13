@@ -1,7 +1,7 @@
 """Run flat-floor validation and a reset replay through the owned GUI."""
 import json
 import time
-from haiclaw.spot_validation import evaluate
+from tracebot.spot_validation import evaluate
 from isaacsim.core.simulation_manager import SimulationManager
 summaries = []
 for replay_index in range(2):

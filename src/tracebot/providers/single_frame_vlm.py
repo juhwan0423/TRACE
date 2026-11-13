@@ -13,8 +13,8 @@ from pathlib import Path
 import time
 import urllib.request
 from urllib.parse import urlsplit
-from haiclaw.core import Decision, State
-from haiclaw.observation_rules import clear_posture_observation
+from tracebot.core import Decision, State
+from tracebot.observation_rules import clear_posture_observation
 
 FIELDS = {'person_visible', 'posture', 'visible_risk_cues', 'observation_limitations',
           'needs_more_observation', 'evidence_ids'}

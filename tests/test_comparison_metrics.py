@@ -2,7 +2,7 @@ import copy
 import json
 import unittest
 
-from haiclaw.comparison_metrics import evaluate
+from tracebot.comparison_metrics import evaluate
 
 
 def trial(name, *, policy="trace", scenario="scene-1", repetition="r1", **changes):

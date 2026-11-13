@@ -5,10 +5,10 @@ from dataclasses import replace
 from pathlib import Path
 import unittest
 from unittest.mock import patch
-from haiclaw.core import Evidence, Incident, State
-from haiclaw.providers.single_frame_vlm import (validate, incident_decision, request_payload,
+from tracebot.core import Evidence, Incident, State
+from tracebot.providers.single_frame_vlm import (validate, incident_decision, request_payload,
     SingleFrameVLM, IncidentVLM, LocalChatTransport)
-from haiclaw.providers.gemini import GeminiTransport, gemini_payload, response_text, MODEL
+from tracebot.providers.gemini import GeminiTransport, gemini_payload, response_text, MODEL
 
 
 def observation(eid='f', posture='standing'):

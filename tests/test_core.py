@@ -1,8 +1,8 @@
 """Core semantic regression tests using synthetic evidence only."""
 from dataclasses import replace
 import unittest
-from haiclaw.core import Evidence, Decision, Incident, Observation, State
-from haiclaw.providers.perception import LossTracker
+from tracebot.core import Evidence, Decision, Incident, Observation, State
+from tracebot.providers.perception import LossTracker
 
 
 def evidence(t=2., name='f', source='robot'):
@@ -260,7 +260,7 @@ class IncidentTests(unittest.TestCase):
 
 class AsyncIncidentTests(unittest.IsolatedAsyncioTestCase):
     async def test_vlm_cache_is_generation_scoped(self):
-        from haiclaw.providers.vlm import VLMAdapter
+        from tracebot.providers.vlm import VLMAdapter
 
         async def transport(last, frame):
             return dict(person_visible=True,
@@ -278,7 +278,7 @@ class AsyncIncidentTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_old_inflight_response_cannot_close_new_generation(self):
         import asyncio
-        from haiclaw.providers.vlm import VLMAdapter
+        from tracebot.providers.vlm import VLMAdapter
         started, release = asyncio.Event(), asyncio.Event()
 
         async def transport(last, frame):
@@ -301,7 +301,7 @@ class AsyncIncidentTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_vlm_timeout_does_not_block_deadline(self):
         import asyncio
-        from haiclaw.providers.vlm import VLMAdapter, VLMConfig
+        from tracebot.providers.vlm import VLMAdapter, VLMConfig
         started, never = asyncio.Event(), asyncio.Event()
 
         async def transport(last, frame):

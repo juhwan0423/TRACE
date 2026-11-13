@@ -1,7 +1,7 @@
 from collections import deque
 from pathlib import Path
 import math
-from haiclaw.core import Observation
+from tracebot.core import Observation
 
 
 class LossTracker:

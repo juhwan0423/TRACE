@@ -6,7 +6,7 @@ No AMCL, SLAM, real LiDAR, or real robot transport is claimed.
 import math
 import time
 import rclpy
-from haiclaw.navigation import SimulationCadence
+from tracebot.navigation import SimulationCadence
 from rclpy.node import Node
 from geometry_msgs.msg import Twist, TransformStamped
 from nav_msgs.msg import Odometry, Path as NavPath

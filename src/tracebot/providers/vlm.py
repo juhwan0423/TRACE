@@ -1,7 +1,7 @@
 """Injected asynchronous adapter. Default mock; never creates network clients."""
 import asyncio
 from dataclasses import dataclass
-from haiclaw.core import Decision
+from tracebot.core import Decision
 
 
 def validate(data, ref):

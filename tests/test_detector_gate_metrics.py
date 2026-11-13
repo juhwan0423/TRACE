@@ -2,7 +2,7 @@ import copy
 import json
 import unittest
 
-from haiclaw.detector_gate_metrics import evaluate_gate
+from tracebot.detector_gate_metrics import evaluate_gate
 
 
 def record(name="trial-1", **overrides):

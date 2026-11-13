@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 from comparison_evaluator_capture import (SCHEMA, evaluate_presence, paired_payload,
                                            save_evaluator_capture)
 from real2sim_harness_tools import Real2SimTools
-from haiclaw.core import Evidence
+from tracebot.core import Evidence
 
 
 def pair(mask=None, mapping=None, **kwargs):

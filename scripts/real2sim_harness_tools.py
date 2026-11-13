@@ -8,7 +8,7 @@ import uuid
 from dataclasses import asdict
 from pathlib import Path
 from PIL import Image
-from haiclaw.core import Evidence
+from tracebot.core import Evidence
 
 async def remote(code, *, timeout=10, **args):
     async def call():

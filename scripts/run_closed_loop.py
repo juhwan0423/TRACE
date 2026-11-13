@@ -9,9 +9,9 @@ import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
-from haiclaw.core import Evidence, Observation
-from haiclaw.closed_loop import ClosedLoop
-from haiclaw.providers.ollama import make_adapter
+from tracebot.core import Evidence, Observation
+from tracebot.closed_loop import ClosedLoop
+from tracebot.providers.ollama import make_adapter
 
 
 async def remote(code, *, raw=False, timeout=60., **args):

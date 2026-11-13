@@ -3,9 +3,9 @@ from copy import deepcopy
 from dataclasses import replace
 import unittest
 
-from haiclaw.comparison_policies import CameraOnlyPlanner, FixedOrderVerificationPlanner
-from haiclaw.harness import Harness, validate_action
-from haiclaw.providers.harness_fixture import FixtureTools
+from tracebot.comparison_policies import CameraOnlyPlanner, FixedOrderVerificationPlanner
+from tracebot.harness import Harness, validate_action
+from tracebot.providers.harness_fixture import FixtureTools
 
 
 VIEWS = ('east_inspection', 'southeast_inspection')
