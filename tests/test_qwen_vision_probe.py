@@ -25,7 +25,14 @@ def envelope(condition, eid="calibration-00"):
     return json.dumps(dict(fields, done=True, done_reason="stop", eval_count=80))
 
 
+# Calibration frames are local run artifacts (git-ignored); skip where absent, e.g. CI.
+needs_calibration_images = unittest.skipUnless(
+    all((ROOT / "artifacts/trace_comparison_readiness" / p).is_file() for p in probe.CALIBRATION),
+    "local calibration frames not present")
+
+
 class ProbeTests(unittest.TestCase):
+    @needs_calibration_images
     def test_chat_request_exactly_matches_frozen_adapter(self):
         from haiclaw.providers import ollama
         calls = []
@@ -103,6 +110,7 @@ class ProbeTests(unittest.TestCase):
         metadata.assert_not_called()
         inference.assert_not_called()
 
+    @needs_calibration_images
     def test_freeze_and_verify_do_not_infer_and_detect_snapshot_mutation(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "registered"
@@ -118,6 +126,7 @@ class ProbeTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "source changed"):
                 probe.verify(output)
 
+    @needs_calibration_images
     def test_transport_failure_aborts_without_retry_or_resume(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "registered"
@@ -133,6 +142,7 @@ class ProbeTests(unittest.TestCase):
                     probe.run(output, True)
                 self.assertEqual(inference.call_count, 1)
 
+    @needs_calibration_images
     def test_complete_mock_run_is_exactly_eight_calls(self):
         def answer(transport, request):
             eid = request["format"]["properties"]["evidence_ids"]["items"]["enum"][0]
