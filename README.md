@@ -6,9 +6,9 @@ TRACE is an agent harness for robot-assisted visual inspection. A local vision-l
 
 The current implementation connects **Spot in HAI-Real2Sim**, **Isaac Sim 6.2**, and **Qwen3-VL 8B**. Simulation runs on an RTX 5090 PC and model inference runs on DGX Spark. The orchestration is native Python `asyncio`, with separate planner and inspection-tool interfaces. The Python package is `tracebot` (`trace` is a standard-library module). TRACE was previously called HAI-CLAW, and that name survives in dated reports, saved run snapshots and some runtime identifiers.
 
-[![TRACE inspection demo: the robot declines to answer from an obstructed view, moves, and answers from a frame that shows the worker](docs/assets/trace_demo_poster.jpg)](docs/assets/trace_demo_monitor_en.mp4)
+https://github.com/user-attachments/assets/79563b4e-c37d-407b-aeb1-a65cc7d94959
 
-*Demo (34.5 s, click to open the video). One simulated inspection of about four minutes, redrawn from its saved records and time-compressed; it is not a screen recording, and the card text paraphrases the saved structured events. This run is a separate demonstration, not one of the comparison runs reported below.*
+*Demo (34.5 s; the same file is kept at [docs/assets](docs/assets/trace_demo_monitor_en.mp4)). One simulated inspection of about four minutes, redrawn from its saved records and time-compressed; it is not a screen recording, and the card text paraphrases the saved structured events. This run is a separate demonstration, not one of the comparison runs reported below.*
 
 ![Spot body-camera observation during a live worker inspection](docs/assets/spot-inspection.png)
 
