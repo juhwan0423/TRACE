@@ -1,2 +1,2 @@
 # Saved run evidence and rendered reports are not source code (GitHub language stats).
-artifacts/** linguist-generated
+artifacts/** linguist-generated -linguist-detectable
