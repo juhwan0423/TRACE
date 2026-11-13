@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "evaluation_role": "development",
+  "seed": 20261107,
+  "repetitions": 1,
+  "policies": [
+    "fixed_order",
+    "trace"
+  ],
+  "independent_unit": "three spatial placements within one reconstructed lab; posture variants clustered together",
+  "geometry_selection": "Before policy inference; excluded north lying due observed route obstruction; no benchmark outcomes used.",
+  "scenarios": [
+    {
+      "scenario_id": "west_lying",
+      "independent_group_id": "geometry_west_v1",
+      "condition": "lying",
+      "actual_posture": "lying",
+      "answerable": true,
+      "position": [
+        -5.3,
+        0.2,
+        0.03
+      ],
+      "rotation": [
+        0,
+        90,
+        -90
+      ],
+      "geometry_evidence": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/trace_comparison_readiness/west_adjusted_lying_reversed_valid/capture.json",
+      "limitations": "Development visual review accepted near-horizontal legs/trunk/vest; feet cropped, face not visible. Fixed and other body views have zero human pixels. Authored static pose, not physical fall; evaluator visibility is not model correctness.",
+      "coverage_evidence": {
+        "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/trace_comparison_readiness/entrance_west_adjusted_lying_reversed/capture.json",
+        "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/trace_comparison_readiness/west_adjusted_lying_reversed_valid/capture.json",
+        "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/trace_comparison_readiness/door_west_adjusted_lying_reversed/capture.json"
+      }
+    },
+    {
+      "scenario_id": "west_standing",
+      "independent_group_id": "geometry_west_v1",
+      "condition": "standing",
+      "actual_posture": "standing",
+      "answerable": true,
+      "position": [
+        -5.3,
+        0.2,
+        0.03
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "geometry_evidence": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/trace_comparison_readiness/west_adjusted_standing/capture.json",
+      "limitations": "West body shows standing posture; fixed has185human pixels, so fixed is partially visible, not strictly absent. Authored static pose, not physical fall; evaluator visibility is not model correctness.",
+      "coverage_evidence": {
+        "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/trace_comparison_readiness/entrance_west_adjusted_standing/capture.json",
+        "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/trace_comparison_readiness/west_adjusted_standing/capture.json",
+        "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/trace_comparison_readiness/door_west_adjusted_standing/capture.json"
+      }
+    },
+    {
+      "scenario_id": "north_standing",
+      "independent_group_id": "geometry_north_v1",
+      "condition": "standing",
+      "actual_posture": "standing",
+      "answerable": true,
+      "position": [
+        -3,
+        2.1,
+        0.03
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "geometry_evidence": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/trace_comparison_readiness/door_north_adjusted_standing/capture.json",
+      "limitations": "Door yaw2.9 shows standing posture; fixed/entrance/west zero human pixels. West-to-door traversal succeeded with this worker pose; no guarantee every repeat will succeed. Authored static pose, not physical fall; evaluator visibility is not model correctness.",
+      "coverage_evidence": {
+        "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/trace_comparison_readiness/entrance_north_adjusted_standing/capture.json",
+        "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/trace_comparison_readiness/west_north_adjusted_standing/capture.json",
+        "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/trace_comparison_readiness/door_north_adjusted_standing/capture.json"
+      }
+    },
+    {
+      "scenario_id": "offcatalog_lying",
+      "independent_group_id": "geometry_offcatalog_v1",
+      "condition": "unanswerable_lying",
+      "actual_posture": "lying",
+      "answerable": false,
+      "position": [
+        3,
+        1.5,
+        0.03
+      ],
+      "rotation": [
+        0,
+        90,
+        90
+      ],
+      "geometry_evidence": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/trace_comparison_readiness/geometry_manifest.json",
+      "limitations": "No human pixels in fixed, overview, entrance, west or door. Coverage-limited unanswerable; not simulated disappearance or hidden-human detection accuracy. Authored static pose, not physical fall; evaluator visibility is not model correctness.",
+      "coverage_evidence": {
+        "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/trace_comparison_readiness/entrance_east_offcatalog_lying/capture.json",
+        "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/trace_comparison_readiness/west_east_offcatalog_lying/capture.json",
+        "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/trace_comparison_readiness/door_east_offcatalog_lying/capture.json"
+      }
+    },
+    {
+      "scenario_id": "offcatalog_standing",
+      "independent_group_id": "geometry_offcatalog_v1",
+      "condition": "unanswerable_standing",
+      "actual_posture": "standing",
+      "answerable": false,
+      "position": [
+        3,
+        1.5,
+        0.03
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "geometry_evidence": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/trace_comparison_readiness/geometry_manifest.json",
+      "limitations": "No human pixels in fixed, overview, entrance, west or door. Coverage-limited unanswerable; not simulated disappearance or hidden-human detection accuracy. Authored static pose, not physical fall; evaluator visibility is not model correctness.",
+      "coverage_evidence": {
+        "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/trace_comparison_readiness/entrance_east_offcatalog_standing/capture.json",
+        "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/trace_comparison_readiness/west_east_offcatalog_standing/capture.json",
+        "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/trace_comparison_readiness/door_east_offcatalog_standing/capture.json"
+      }
+    }
+  ]
+}

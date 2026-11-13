@@ -12,6 +12,7 @@ sys.path.insert(0,str(ROOT/'src'))
 from haiclaw.harness import Harness
 from haiclaw.providers.harness_planner import OllamaPlanner
 from haiclaw.providers.ollama import make_adapter
+from haiclaw.providers.person_gate import detector_config, with_person_gate, configure_detector_environment
 from real2sim_harness_tools import Real2SimTools
 from qwen_events import emit as qwen_emit
 
@@ -31,11 +32,18 @@ async def run(args):
         for path in (out/'events.jsonl',live/'harness.jsonl'):
             with path.open('a') as f:f.write(line)
         if event['kind'] in ('decision','tool_result','terminal','finished','aborted'):print(line,flush=True)
-    tools=Real2SimTools(make_adapter(model,event_sink=qwen_emit),cfg['locations'],out/'frames',cameras=cfg['enabled_cameras'])
+    adapter=make_adapter(model,event_sink=qwen_emit)
+    gate_path=getattr(args,'person_gate_config',None)
+    if gate_path:
+        configure_detector_environment(ROOT)
+        cfg['person_gate']=detector_config(gate_path)
+        adapter=with_person_gate(adapter,cfg['person_gate'])
+    tools=Real2SimTools(adapter,cfg['locations'],out/'frames',cameras=cfg['enabled_cameras'])
     initial=await tools.snapshot()
     if not initial['playing'] or not initial.get('ready'):raise RuntimeError('Start the Real2Sim monitor and wait for Spot')
     if initial['navigation']['status'] in ('moving','failed'):raise RuntimeError('Resolve active movement or navigation fault before starting')
     files=['src/haiclaw/harness.py','src/haiclaw/context.py','src/haiclaw/tool_contracts.py','src/haiclaw/providers/harness_planner.py','src/haiclaw/providers/ollama.py','scripts/real2sim_navigation.py','scripts/real2sim_monitor_scene.py','scripts/real2sim_harness_tools.py','scripts/run_real2sim_harness.py']
+    files += ['src/haiclaw/providers/person_gate.py','src/haiclaw/providers/person_detector.py']
     manifest=dict(runtime='native_asyncio',config=cfg,model_config=model,initial_snapshot=initial,
         files={p:hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in files})
     (out/'manifest.json').write_text(json.dumps(manifest,indent=2))
@@ -55,6 +63,9 @@ async def run(args):
         report=harness.report()
         report.update(runtime='native_asyncio',mode='real2sim',trigger=cfg['trigger'],config=cfg,
             model=model['model'],motion_records=tools.motion_records,planner_records=planner.records)
+        report['person_gate_cost']=dict(enabled=bool(gate_path),
+            calls=getattr(adapter,'detector_calls',0),
+            latency_wall_seconds=sum(getattr(adapter,'detector_latencies',[])))
         (out/'result.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
         print(out/'result.json',flush=True)
     # A clean unresolved handoff completes a run, but is never a successful diagnosis.
@@ -63,12 +74,13 @@ async def run(args):
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--max-steps',type=int)
     p.add_argument('--camera-policy',choices=['all','body-only'],default='all',help='Explicit sensor ablation; body-only hides the fixed-camera tool, not the worker')
+    p.add_argument('--person-gate-config',type=Path,help='Opt-in independent RGB person veto; same Qwen model/prompt')
     p.add_argument('--finish-on-inspection-answer',action=argparse.BooleanOptionalAction,default=None,
         help='Finish the operator request once fresh presence/posture answers exist; does not establish overall safety')
     args=p.parse_args()
     if args.max_steps is not None and not 1<=args.max_steps<=100:p.error('max-steps must be in 1..100')
     lock=ROOT/'artifacts/closed_loop/runner.lock';lock.parent.mkdir(parents=True,exist_ok=True)
     with lock.open('a') as handle:
-        try:fcntl.flock(handle,fcntl.LOCK_EX|fcntl.LOCK_NB)
-        except BlockingIOError:p.error('A TRACE harness is already running')
-        raise SystemExit(asyncio.run(run(args)))
+        try:fcntl.flock(handle,fcntl.LOCK_EX|fcntl.LOCK_NB) # 락 잡기 시도
+        except BlockingIOError:p.error('A TRACE harness is already running') # 실패 시 종료
+        raise SystemExit(asyncio.run(run(args))) # 끝나면 결과로 종료, 종료코드를 사람에게 넘기기 위해 raise SystemExit을 사용하는 것.

@@ -8,6 +8,7 @@ from .core import Incident, State, TERMINAL
 from .context import ContextGraph
 from .tool_contracts import Planner, InspectionTools
 from .providers.single_frame_vlm import incident_decision
+from .observation_rules import clear_posture_observation
 
 ACTIONS = {'observe', 'inspect', 'wait', 'stop', 'escalate'}
 
@@ -206,8 +207,9 @@ class Harness:
                     observation=asdict(observation)))
             prior=self.view_observations.get(target)
             same_view=prior is not None and (target=='fixed' or prior['view_epoch']==self.view_epoch)
-            clear_subject=(valid and record['status']=='ok' and observation.person_visible=='yes'
-                and not observation.observation_limitations and not observation.needs_more_observation)
+            clear_subject=(valid and record['status']=='ok' and
+                ((observation.person_visible=='yes' and not observation.observation_limitations
+                  and not observation.needs_more_observation) or clear_posture_observation(observation)))
             self.view_observations[target]=dict(view_epoch=self.view_epoch,
                 capture_time=evidence.capture_time,valid=valid,status=record['status'],
                 person_visible=observation.person_visible if valid else 'uncertain',
@@ -217,10 +219,15 @@ class Harness:
                 same_view_attempts=(0 if clear_subject else prior['same_view_attempts']+1
                     if same_view and not prior['clear_subject'] else 1))
             self.evidence_records.append(dict(evidence=asdict(evidence), inference=record, valid=valid, accepted=accepted))
+            gate = record.get('person_gate')
+            gate_feedback = None if gate is None else dict(
+                presence_corroborated=gate['presence_corroborated'],
+                reason=gate['reason'], detector_status=gate['detector'].get('status'),
+                detector_latency_wall_seconds=gate['detector_latency_wall_seconds'])
             self.log('tool_result', tool=tool, target=target, status=record['status'],
                      latency_wall_seconds=record.get('latency_wall_seconds'),
                      evidence_id=evidence.id, question_id=action['question_id'], valid=valid, accepted=accepted,
-                     observation=asdict(observation) if valid else None)
+                     observation=asdict(observation) if valid else None, person_gate=gate_feedback)
         elif tool == 'inspect':
             attempt = self.incident.motion('moving', self.incident.now)
             self.last_target = None  # moving/failed motion is not the previous arrived viewpoint

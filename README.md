@@ -39,7 +39,33 @@ Spot follows configured corridors using Isaac Sim's locomotion policy. This Real
 | Fixed and body cameras available | One final run answered the inspection questions from a fixed-camera observation in 47.2 s |
 | Evidence and execution contracts | 122 CPU regression tests at the October 27 checkpoint |
 
-These are integration checks in a standing-worker scene, not a perception benchmark. Live fallen-worker validation, controlled comparisons and durable crash recovery remain open. Earlier and later timing runs also changed prompts and guards, so they do not establish a single-factor speedup. See [validation notes](reports/RTX5090_SETUP.md) and the [work log](reports/WORKLOG.md).
+These October checks are integration evidence in a standing-worker scene, not a perception benchmark. Earlier and later timing runs changed prompts and guards, so they do not establish a single-factor speedup. See [validation notes](reports/RTX5090_SETUP.md) and the [work log](reports/WORKLOG.md).
+
+### November 7 development comparison
+
+Ten live Isaac/Qwen executions compared fixed-order verification with TRACE across five posture/coverage variants in three placements of this lab. All planned executions were retained, including unresolved inspections and internal failures. This pilot **does not demonstrate an advantage for TRACE**.
+
+| Saved measure | Fixed order | TRACE |
+|---|---:|---:|
+| Correct posture label in answerable cases | 2/3 | 1/3 |
+| Posture assertion in unanswerable cases | 1/2 | 1/2 |
+| Mean wall time, all five executions | 269.17 s | 418.33 s |
+
+Correct labels do not establish visual support: a separate, unblinded assistant visual audit found support for only two of the five asserted posture answers. One fixed-order label match came from a frame with no identifiable worker. This audit is not independent human annotation. Gate drive phase/physical state were not controlled, a later closure diagnostic failed, and the north route had a marginal-clearance failure, so the pilot is not a clean causal policy comparison.
+
+See the [comparison findings](reports/COMPARISON_FINDINGS_20261107.md), [frozen-run protocol](reports/COMPARISON_PROTOCOL.md), and [metric definitions](reports/COMPARISON_METRICS.md). Raw frames, source snapshots, records and rendered summaries remain local under `artifacts/comparisons/20261107_development_01/`. The runner is [run_real2sim_comparison.py](scripts/run_real2sim_comparison.py); it refuses silent overwrites and source/model changes during a cohort.
+
+Held-out, matched-reset comparisons, independent grounding assessment, repeated loss-triggered trials, dynamic fall validation and durable crash recovery remain open. The authored lying poses in this pilot are not physical falls or injury diagnoses.
+
+### November 8 independent detector gate
+
+An opt-in RGB person detector now vetoes uncorroborated posture interpretations before they reach the host. The two new comparison arms, `agent_gate_off` and `agent_gate_on`, use the same Qwen planner, full-frame vision request, tools and existing evidence rules. Only the additional detector veto differs. Simulator truth is reserved for offline evaluation; detection does not verify identity or posture.
+
+**Human annotation update:** the researcher has now labeled all 61 frames. At confidence 0.25 and IoU ≥ 0.5, target-box recall is 6/7 (lying: 3/4), while 37/54 target-not-visible frames have person detections and 24/54 pass the single-candidate gate. One lying detection covers the worker but has an undersized box (IoU 0.422). This gate is not ready for the planned policy comparison. Confidence 0.60 reduces the cached-data false-positive count to 3/54 without further recall loss here, but needs new-frame validation. See the [completed human audit](reports/PERSON_DETECTOR_HUMAN_AUDIT_20261108.md). No runtime threshold was changed.
+
+The fixed YOLO11n development configuration processed all 61 archived frames: 31 had one person candidate, 13 had multiple candidates and 17 had none. No detector execution failed. However, laboratory equipment also produced false person candidates. A presence-only rule would pass all three previously audited unsupported assertions; the implemented single-candidate rule rejects their ambiguous detections. This is a development observation, not a measured reduction in online errors. Two fresh Qwen calls on saved images verified integration; no new closed-loop comparison has run.
+
+See [implementation and findings](reports/DETECTOR_GATE_FINDINGS_20261108.md) and the [two-arm evaluation protocol](reports/DETECTOR_GATE_PROTOCOL.md). The suite currently passes 265 tests. Paired scene reset, exact-frame evaluation labels, independent posture review and the proposed 40 executions remain to be completed.
 
 ## Try the core without a simulator
 

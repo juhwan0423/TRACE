@@ -1,0 +1,11 @@
+{
+  "model_path": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/person_detector/models/yolo11n.pt",
+  "model_sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1",
+  "confidence": 0.60,
+  "archive_confidence": 0.05,
+  "nms_iou": 0.7,
+  "max_det": 300,
+  "image_size": 640,
+  "device": "cpu",
+  "timeout_seconds": 10
+}

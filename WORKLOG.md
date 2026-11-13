@@ -94,3 +94,9 @@ Prior code is Kit-independent: no existing Isaac Sim API calls to migrate. Scene
 - artifacts/runtime, 대형 USD 백업, 일반 로그와 .env/키 파일은 제외. 로컬 파일 삭제 없음.
 - README에 검증 수준 및 다른 머신에서 절대 경로/산출물 재생성이 필요한 한계 명시.
 - staging 파일의 비밀키 패턴/크기 점검 및 전체 테스트 후 로컬 커밋. 원격 주소를 받기 전에는 push하지 않는다. 전역 Git 설정 변경 없음.
+
+### 2026-11-11 — 발표 데모 최소 자막 편집
+
+- 기존 별도 standing 시연 기록만 사용하여 scripts/render_trace_demo_minimal.py로 30초 영상 생성. 신규 시뮬레이션/추론 없음.
+- 대시보드 제거, 초기 관측/이동/최종 인용 프레임/전후 비교를 7/8/8/7초로 구성. 정지 화면·배속·별도 시연 표시와 원본 해시 포함 edit_manifest.json 보존.
+- artifacts/demo_video_20261111_minimal/trace_demo_minimal_30s.mp4: H.264 1920×1080 24fps 30초. 스토리보드 시각 확인 및 ffmpeg 전체 디코드 오류 없음. 슬라이드 문서 영상 경로 및 편집 설명 갱신.

@@ -5,6 +5,7 @@ import io
 import json
 import math
 import uuid
+from dataclasses import asdict
 from pathlib import Path
 from PIL import Image
 from haiclaw.core import Evidence
@@ -28,11 +29,19 @@ async def remote(code, *, timeout=10, **args):
     return await asyncio.wait_for(call(),timeout)
 
 class Real2SimTools:
-    def __init__(self, adapter, locations, output, requester=remote, cameras=('fixed','body')):
+    def __init__(self, adapter, locations, output, requester=remote, cameras=('fixed','body'),
+                 *, evaluator_output=None, evaluator_calibration=None):
         if not cameras or any(c not in ('fixed','body') for c in cameras):raise ValueError('Invalid camera capability')
         self.cameras=tuple(cameras)
         self.adapter,self.locations,self.output,self.remote=adapter,locations,Path(output),requester
         self.latest={};self.arrived_at=-1.;self.motion_records=[];self.action_id=None
+        self.captured_evidence=[]
+        self.evaluator_output=Path(evaluator_output) if evaluator_output is not None else None
+        self.evaluator_calibration=evaluator_calibration
+        if self.evaluator_output is not None:
+            if self.evaluator_output.resolve()==self.output.resolve():
+                raise ValueError('Evaluator annotations must be separate from online frames')
+            self.evaluator_output.mkdir(parents=True,exist_ok=True)
         self.output.mkdir(parents=True,exist_ok=True)
 
     async def snapshot(self):
@@ -51,7 +60,9 @@ class Real2SimTools:
         if camera=='body':self.check_body_view(state)
         after=max(state['now'],self.latest.get(camera,-1),self.arrived_at if camera=='body' else -1)
         for _ in range(40):
-            result=await self.remote('print(json.dumps(real2sim_monitor_frames()))')
+            capture=('comparison_evaluator_frames' if self.evaluator_output is not None
+                     else 'real2sim_monitor_frames')
+            result=await self.remote('print(json.dumps('+capture+'()))')
             if camera=='body':self.check_body_view(result['snapshot'])
             frame=result['frames'][camera];received=result['snapshot']['now'];stamp=frame['capture_time']
             if not result['snapshot']['playing']:raise RuntimeError('Simulation paused')
@@ -62,6 +73,12 @@ class Real2SimTools:
         Image.open(io.BytesIO(base64.b64decode(frame['image'],validate=True))).convert('RGB').save(path)
         self.latest[camera]=stamp
         evidence=Evidence(eid,episode,camera,stamp,received,str(path))
+        self.captured_evidence.append(asdict(evidence))
+        if self.evaluator_output is not None:
+            from comparison_evaluator_capture import save_evaluator_capture
+            save_evaluator_capture(self.evaluator_output,evidence,
+                result.get('evaluator',{}).get(camera),rgb_transport=frame['image'],
+                calibration=self.evaluator_calibration)
         obs,record=await self.adapter.infer(evidence)
         record=dict(record,capture_snapshot=result['snapshot'])
         return evidence,obs,record
