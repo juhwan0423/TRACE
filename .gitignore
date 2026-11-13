@@ -46,3 +46,6 @@ artifacts/vlm/captures/*
 # Independently managed Sites checkout; native desktop sources are in scripts/.
 /dashboard/
 /.venv
+
+# KSME 2026 slide package (figures, demo video, provenance)
+!artifacts/ksme_slide_package_20261111/

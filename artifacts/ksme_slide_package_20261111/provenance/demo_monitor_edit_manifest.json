@@ -1,0 +1,253 @@
+{
+  "source": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/demo_video_20261110_standing/live",
+  "duration_seconds": 34.5,
+  "fps": 24,
+  "style": "Offline PIL rendering in the TRACE monitor look; not a screen recording of the GTK app",
+  "segments": [
+    {
+      "segment": "intro",
+      "video_seconds": 2.5,
+      "sim_start": 10666.904,
+      "sim_end": 10669.486,
+      "wall_span_seconds": 5.5,
+      "speed": 2.2
+    },
+    {
+      "segment": "fixed_wait",
+      "video_seconds": 2.5,
+      "sim_start": 10669.486,
+      "sim_end": 10718.236,
+      "wall_span_seconds": 103.17,
+      "speed": 41.27
+    },
+    {
+      "segment": "fixed_done",
+      "video_seconds": 2.0,
+      "sim_start": 10718.236,
+      "sim_end": 10718.236,
+      "wall_span_seconds": 0.0,
+      "speed": 0
+    },
+    {
+      "segment": "body1_wait",
+      "video_seconds": 2.5,
+      "sim_start": 10719.486,
+      "sim_end": 10743.254,
+      "wall_span_seconds": 50.59,
+      "speed": 20.24
+    },
+    {
+      "segment": "body1_done",
+      "video_seconds": 5.0,
+      "sim_start": 10743.254,
+      "sim_end": 10743.254,
+      "wall_span_seconds": 0.0,
+      "speed": 0
+    },
+    {
+      "segment": "move",
+      "video_seconds": 7.0,
+      "sim_start": 10744.82,
+      "sim_end": 10763.454,
+      "wall_span_seconds": 39.53,
+      "speed": 5.65
+    },
+    {
+      "segment": "body2_wait",
+      "video_seconds": 2.5,
+      "sim_start": 10764.854,
+      "sim_end": 10780.254,
+      "wall_span_seconds": 33.07,
+      "speed": 13.23
+    },
+    {
+      "segment": "body2_done",
+      "video_seconds": 5.5,
+      "sim_start": 10780.254,
+      "sim_end": 10780.254,
+      "wall_span_seconds": 0.0,
+      "speed": 0
+    },
+    {
+      "segment": "final",
+      "video_seconds": 5.0,
+      "sim_start": 10780.254,
+      "sim_end": 10780.254,
+      "wall_span_seconds": 0.0,
+      "speed": 0
+    }
+  ],
+  "card_basis": {
+    "decisions": [
+      {
+        "tool": "observe",
+        "target": "fixed",
+        "reason": "Initial action to seek presence evidence using fixed camera; no prior observations exist. Fixed camera provides baseline coverage for presence question.",
+        "question_id": "presence",
+        "evidence_ids": []
+      },
+      {
+        "tool": "observe",
+        "target": "body",
+        "reason": "Fixed camera failed with invalid evidence; body camera provides independent view to confirm presence without repeating same view. Previous attempt showed no person detection, so seeking fresh evidence from body camera to resolve uncertainty.",
+        "question_id": "presence",
+        "evidence_ids": []
+      },
+      {
+        "tool": "inspect",
+        "target": "west",
+        "reason": "Fixed camera failed to capture valid evidence due to invalid JSON and body camera shows partial obstruction. West viewpoint provides new line of sight to work area for presence/posture evidence.",
+        "question_id": "presence",
+        "evidence_ids": [
+          "11daf685-9848-46db-93ad-c5bcaeb82656"
+        ]
+      },
+      {
+        "tool": "observe",
+        "target": "body",
+        "reason": "The body camera shows uncertain presence due to partial obstruction and distance; seeking fresh body observation to confirm visibility and posture.",
+        "question_id": "presence",
+        "evidence_ids": [
+          "11daf685-9848-46db-93ad-c5bcaeb82656"
+        ]
+      }
+    ],
+    "results": [
+      {
+        "kind": "tool_result",
+        "wall_elapsed": 108.77498718904098,
+        "sim_time": 10718.236,
+        "tool": "observe",
+        "target": "fixed",
+        "status": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+        "latency_wall_seconds": 101.9768185900175,
+        "evidence_id": "ed040620-0dc4-42c6-99c7-303b0688e784",
+        "question_id": "presence",
+        "valid": false,
+        "accepted": false,
+        "observation": null,
+        "person_gate": {
+          "presence_corroborated": false,
+          "reason": "independent person detection does not identify one unambiguous person: not_detected",
+          "detector_status": "not_detected",
+          "detector_latency_wall_seconds": 0.6708707269863226
+        }
+      },
+      {
+        "kind": "tool_result",
+        "wall_elapsed": 161.82159520004643,
+        "sim_time": 10743.254,
+        "tool": "observe",
+        "target": "body",
+        "status": "ok",
+        "latency_wall_seconds": 49.977713925007265,
+        "evidence_id": "11daf685-9848-46db-93ad-c5bcaeb82656",
+        "question_id": "presence",
+        "valid": true,
+        "accepted": false,
+        "observation": {
+          "person_visible": "uncertain",
+          "posture": "unknown",
+          "visible_risk_cues": [],
+          "observation_limitations": [
+            "subject partially obscured by cage structure",
+            "distance from subject",
+            "independent person detection does not identify one unambiguous person: not_detected"
+          ],
+          "needs_more_observation": true,
+          "evidence_ids": [
+            "11daf685-9848-46db-93ad-c5bcaeb82656"
+          ]
+        },
+        "person_gate": {
+          "presence_corroborated": false,
+          "reason": "independent person detection does not identify one unambiguous person: not_detected",
+          "detector_status": "not_detected",
+          "detector_latency_wall_seconds": 0.026995206018909812
+        }
+      },
+      {
+        "kind": "tool_result",
+        "wall_elapsed": 205.03951339802006,
+        "sim_time": 10763.454,
+        "tool": "inspect",
+        "target": "west",
+        "status": "arrived",
+        "question_id": "presence"
+      },
+      {
+        "kind": "tool_result",
+        "wall_elapsed": 240.6863240720122,
+        "sim_time": 10780.254,
+        "tool": "observe",
+        "target": "body",
+        "status": "ok",
+        "latency_wall_seconds": 32.257925551966764,
+        "evidence_id": "f094c494-dacc-4068-bd29-797d34d6d822",
+        "question_id": "presence",
+        "valid": true,
+        "accepted": false,
+        "observation": {
+          "person_visible": "yes",
+          "posture": "standing",
+          "visible_risk_cues": [
+            "blue bag on floor"
+          ],
+          "observation_limitations": [
+            "face not visible",
+            "person viewed from rear"
+          ],
+          "needs_more_observation": false,
+          "evidence_ids": [
+            "f094c494-dacc-4068-bd29-797d34d6d822"
+          ]
+        },
+        "person_gate": {
+          "presence_corroborated": true,
+          "reason": "independent person detection corroborates presence only",
+          "detector_status": "detected",
+          "detector_latency_wall_seconds": 0.024847385997418314
+        }
+      }
+    ],
+    "inspection_answer": {
+      "presence": {
+        "id": "presence",
+        "template": "presence",
+        "proposition": "Is the subject visible in the monitored scope?",
+        "requires": [
+          "fresh scoped observation",
+          "clear visibility",
+          "trusted complete coverage for absence"
+        ],
+        "state": "resolved",
+        "value": true,
+        "evidence_ids": [
+          "f094c494-dacc-4068-bd29-797d34d6d822"
+        ]
+      },
+      "lying": {
+        "id": "lying",
+        "template": "lying",
+        "proposition": "Is the visible subject lying?",
+        "requires": [
+          "fresh scoped observation",
+          "visible subject",
+          "clear posture"
+        ],
+        "state": "resolved",
+        "value": false,
+        "evidence_ids": [
+          "f094c494-dacc-4068-bd29-797d34d6d822"
+        ]
+      }
+    },
+    "scope": "observable presence and lying only; overall safety is not established"
+  },
+  "scope": "Presentation edit of one separate demonstration run. Model waiting is time-compressed, verdict frames are held. Card text paraphrases saved structured events. No new simulation or inference.",
+  "source_hashes": {
+    "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/demo_video_20261110_standing/live/trials/demo01/frames/ed040620-0dc4-42c6-99c7-303b0688e784.png": "a1ec58c99e9e5492868ba4951e8ba1c39337f532c8cb7dc7de06a910c0b3d743",
+    "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/demo_video_20261110_standing/live/trials/demo01/frames/11daf685-9848-46db-93ad-c5bcaeb82656.png": "6ebf3feb23bdc5e06ce53f70045de99177093ea4749497e5d610ff9ce96f290d",
+    "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/demo_video_20261110_standing/live/trials/demo01/frames/f094c494-dacc-4068-bd29-797d34d6d822.png": "9e2fc60893f6d01cf0f8e72e0eef11c220a413d549737683bc34e0b6fcf1e0de"
+  }
+}
