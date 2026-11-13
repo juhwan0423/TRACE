@@ -1,0 +1,76 @@
+{
+  "source": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/demo_video_20261110_standing/live",
+  "style": "Plain footage with question/reason captions",
+  "segments": [
+    {
+      "seconds": 3,
+      "kind": "question_card"
+    },
+    {
+      "seconds": 6,
+      "kind": "initial_body_still",
+      "evidence_id": "11daf685-9848-46db-93ad-c5bcaeb82656"
+    },
+    {
+      "seconds": 8,
+      "kind": "recorded_overview_motion",
+      "wall_start": 184.84591255302075,
+      "wall_end": 224.3714120030054,
+      "speed": 4.9406874312480795
+    },
+    {
+      "seconds": 7,
+      "kind": "final_cited_still",
+      "evidence_id": "f094c494-dacc-4068-bd29-797d34d6d822"
+    },
+    {
+      "seconds": 6,
+      "kind": "before_after_stills"
+    }
+  ],
+  "caption_basis": {
+    "first_observation": {
+      "person_visible": "uncertain",
+      "posture": "unknown",
+      "visible_risk_cues": [],
+      "observation_limitations": [
+        "subject partially obscured by cage structure",
+        "distance from subject",
+        "independent person detection does not identify one unambiguous person: not_detected"
+      ],
+      "needs_more_observation": true,
+      "evidence_ids": [
+        "11daf685-9848-46db-93ad-c5bcaeb82656"
+      ]
+    },
+    "final_observation": {
+      "person_visible": "yes",
+      "posture": "standing",
+      "visible_risk_cues": [
+        "blue bag on floor"
+      ],
+      "observation_limitations": [
+        "face not visible",
+        "person viewed from rear"
+      ],
+      "needs_more_observation": false,
+      "evidence_ids": [
+        "f094c494-dacc-4068-bd29-797d34d6d822"
+      ]
+    },
+    "move_action": {
+      "tool": "inspect",
+      "target": "west",
+      "reason": "Fixed camera failed to capture valid evidence due to invalid JSON and body camera shows partial obstruction. West viewpoint provides new line of sight to work area for presence/posture evidence.",
+      "question_id": "presence",
+      "evidence_ids": [
+        "11daf685-9848-46db-93ad-c5bcaeb82656"
+      ]
+    }
+  },
+  "scope": "Presentation edit; captions paraphrase saved structured responses, not model reasoning. Intermediate fixed-camera JSON failure and model waiting omitted. No new simulation or inference.",
+  "source_hashes": {
+    "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/demo_video_20261110_standing/live/trials/demo01/frames/11daf685-9848-46db-93ad-c5bcaeb82656.png": "6ebf3feb23bdc5e06ce53f70045de99177093ea4749497e5d610ff9ce96f290d",
+    "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/demo_video_20261110_standing/live/trials/demo01/frames/f094c494-dacc-4068-bd29-797d34d6d822.png": "9e2fc60893f6d01cf0f8e72e0eef11c220a413d549737683bc34e0b6fcf1e0de"
+  }
+}

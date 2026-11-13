@@ -6,16 +6,24 @@ import math
 import time
 from .core import Incident, State, TERMINAL
 from .context import ContextGraph
+from .tool_contracts import Planner, InspectionTools
 from .providers.single_frame_vlm import incident_decision
+from .observation_rules import clear_posture_observation
 
 ACTIONS = {'observe', 'inspect', 'wait', 'stop', 'escalate'}
 
 
-def validate_action(value, catalog):
-    if not isinstance(value, dict) or set(value) not in ({'tool', 'target', 'reason'}, {'tool', 'target', 'reason', 'question_id'}):
-        raise ValueError('expected tool, target, reason only')
-    if any(type(value[k]) is not str for k in value):
+def validate_action(value, catalog, evidence_ids=()):
+    required={'tool','target','reason'}
+    if not isinstance(value, dict) or not required<=set(value) or set(value)-required-{'question_id','evidence_ids'}:
+        raise ValueError('expected tool, target, reason and optional question_id/evidence_ids')
+    if any(type(value[k]) is not str for k in value if k!='evidence_ids'):
         raise ValueError('action fields must be strings')
+    refs=value.get('evidence_ids',[])
+    if not isinstance(refs,list) or any(type(ref) is not str for ref in refs):
+        raise ValueError('evidence_ids must be a list of strings')
+    if len(refs)!=len(set(refs)) or not set(refs)<=set(evidence_ids):
+        raise ValueError('evidence references must name distinct observations from this context')
     if not value['reason'].strip() or len(value['reason']) > 500:
         raise ValueError('bounded nonempty reason required')
     if (value['tool'], value['target']) not in {(x['tool'], x['target']) for x in catalog}:
@@ -24,14 +32,21 @@ def validate_action(value, catalog):
 
 
 class Harness:
-    def __init__(self, episode, planner, tools, *, budget=180., wall_budget=900.,
-                 operation_timeout=180., motion_timeout=600., max_steps=12, max_age=45., emit=None):
+    def __init__(self, episode, planner: Planner, tools: InspectionTools, *, budget=180., wall_budget=900.,
+                 operation_timeout=180., motion_timeout=600., max_steps=12, max_age=45., emit=None,
+                 view_retry_budget=2, finish_on_inspection_answer=False,
+                 goal="Resolve an observed person-loss incident with fresh evidence within budget."):
         for value in (budget, wall_budget, operation_timeout, motion_timeout, max_age):
             if not math.isfinite(value) or value <= 0:
                 raise ValueError('finite positive limits required')
         if type(max_steps) is not int or not 1 <= max_steps <= 100:
             raise ValueError('max_steps must be 1..100')
         self.episode, self.planner, self.tools = episode, planner, tools
+        if type(view_retry_budget) is not int or view_retry_budget<1:raise ValueError('positive view retry budget required')
+        self.view_retry_budget=view_retry_budget
+        self.goal = goal
+        self.finish_on_inspection_answer=finish_on_inspection_answer
+        self.inspection_answer=None
         self.budget, self.wall_budget, self.operation_timeout = budget, wall_budget, operation_timeout
         self.max_steps, self.max_age = max_steps, max_age
         self.motion_timeout = motion_timeout
@@ -52,6 +67,8 @@ class Harness:
         self._pending = set()
         self._last_action = None
         self._repeat = 0
+        self.view_epoch = 0
+        self.view_observations = {}
 
     def log(self, kind, **fields):
         if kind in ('tool_start', 'tool_result') and self.active_question:
@@ -103,9 +120,25 @@ class Harness:
                 # A transport may suppress cancellation; never apply its late output.
                 await asyncio.wait({task}, timeout=.05)
 
+    def observation_feedback(self):
+        """Camera-local evidence, never scene truth or an inferred absence claim."""
+        feedback={}
+        now=self.incident.now if self.incident else 0
+        for camera, record in self.view_observations.items():
+            same_view = camera == 'fixed' or record['view_epoch'] == self.view_epoch
+            feedback[camera]=dict(record, same_view=same_view,
+                age_sim_seconds=max(0,now-record['capture_time']),
+                fresh=now-record['capture_time']<self.max_age,
+                retry_note=('A new timestamp alone does not change camera coverage. Consider another view if visibility was limited.'
+                    if same_view and not record['clear_subject'] else 'View changed or prior observation clearly showed the subject.'))
+        return feedback
+
     def catalog(self):
+        feedback=self.observation_feedback()
+        suppressed={camera for camera,r in feedback.items() if r['same_view'] and r['fresh']
+            and not r['clear_subject'] and r['same_view_attempts']>=self.view_retry_budget}
         result = [dict(tool='observe', target=c, description='Capture and analyze a NEW frame')
-                  for c in ('fixed', 'body')]
+                  for c in getattr(self.tools, 'cameras', ('fixed', 'body')) if c not in suppressed]
         result += [dict(tool='inspect', target=k, description=v['description'])
                    for k, v in self.tools.locations.items()
                    if k not in self.failed_targets and k != self.last_target
@@ -117,6 +150,8 @@ class Harness:
         if self._repeat >= 2:
             result = [x for x in result if (x['tool'], x['target']) != self._last_action]
         for item in result:
+            if item['tool']=='inspect':
+                item['previous_observations']=[o for o in self.memory if o.get('viewpoint')==item['target']][-2:]
             item.update(question_ids=['presence', 'lying'],
                 expected_evidence=('new image' if item['tool']=='observe' else
                     'new viewpoint; subsequent image required' if item['tool']=='inspect' else None),
@@ -126,7 +161,7 @@ class Harness:
 
     def context(self):
         i = self.incident
-        return dict(goal='Resolve an observed person-loss incident with fresh evidence within budget.',
+        return dict(goal=self.goal,
                     episode=self.episode, state=i.state.value,
                     remaining_sim_seconds=max(0, i.deadline-i.now),
                     remaining_wall_seconds=max(0, self.wall_end-time.monotonic()),
@@ -134,6 +169,12 @@ class Harness:
                     required_next_evidence=('fresh body observation at the arrived viewpoint'
                         if self.awaiting_body_observation else None),
                     observations=self.memory[-8:],
+                    observation_status='observed' if self.memory else 'not_observed',
+                    camera_feedback=self.observation_feedback(),
+                    view_retry_policy=dict(max_ineffective_observations_per_unchanged_view=self.view_retry_budget,
+                        reset='successful body viewpoint change or evidence expiry',
+                        selection='host limits repeated ineffective tools; model still chooses among remaining tools'),
+                    evidence_semantics='A person visible in one camera and not visible in another is not a contradiction without complete coverage. Standing is not proof of overall safety.',
                     recent_events=[e for e in self.trace if e['kind'] in ('tool_result','rejected','planner_error')][-8:],
                     available_tools=self.catalog(), context_graph=self.questions.planning())
 
@@ -161,13 +202,32 @@ class Harness:
                 if target == 'body' and record['status'] == 'ok' and self.viewpoint_arrived_at is not None and evidence.capture_time > self.viewpoint_arrived_at:
                     self.awaiting_body_observation = False
                 self.memory.append(dict(evidence_id=evidence.id, camera=target,
+                    viewpoint=self.last_target if target=='body' else 'fixed',
                     capture_time=evidence.capture_time, status=record['status'],
                     observation=asdict(observation)))
+            prior=self.view_observations.get(target)
+            same_view=prior is not None and (target=='fixed' or prior['view_epoch']==self.view_epoch)
+            clear_subject=(valid and record['status']=='ok' and
+                ((observation.person_visible=='yes' and not observation.observation_limitations
+                  and not observation.needs_more_observation) or clear_posture_observation(observation)))
+            self.view_observations[target]=dict(view_epoch=self.view_epoch,
+                capture_time=evidence.capture_time,valid=valid,status=record['status'],
+                person_visible=observation.person_visible if valid else 'uncertain',
+                posture=observation.posture if valid else 'unknown',
+                limitations=list(observation.observation_limitations) if valid else ['invalid or stale evidence'],
+                clear_subject=clear_subject,
+                same_view_attempts=(0 if clear_subject else prior['same_view_attempts']+1
+                    if same_view and not prior['clear_subject'] else 1))
             self.evidence_records.append(dict(evidence=asdict(evidence), inference=record, valid=valid, accepted=accepted))
+            gate = record.get('person_gate')
+            gate_feedback = None if gate is None else dict(
+                presence_corroborated=gate['presence_corroborated'],
+                reason=gate['reason'], detector_status=gate['detector'].get('status'),
+                detector_latency_wall_seconds=gate['detector_latency_wall_seconds'])
             self.log('tool_result', tool=tool, target=target, status=record['status'],
                      latency_wall_seconds=record.get('latency_wall_seconds'),
                      evidence_id=evidence.id, question_id=action['question_id'], valid=valid, accepted=accepted,
-                     observation=asdict(observation) if valid else None)
+                     observation=asdict(observation) if valid else None, person_gate=gate_feedback)
         elif tool == 'inspect':
             attempt = self.incident.motion('moving', self.incident.now)
             self.last_target = None  # moving/failed motion is not the previous arrived viewpoint
@@ -179,6 +239,7 @@ class Harness:
                 self.incident.motion(status, self.incident.now, attempt_id=attempt)
                 if status == 'arrived':
                     self.last_target = target
+                    self.view_epoch += 1
                     self.awaiting_body_observation = True
                     self.viewpoint_arrived_at = self.incident.now
                 else:
@@ -224,7 +285,7 @@ class Harness:
                 self.log('planning', step=step, context=state)
                 try:
                     action = await self.guarded(self.planner.choose(state))
-                    validate_action(action, state['available_tools'])
+                    validate_action(action, state['available_tools'],[o['evidence_id'] for o in state['observations'] if 'evidence_id' in o])
                     binding_source = 'planner' if 'question_id' in action else 'host_legacy_fallback'
                     action = self.questions.bind(action)
                 except TimeoutError as e:
@@ -239,6 +300,13 @@ class Harness:
                 self._last_action = pair
                 try:
                     await self.execute(action)
+                    if self.finish_on_inspection_answer:
+                        questions=self.questions.snapshot()['payload']['questions']
+                        if all(questions[k]['state']=='resolved' for k in ('presence','lying')):
+                            self.inspection_answer={k:questions[k] for k in ('presence','lying')}
+                            self.log('inspection_answer',questions=self.inspection_answer,
+                                scope='observable presence and lying only; overall safety is not established')
+                            self.escalate('operator inspection answered; overall safety remains unestablished')
                     errors = 0
                 except TimeoutError as e:
                     errors += 1
@@ -274,6 +342,7 @@ class Harness:
 
     def report(self):
         return dict(episode=self.episode, completed=self.completed, error=self.error,
+                    inspection_answer=self.inspection_answer,
                     agent_decisions=sum(e['kind']=='decision' for e in self.trace),
                     executed_tools=sum(e['kind']=='tool_start' for e in self.trace),
                     agent_cycle_exercised=any(e['kind']=='decision' for e in self.trace),

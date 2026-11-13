@@ -4,6 +4,7 @@ import asyncio
 from dataclasses import asdict
 import fcntl
 import json
+import os
 from pathlib import Path
 import sys
 import uuid
@@ -18,6 +19,8 @@ from haiclaw.core import Observation
 from qwen_events import emit as qwen_emit
 
 async def main(args):
+    if args.mode == 'live' and os.environ.get('TRACE_SCENE', 'real2sim') == 'real2sim':
+        raise RuntimeError('Use scripts/run_real2sim_harness.py for the native Real2Sim harness; this legacy live runner generates old-scene experiments.')
     cfg=json.loads((ROOT/'configs/harness.json').read_text())
     model_cfg=json.loads((ROOT/'configs/vlm_local.json').read_text())
     episode=str(uuid.uuid4());out=ROOT/'artifacts/harness'/episode;out.mkdir(parents=True)

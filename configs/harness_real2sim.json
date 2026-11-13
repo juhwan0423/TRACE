@@ -1,0 +1,23 @@
+{
+  "runtime": "native_asyncio",
+  "trigger": "operator_inspection_request",
+  "budget_seconds": 300,
+  "wall_budget_seconds": 900,
+  "operation_timeout_seconds": 180,
+  "motion_timeout_seconds": 240,
+  "max_steps": 6,
+  "max_evidence_age_seconds": 45,
+  "finish_on_inspection_answer": true,
+  "locations": {
+    "door": {
+      "yaw": -2.0,
+      "description": "Door-approach corridor viewpoint with a wide body camera facing the work area. Visibility must be checked in a fresh image; do not infer a person from this description."
+    },
+    "entrance": {
+      "yaw": -1.5707963267948966,
+      "description": "Entrance viewpoint facing south into the lab; visibility is not guaranteed."
+    }
+  },
+  "view_retry_budget": 2,
+  "planning_policy": "camera-feedback-and-view-retry/1"
+}

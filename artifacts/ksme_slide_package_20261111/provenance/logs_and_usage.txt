@@ -1,0 +1,222 @@
+발표 순서 및 원문 확인
+
+01_failure_answer.png: 답은 실제 자세와 같지만 인용 화면에는 작업자가 없는 사례.
+02_failure_gate.png: 같은 프레임의 YOLO 박스를 공개. 설비라는 해석은 assistant 시각 진단이며 독립 블라인드 판독이 아님.
+03_demo_before.png: 별도 시연의 이동 전 관측 및 이동 선택.
+04_demo_30s.mp4: 별도 시연 편집본. 정지 화면/배속 표시. 초기 fixed 카메라 JSON 오류 및 대기 구간 생략.
+05_demo_after.png: 새 프레임으로 자세 질의를 해결. overall safety는 미확정.
+
+실패와 성공 시연을 한 실행의 수정 전후처럼 설명하지 말 것.
+영상의 이동 전후는 같은 demo01 실행. 원본 구조화 로그는 logs_structured.json에 보존.
+tool_result의 accepted=false는 위험 근거 채택 필드이며 자세 질의 해결 여부와 다름.
+최종 판정은 inspection_answer의 resolved 상태 및 evidence_ids로 확인.
+
+--- 실패 당시 Qwen 구조화 응답 원문 ---
+{
+  "person_visible": "yes",
+  "posture": "standing",
+  "visible_risk_cues": [],
+  "observation_limitations": [],
+  "needs_more_observation": false,
+  "evidence_ids": [
+    "cf7fbc56-8e91-40dd-bbc7-de6b8a17e4a5"
+  ]
+}
+
+--- 시연 도구 선택/관측 결과 원문 (모델 내부 추론 아님) ---
+[
+  {
+    "kind": "decision",
+    "episode": "c4e2e2d9-568e-4472-a854-643fa18456ff",
+    "wall_elapsed": 5.6666215840377845,
+    "sim_time": 10669.486,
+    "action": {
+      "tool": "observe",
+      "target": "fixed",
+      "reason": "Initial action to seek presence evidence using fixed camera; no prior observations exist. Fixed camera provides baseline coverage for presence question.",
+      "question_id": "presence",
+      "evidence_ids": []
+    },
+    "question_binding_source": "planner"
+  },
+  {
+    "kind": "tool_result",
+    "episode": "c4e2e2d9-568e-4472-a854-643fa18456ff",
+    "wall_elapsed": 108.77498718904098,
+    "sim_time": 10718.236,
+    "tool": "observe",
+    "target": "fixed",
+    "status": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)",
+    "latency_wall_seconds": 101.9768185900175,
+    "evidence_id": "ed040620-0dc4-42c6-99c7-303b0688e784",
+    "question_id": "presence",
+    "valid": false,
+    "accepted": false,
+    "observation": null,
+    "person_gate": {
+      "presence_corroborated": false,
+      "reason": "independent person detection does not identify one unambiguous person: not_detected",
+      "detector_status": "not_detected",
+      "detector_latency_wall_seconds": 0.6708707269863226
+    }
+  },
+  {
+    "kind": "decision",
+    "episode": "c4e2e2d9-568e-4472-a854-643fa18456ff",
+    "wall_elapsed": 111.45026707299985,
+    "sim_time": 10719.486,
+    "action": {
+      "tool": "observe",
+      "target": "body",
+      "reason": "Fixed camera failed with invalid evidence; body camera provides independent view to confirm presence without repeating same view. Previous attempt showed no person detection, so seeking fresh evidence from body camera to resolve uncertainty.",
+      "question_id": "presence",
+      "evidence_ids": []
+    },
+    "question_binding_source": "planner"
+  },
+  {
+    "kind": "tool_result",
+    "episode": "c4e2e2d9-568e-4472-a854-643fa18456ff",
+    "wall_elapsed": 161.82159520004643,
+    "sim_time": 10743.254,
+    "tool": "observe",
+    "target": "body",
+    "status": "ok",
+    "latency_wall_seconds": 49.977713925007265,
+    "evidence_id": "11daf685-9848-46db-93ad-c5bcaeb82656",
+    "question_id": "presence",
+    "valid": true,
+    "accepted": false,
+    "observation": {
+      "person_visible": "uncertain",
+      "posture": "unknown",
+      "visible_risk_cues": [],
+      "observation_limitations": [
+        "subject partially obscured by cage structure",
+        "distance from subject",
+        "independent person detection does not identify one unambiguous person: not_detected"
+      ],
+      "needs_more_observation": true,
+      "evidence_ids": [
+        "11daf685-9848-46db-93ad-c5bcaeb82656"
+      ]
+    },
+    "person_gate": {
+      "presence_corroborated": false,
+      "reason": "independent person detection does not identify one unambiguous person: not_detected",
+      "detector_status": "not_detected",
+      "detector_latency_wall_seconds": 0.026995206018909812
+    }
+  },
+  {
+    "kind": "decision",
+    "episode": "c4e2e2d9-568e-4472-a854-643fa18456ff",
+    "wall_elapsed": 165.14693291700678,
+    "sim_time": 10744.82,
+    "action": {
+      "tool": "inspect",
+      "target": "west",
+      "reason": "Fixed camera failed to capture valid evidence due to invalid JSON and body camera shows partial obstruction. West viewpoint provides new line of sight to work area for presence/posture evidence.",
+      "question_id": "presence",
+      "evidence_ids": [
+        "11daf685-9848-46db-93ad-c5bcaeb82656"
+      ]
+    },
+    "question_binding_source": "planner"
+  },
+  {
+    "kind": "tool_result",
+    "episode": "c4e2e2d9-568e-4472-a854-643fa18456ff",
+    "wall_elapsed": 205.03951339802006,
+    "sim_time": 10763.454,
+    "tool": "inspect",
+    "target": "west",
+    "status": "arrived",
+    "question_id": "presence"
+  },
+  {
+    "kind": "decision",
+    "episode": "c4e2e2d9-568e-4472-a854-643fa18456ff",
+    "wall_elapsed": 208.0066533050267,
+    "sim_time": 10764.854,
+    "action": {
+      "tool": "observe",
+      "target": "body",
+      "reason": "The body camera shows uncertain presence due to partial obstruction and distance; seeking fresh body observation to confirm visibility and posture.",
+      "question_id": "presence",
+      "evidence_ids": [
+        "11daf685-9848-46db-93ad-c5bcaeb82656"
+      ]
+    },
+    "question_binding_source": "planner"
+  },
+  {
+    "kind": "tool_result",
+    "episode": "c4e2e2d9-568e-4472-a854-643fa18456ff",
+    "wall_elapsed": 240.6863240720122,
+    "sim_time": 10780.254,
+    "tool": "observe",
+    "target": "body",
+    "status": "ok",
+    "latency_wall_seconds": 32.257925551966764,
+    "evidence_id": "f094c494-dacc-4068-bd29-797d34d6d822",
+    "question_id": "presence",
+    "valid": true,
+    "accepted": false,
+    "observation": {
+      "person_visible": "yes",
+      "posture": "standing",
+      "visible_risk_cues": [
+        "blue bag on floor"
+      ],
+      "observation_limitations": [
+        "face not visible",
+        "person viewed from rear"
+      ],
+      "needs_more_observation": false,
+      "evidence_ids": [
+        "f094c494-dacc-4068-bd29-797d34d6d822"
+      ]
+    },
+    "person_gate": {
+      "presence_corroborated": true,
+      "reason": "independent person detection corroborates presence only",
+      "detector_status": "detected",
+      "detector_latency_wall_seconds": 0.024847385997418314
+    }
+  }
+]
+
+--- 시연 최종 질의 상태 원문 ---
+{
+  "presence": {
+    "id": "presence",
+    "template": "presence",
+    "proposition": "Is the subject visible in the monitored scope?",
+    "requires": [
+      "fresh scoped observation",
+      "clear visibility",
+      "trusted complete coverage for absence"
+    ],
+    "state": "resolved",
+    "value": true,
+    "evidence_ids": [
+      "f094c494-dacc-4068-bd29-797d34d6d822"
+    ]
+  },
+  "lying": {
+    "id": "lying",
+    "template": "lying",
+    "proposition": "Is the visible subject lying?",
+    "requires": [
+      "fresh scoped observation",
+      "visible subject",
+      "clear posture"
+    ],
+    "state": "resolved",
+    "value": false,
+    "evidence_ids": [
+      "f094c494-dacc-4068-bd29-797d34d6d822"
+    ]
+  }
+}

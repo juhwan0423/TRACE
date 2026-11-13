@@ -1,10 +1,11 @@
 """Append local model stream events for the desktop observer."""
 import json
+import os
 import threading
 import time
 from pathlib import Path
 LOCK = threading.Lock()
-PATH = Path(__file__).resolve().parents[1] / 'artifacts/live/qwen.jsonl'
+PATH = Path(__file__).resolve().parents[1] / ('artifacts/live_real2sim/qwen.jsonl' if os.environ.get('TRACE_SCENE', 'real2sim') == 'real2sim' else 'artifacts/live/qwen.jsonl')
 
 def emit(event):
     try:

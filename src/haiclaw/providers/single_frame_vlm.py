@@ -14,6 +14,7 @@ import time
 import urllib.request
 from urllib.parse import urlsplit
 from haiclaw.core import Decision, State
+from haiclaw.observation_rules import clear_posture_observation
 
 FIELDS = {'person_visible', 'posture', 'visible_risk_cues', 'observation_limitations',
           'needs_more_observation', 'evidence_ids'}
@@ -60,8 +61,7 @@ def unknown(evidence_id, reason):
 
 def incident_decision(observation):
     # v1 never asserts activity or safe closure from one still frame.
-    clear_lying = (observation.person_visible == 'yes' and observation.posture == 'lying'
-                  and not observation.needs_more_observation and not observation.observation_limitations)
+    clear_lying = clear_posture_observation(observation) and observation.posture == 'lying'
     return Decision(observation.person_visible == 'yes', 'lying' if clear_lying else 'unknown', (),
                     not clear_lying, observation.evidence_ids)
 

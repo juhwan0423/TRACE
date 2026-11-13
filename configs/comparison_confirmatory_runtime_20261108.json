@@ -1,0 +1,61 @@
+{
+  "runtime": "native_asyncio",
+  "trigger": "operator_inspection_request",
+  "budget_seconds": 300,
+  "wall_budget_seconds": 900,
+  "operation_timeout_seconds": 180,
+  "motion_timeout_seconds": 240,
+  "max_steps": 12,
+  "max_evidence_age_seconds": 45,
+  "finish_on_inspection_answer": true,
+  "view_retry_budget": 2,
+  "fixed_order": [
+    "entrance",
+    "west",
+    "door"
+  ],
+  "initial_pose": [
+    -1.1,
+    3.32,
+    -1.5707963267948966
+  ],
+  "initial_xy_tolerance_m": 0.25,
+  "initial_yaw_tolerance_rad": 0.2,
+  "locations": {
+    "west": {
+      "yaw": -1.5707963267948966,
+      "description": "West aisle viewpoint facing south along the west side of the central equipment. It provides a different line of sight from the east fixed camera. Worker visibility and posture must be determined from a new image."
+    },
+    "door": {
+      "yaw": 2.9,
+      "description": "Door-approach corridor viewpoint facing west-northwest toward the north aisle. Worker visibility and posture must be determined from a new image."
+    },
+    "entrance": {
+      "yaw": -1.5707963267948966,
+      "description": "Entrance viewpoint facing south into the lab. Worker visibility is not guaranteed."
+    }
+  },
+  "fixed_gate": true,
+  "evaluator_capture": true,
+  "evaluator_calibration": {
+    "schema": "trace-paired-evaluator/1",
+    "stage_root": "/home/jude/Documents/ChatGPT/ROSCLAW/HAI-Real2Sim/lab_west/results/human_door/labwest_optb/human_in_scene.usda",
+    "target_prim": "/World/Human",
+    "cameras": {
+      "fixed": {
+        "positive_pixel_count": 5172,
+        "evidence_id": "fixed_positive_fixed",
+        "frame_sha256": "0dcdf75a4f8d006b4db5d1dce5e0a14e11005e6c36fb053d80bc3482e9bc9be5",
+        "frame_file": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/confirmatory_preflight_20261108/paired_calibration/fixed_positive/fixed.png"
+      },
+      "body": {
+        "positive_pixel_count": 24267,
+        "evidence_id": "body_positive_body",
+        "frame_sha256": "510745249dcbe607ebce9a6c54012e3767eb8f95301485a23b5725ac0a52eeaa",
+        "frame_file": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/confirmatory_preflight_20261108/paired_calibration/body_positive/body.png"
+      }
+    }
+  },
+  "evaluator_calibration_source": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/confirmatory_preflight_20261108/paired_calibration/calibration.json",
+  "preflight_note": "Task-relevant initial states verified; not a complete physics checkpoint restore"
+}

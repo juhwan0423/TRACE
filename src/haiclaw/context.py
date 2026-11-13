@@ -3,8 +3,8 @@ from copy import deepcopy
 import hashlib
 import json
 import math
+from .observation_rules import RULE_VERSION, clear_posture_observation
 
-RULE_VERSION = 'trace-context/1'
 TEMPLATES = {
     'presence': {'proposition': 'Is the subject visible in the monitored scope?',
                  'requires': ['fresh scoped observation', 'clear visibility',
@@ -57,7 +57,7 @@ class ContextGraph:
         claims = {}
         clear = (not observation.observation_limitations and not observation.needs_more_observation
                  and e.quality >= .7 and not e.reason)
-        if clear and observation.person_visible == 'yes':
+        if (clear or (clear_posture_observation(observation) and e.quality >= .7 and not e.reason)) and observation.person_visible == 'yes':
             claims['presence'] = True
             if observation.posture in ('lying', 'standing', 'seated'):
                 claims['lying'] = observation.posture == 'lying'
