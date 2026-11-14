@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 562" width="1200" height="562" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" role="img" aria-labelledby="t d">
+  <title id="t">TRACE system overview</title>
+  <desc id="d">An RTX 5090 workstation runs Isaac Sim with the simulated Spot robot and the TRACE harness. The harness sends camera frames to a Qwen3-VL model on a DGX Spark through an SSH tunnel and receives tool calls, which it validates before commanding the robot.</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#57606a"/>
+    </marker>
+  </defs>
+
+  <rect x="1" y="1" width="1198" height="560" rx="14" fill="#ffffff" stroke="#d0d7de"/>
+
+  <!-- operator -->
+  <rect x="574" y="26" width="180" height="44" rx="22" fill="#1f2328"/>
+  <text x="664" y="53" text-anchor="middle" font-size="15" font-weight="600" fill="#ffffff">Operator</text>
+  <line x1="634" y1="70" x2="634" y2="148" stroke="#57606a" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="694" y1="148" x2="694" y2="72" stroke="#57606a" stroke-width="1.6" marker-end="url(#a)"/>
+  <text x="622" y="92" text-anchor="end" font-size="13" fill="#57606a">“Check the worker”</text>
+  <text x="706" y="92" font-size="13" fill="#57606a">answer with its frame, or handoff</text>
+
+  <!-- workstation frame -->
+  <rect x="24" y="104" width="830" height="392" rx="12" fill="#f6f8fa" stroke="#d0d7de" stroke-dasharray="6 5"/>
+  <text x="44" y="131" font-size="13" font-weight="600" fill="#57606a" letter-spacing="0.6">RTX 5090 WORKSTATION</text>
+
+  <!-- Isaac Sim -->
+  <rect x="44" y="150" width="300" height="326" rx="10" fill="#ffffff" stroke="#2da44e" stroke-width="1.6"/>
+  <rect x="44" y="150" width="300" height="48" rx="10" fill="#2da44e"/>
+  <rect x="44" y="176" width="300" height="22" fill="#2da44e"/>
+  <text x="64" y="180" font-size="17" font-weight="700" fill="#ffffff">Isaac Sim 6.2</text>
+  <g font-size="14" fill="#1f2328">
+    <rect x="64" y="216" width="260" height="46" rx="6" fill="#dafbe1"/>
+    <text x="78" y="235" font-weight="600">Reconstructed lab</text>
+    <text x="78" y="252" font-size="12" fill="#57606a">HAI-Real2Sim scene, authored worker</text>
+    <rect x="64" y="272" width="260" height="46" rx="6" fill="#dafbe1"/>
+    <text x="78" y="291" font-weight="600">Spot</text>
+    <text x="78" y="308" font-size="12" fill="#57606a">locomotion policy on fixed corridors</text>
+    <rect x="64" y="328" width="260" height="46" rx="6" fill="#dafbe1"/>
+    <text x="78" y="347" font-weight="600">Cameras</text>
+    <text x="78" y="364" font-size="12" fill="#57606a">robot body camera, fixed room camera</text>
+  </g>
+  <text x="64" y="456" font-size="12" fill="#57606a">Physics and rendering on the GPU</text>
+
+  <!-- harness -->
+  <rect x="494" y="150" width="340" height="326" rx="10" fill="#ffffff" stroke="#0969da" stroke-width="1.6"/>
+  <rect x="494" y="150" width="340" height="48" rx="10" fill="#0969da"/>
+  <rect x="494" y="176" width="340" height="22" fill="#0969da"/>
+  <text x="514" y="180" font-size="17" font-weight="700" fill="#ffffff">TRACE harness</text>
+  <text x="814" y="180" text-anchor="end" font-size="13" fill="#ddf4ff">Python asyncio</text>
+  <g font-size="14" fill="#1f2328">
+    <rect x="514" y="216" width="300" height="46" rx="6" fill="#ddf4ff"/>
+    <text x="528" y="235" font-weight="600">Planner client</text>
+    <text x="528" y="252" font-size="12" fill="#57606a">sends frames and the open questions</text>
+    <rect x="514" y="272" width="300" height="46" rx="6" fill="#ddf4ff"/>
+    <text x="528" y="291" font-weight="600">Tool guard</text>
+    <text x="528" y="308" font-size="12" fill="#57606a">checks tool, target, move and time budgets</text>
+    <rect x="514" y="328" width="300" height="46" rx="6" fill="#ddf4ff"/>
+    <text x="528" y="347" font-weight="600">Evidence record</text>
+    <text x="528" y="364" font-size="12" fill="#57606a">source, capture time and frame per answer</text>
+    <rect x="514" y="384" width="300" height="46" rx="6" fill="#ddf4ff"/>
+    <text x="528" y="403" font-weight="600">Person gate</text>
+    <text x="528" y="420" font-size="12" fill="#57606a">YOLO11n veto on the cited frame (CPU)</text>
+  </g>
+  <text x="514" y="456" font-size="12" fill="#57606a">Desktop monitor, saved events and images per run</text>
+
+  <!-- Isaac <-> harness -->
+  <text x="419" y="268" text-anchor="middle" font-size="12" fill="#57606a">observe · inspect</text>
+  <line x1="492" y1="280" x2="348" y2="280" stroke="#57606a" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="346" y1="340" x2="490" y2="340" stroke="#57606a" stroke-width="1.6" marker-end="url(#a)"/>
+  <text x="419" y="360" text-anchor="middle" font-size="12" fill="#57606a">frames · robot state</text>
+  <text x="419" y="314" text-anchor="middle" font-size="11" fill="#8c959f">local TCP</text>
+
+  <!-- Spark -->
+  <rect x="964" y="150" width="212" height="326" rx="10" fill="#ffffff" stroke="#8250df" stroke-width="1.6"/>
+  <rect x="964" y="150" width="212" height="48" rx="10" fill="#8250df"/>
+  <rect x="964" y="176" width="212" height="22" fill="#8250df"/>
+  <text x="984" y="180" font-size="17" font-weight="700" fill="#ffffff">DGX Spark</text>
+  <g font-size="14" fill="#1f2328">
+    <rect x="984" y="216" width="172" height="46" rx="6" fill="#fbefff"/>
+    <text x="998" y="235" font-weight="600">Qwen3-VL 8B</text>
+    <text x="998" y="252" font-size="12" fill="#57606a">vision-language model</text>
+    <rect x="984" y="272" width="172" height="46" rx="6" fill="#fbefff"/>
+    <text x="998" y="291" font-weight="600">Ollama</text>
+    <text x="998" y="308" font-size="12" fill="#57606a">local model server</text>
+  </g>
+  <text x="984" y="456" font-size="12" fill="#57606a">No cloud API</text>
+
+  <!-- harness <-> Spark -->
+  <text x="899" y="268" text-anchor="middle" font-size="12" fill="#57606a">frames · questions</text>
+  <line x1="836" y1="280" x2="960" y2="280" stroke="#57606a" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="962" y1="340" x2="838" y2="340" stroke="#57606a" stroke-width="1.6" marker-end="url(#a)"/>
+  <text x="899" y="360" text-anchor="middle" font-size="12" fill="#57606a">next tool call</text>
+  <text x="899" y="314" text-anchor="middle" font-size="11" fill="#8c959f">SSH tunnel</text>
+
+  <text x="600" y="536" text-anchor="middle" font-size="14" fill="#1f2328">The model proposes the next action. The harness decides whether it runs and which frame an answer may cite.</text>
+</svg>
