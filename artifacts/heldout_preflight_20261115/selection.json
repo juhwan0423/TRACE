@@ -1,0 +1,1031 @@
+{
+ "rule": "Deterministic geometric selection of held-out placements (no model/detector outputs).\nRule fixed before any policy inference:\n answerable: W/E family; per posture a rotation whose useful-view (west for W, entrance for E)\n   evaluator body pixels >=5000, fixed <1000, every other body view <1000.\n rotation: standing cycle [s90,s180,sm90], lying cycle [l90,l0,l180,lm90] starting at placement index.\n unanswerable: O family, zero pixels in all 3 body views + fixed, for all tested rotations.\n spread: farthest-point sampling from prior positions; 12 W, 12 E, 6 O.\n cohorts: seed 20261115 shuffle within family, round-robin into 3 cohorts (4W+4E+2O each).",
+ "eligible": {
+  "W": [
+   "W-4.70_-0.35",
+   "W-4.90_-0.10",
+   "W-4.90_-0.35",
+   "W-4.90_-0.60",
+   "W-5.10_-0.10",
+   "W-5.10_-0.35",
+   "W-5.30_-0.10",
+   "W-5.30_-0.35"
+  ],
+  "E": [
+   "E+0.00_+1.10",
+   "E+0.30_+0.80",
+   "E+0.30_+1.10",
+   "E+0.60_+0.50",
+   "E+0.60_+0.80",
+   "E+0.75_+0.65",
+   "E+0.90_+0.50",
+   "E+0.90_+0.80",
+   "E+1.20_+0.50"
+  ],
+  "O": [
+   "O+2.20_+2.70",
+   "O+2.80_+2.70",
+   "O+3.40_+0.60",
+   "O+3.40_+2.70",
+   "O+4.00_+0.60",
+   "O+4.00_+2.70",
+   "O+4.60_+0.30",
+   "O+4.60_+1.20",
+   "O+4.60_+2.20"
+  ]
+ },
+ "selected": {
+  "W": [
+   "W-4.90_-0.60",
+   "W-5.30_-0.35",
+   "W-4.90_-0.10",
+   "W-4.70_-0.35",
+   "W-5.30_-0.10",
+   "W-4.90_-0.35",
+   "W-5.10_-0.10",
+   "W-5.10_-0.35"
+  ],
+  "E": [
+   "E+1.20_+0.50",
+   "E+0.90_+0.80",
+   "E+0.90_+0.50",
+   "E+0.30_+0.80",
+   "E+0.75_+0.65",
+   "E+0.60_+0.50",
+   "E+0.60_+0.80",
+   "E+0.00_+1.10"
+  ],
+  "O": [
+   "O+4.60_+0.30",
+   "O+2.20_+2.70",
+   "O+4.60_+2.20",
+   "O+4.60_+1.20"
+  ]
+ },
+ "cohorts": [
+  [
+   {
+    "placement": "W-4.90_-0.35",
+    "family": "W",
+    "posture": "standing",
+    "rot_key": "s90",
+    "rotation": [
+     0,
+     0,
+     90
+    ],
+    "x": -4.9,
+    "y": -0.35,
+    "pixels": {
+     "entrance": 0,
+     "west": 11305,
+     "door": 25,
+     "fixed": 345
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/W-4.90_-0.35_s90/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-4.90_-0.35_s90/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/W-4.90_-0.35_s90/capture.json"
+    }
+   },
+   {
+    "placement": "W-4.90_-0.35",
+    "family": "W",
+    "posture": "lying",
+    "rot_key": "l90",
+    "rotation": [
+     0,
+     90,
+     90
+    ],
+    "x": -4.9,
+    "y": -0.35,
+    "pixels": {
+     "entrance": 0,
+     "west": 6353,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/W-4.90_-0.35_l90/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-4.90_-0.35_l90/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/W-4.90_-0.35_l90/capture.json"
+    }
+   },
+   {
+    "placement": "W-5.10_-0.35",
+    "family": "W",
+    "posture": "standing",
+    "rot_key": "s180",
+    "rotation": [
+     0,
+     0,
+     180
+    ],
+    "x": -5.1,
+    "y": -0.35,
+    "pixels": {
+     "entrance": 0,
+     "west": 12626,
+     "door": 0,
+     "fixed": 310
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/W-5.10_-0.35_s180/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-5.10_-0.35_s180/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/W-5.10_-0.35_s180/capture.json"
+    }
+   },
+   {
+    "placement": "W-5.10_-0.35",
+    "family": "W",
+    "posture": "lying",
+    "rot_key": "lm90",
+    "rotation": [
+     0,
+     90,
+     -90
+    ],
+    "x": -5.1,
+    "y": -0.35,
+    "pixels": {
+     "entrance": 0,
+     "west": 7943,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/W-5.10_-0.35_lm90/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-5.10_-0.35_lm90/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/W-5.10_-0.35_lm90/capture.json"
+    }
+   },
+   {
+    "placement": "W-5.30_-0.35",
+    "family": "W",
+    "posture": "standing",
+    "rot_key": "sm90",
+    "rotation": [
+     0,
+     0,
+     -90
+    ],
+    "x": -5.3,
+    "y": -0.35,
+    "pixels": {
+     "entrance": 0,
+     "west": 11129,
+     "door": 0,
+     "fixed": 220
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/W-5.30_-0.35_sm90/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-5.30_-0.35_sm90/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/W-5.30_-0.35_sm90/capture.json"
+    }
+   },
+   {
+    "placement": "W-5.30_-0.35",
+    "family": "W",
+    "posture": "lying",
+    "rot_key": "lm90",
+    "rotation": [
+     0,
+     90,
+     -90
+    ],
+    "x": -5.3,
+    "y": -0.35,
+    "pixels": {
+     "entrance": 0,
+     "west": 7723,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/W-5.30_-0.35_lm90/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-5.30_-0.35_lm90/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/W-5.30_-0.35_lm90/capture.json"
+    }
+   },
+   {
+    "placement": "W-4.70_-0.35",
+    "family": "W",
+    "posture": "standing",
+    "rot_key": "s90",
+    "rotation": [
+     0,
+     0,
+     90
+    ],
+    "x": -4.7,
+    "y": -0.35,
+    "pixels": {
+     "entrance": 0,
+     "west": 6891,
+     "door": 136,
+     "fixed": 367
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/W-4.70_-0.35_s90/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-4.70_-0.35_s90/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/W-4.70_-0.35_s90/capture.json"
+    }
+   },
+   {
+    "placement": "W-4.70_-0.35",
+    "family": "W",
+    "posture": "lying",
+    "rot_key": "l0",
+    "rotation": [
+     0,
+     90,
+     0
+    ],
+    "x": -4.7,
+    "y": -0.35,
+    "pixels": {
+     "entrance": 0,
+     "west": 7460,
+     "door": 0,
+     "fixed": 3
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/W-4.70_-0.35_l0/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-4.70_-0.35_l0/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/W-4.70_-0.35_l0/capture.json"
+    }
+   },
+   {
+    "placement": "E+0.90_+0.80",
+    "family": "E",
+    "posture": "standing",
+    "rot_key": "s180",
+    "rotation": [
+     0,
+     0,
+     180
+    ],
+    "x": 0.9,
+    "y": 0.8,
+    "pixels": {
+     "entrance": 8838,
+     "west": 0,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/E+0.90_+0.80_s180/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/E+0.90_+0.80_s180/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/E+0.90_+0.80_s180/capture.json"
+    }
+   },
+   {
+    "placement": "E+0.90_+0.80",
+    "family": "E",
+    "posture": "lying",
+    "rot_key": "l0",
+    "rotation": [
+     0,
+     90,
+     0
+    ],
+    "x": 0.9,
+    "y": 0.8,
+    "pixels": {
+     "entrance": 8182,
+     "west": 0,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/E+0.90_+0.80_l0/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/E+0.90_+0.80_l0/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/E+0.90_+0.80_l0/capture.json"
+    }
+   },
+   {
+    "placement": "E+0.60_+0.80",
+    "family": "E",
+    "posture": "standing",
+    "rot_key": "sm90",
+    "rotation": [
+     0,
+     0,
+     -90
+    ],
+    "x": 0.6,
+    "y": 0.8,
+    "pixels": {
+     "entrance": 5529,
+     "west": 0,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/E+0.60_+0.80_sm90/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/E+0.60_+0.80_sm90/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/E+0.60_+0.80_sm90/capture.json"
+    }
+   },
+   {
+    "placement": "E+0.60_+0.80",
+    "family": "E",
+    "posture": "lying",
+    "rot_key": "l0",
+    "rotation": [
+     0,
+     90,
+     0
+    ],
+    "x": 0.6,
+    "y": 0.8,
+    "pixels": {
+     "entrance": 8068,
+     "west": 0,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/E+0.60_+0.80_l0/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/E+0.60_+0.80_l0/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/E+0.60_+0.80_l0/capture.json"
+    }
+   },
+   {
+    "placement": "E+0.00_+1.10",
+    "family": "E",
+    "posture": "standing",
+    "rot_key": "s90",
+    "rotation": [
+     0,
+     0,
+     90
+    ],
+    "x": 0.0,
+    "y": 1.1,
+    "pixels": {
+     "entrance": 7439,
+     "west": 0,
+     "door": 0,
+     "fixed": 600
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/E+0.00_+1.10_s90/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/E+0.00_+1.10_s90/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/E+0.00_+1.10_s90/capture.json"
+    }
+   },
+   {
+    "placement": "E+0.00_+1.10",
+    "family": "E",
+    "posture": "lying",
+    "rot_key": "lm90",
+    "rotation": [
+     0,
+     90,
+     -90
+    ],
+    "x": 0.0,
+    "y": 1.1,
+    "pixels": {
+     "entrance": 9202,
+     "west": 0,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/E+0.00_+1.10_lm90/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/E+0.00_+1.10_lm90/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/E+0.00_+1.10_lm90/capture.json"
+    }
+   },
+   {
+    "placement": "E+0.90_+0.50",
+    "family": "E",
+    "posture": "standing",
+    "rot_key": "s180",
+    "rotation": [
+     0,
+     0,
+     180
+    ],
+    "x": 0.9,
+    "y": 0.5,
+    "pixels": {
+     "entrance": 6628,
+     "west": 0,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/E+0.90_+0.50_s180/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/E+0.90_+0.50_s180/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/E+0.90_+0.50_s180/capture.json"
+    }
+   },
+   {
+    "placement": "E+0.90_+0.50",
+    "family": "E",
+    "posture": "lying",
+    "rot_key": "lm90",
+    "rotation": [
+     0,
+     90,
+     -90
+    ],
+    "x": 0.9,
+    "y": 0.5,
+    "pixels": {
+     "entrance": 5464,
+     "west": 0,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/E+0.90_+0.50_lm90/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/E+0.90_+0.50_lm90/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/E+0.90_+0.50_lm90/capture.json"
+    }
+   },
+   {
+    "placement": "O+4.60_+1.20",
+    "family": "O",
+    "posture": "standing",
+    "rot_key": "sm90",
+    "rotation": [
+     0,
+     0,
+     -90
+    ],
+    "x": 4.6,
+    "y": 1.2,
+    "pixels": {
+     "entrance": 0,
+     "west": 0,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/entrance/O+4.60_+1.20_sm90/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/west/O+4.60_+1.20_sm90/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/door/O+4.60_+1.20_sm90/capture.json"
+    }
+   },
+   {
+    "placement": "O+4.60_+1.20",
+    "family": "O",
+    "posture": "lying",
+    "rot_key": "l90",
+    "rotation": [
+     0,
+     90,
+     90
+    ],
+    "x": 4.6,
+    "y": 1.2,
+    "pixels": {
+     "entrance": 0,
+     "west": 0,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/entrance/O+4.60_+1.20_l90/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/west/O+4.60_+1.20_l90/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/door/O+4.60_+1.20_l90/capture.json"
+    }
+   },
+   {
+    "placement": "O+2.20_+2.70",
+    "family": "O",
+    "posture": "standing",
+    "rot_key": "s90",
+    "rotation": [
+     0,
+     0,
+     90
+    ],
+    "x": 2.2,
+    "y": 2.7,
+    "pixels": {
+     "entrance": 0,
+     "west": 0,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/entrance/O+2.20_+2.70_s90/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/west/O+2.20_+2.70_s90/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/door/O+2.20_+2.70_s90/capture.json"
+    }
+   },
+   {
+    "placement": "O+2.20_+2.70",
+    "family": "O",
+    "posture": "lying",
+    "rot_key": "l0",
+    "rotation": [
+     0,
+     90,
+     0
+    ],
+    "x": 2.2,
+    "y": 2.7,
+    "pixels": {
+     "entrance": 0,
+     "west": 0,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/entrance/O+2.20_+2.70_l0/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/west/O+2.20_+2.70_l0/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/door/O+2.20_+2.70_l0/capture.json"
+    }
+   }
+  ],
+  [
+   {
+    "placement": "W-5.30_-0.10",
+    "family": "W",
+    "posture": "standing",
+    "rot_key": "s180",
+    "rotation": [
+     0,
+     0,
+     180
+    ],
+    "x": -5.3,
+    "y": -0.1,
+    "pixels": {
+     "entrance": 0,
+     "west": 16255,
+     "door": 0,
+     "fixed": 170
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/W-5.30_-0.10_s180/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-5.30_-0.10_s180/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/W-5.30_-0.10_s180/capture.json"
+    }
+   },
+   {
+    "placement": "W-5.30_-0.10",
+    "family": "W",
+    "posture": "lying",
+    "rot_key": "lm90",
+    "rotation": [
+     0,
+     90,
+     -90
+    ],
+    "x": -5.3,
+    "y": -0.1,
+    "pixels": {
+     "entrance": 0,
+     "west": 7788,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/W-5.30_-0.10_lm90/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-5.30_-0.10_lm90/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/W-5.30_-0.10_lm90/capture.json"
+    }
+   },
+   {
+    "placement": "W-4.90_-0.10",
+    "family": "W",
+    "posture": "standing",
+    "rot_key": "sm90",
+    "rotation": [
+     0,
+     0,
+     -90
+    ],
+    "x": -4.9,
+    "y": -0.1,
+    "pixels": {
+     "entrance": 0,
+     "west": 13316,
+     "door": 0,
+     "fixed": 130
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/W-4.90_-0.10_sm90/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-4.90_-0.10_sm90/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/W-4.90_-0.10_sm90/capture.json"
+    }
+   },
+   {
+    "placement": "W-4.90_-0.10",
+    "family": "W",
+    "posture": "lying",
+    "rot_key": "lm90",
+    "rotation": [
+     0,
+     90,
+     -90
+    ],
+    "x": -4.9,
+    "y": -0.1,
+    "pixels": {
+     "entrance": 0,
+     "west": 8861,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/W-4.90_-0.10_lm90/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-4.90_-0.10_lm90/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/W-4.90_-0.10_lm90/capture.json"
+    }
+   },
+   {
+    "placement": "W-4.90_-0.60",
+    "family": "W",
+    "posture": "standing",
+    "rot_key": "s90",
+    "rotation": [
+     0,
+     0,
+     90
+    ],
+    "x": -4.9,
+    "y": -0.6,
+    "pixels": {
+     "entrance": 0,
+     "west": 8582,
+     "door": 189,
+     "fixed": 794
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/W-4.90_-0.60_s90/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-4.90_-0.60_s90/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/W-4.90_-0.60_s90/capture.json"
+    }
+   },
+   {
+    "placement": "W-4.90_-0.60",
+    "family": "W",
+    "posture": "lying",
+    "rot_key": "l90",
+    "rotation": [
+     0,
+     90,
+     90
+    ],
+    "x": -4.9,
+    "y": -0.6,
+    "pixels": {
+     "entrance": 0,
+     "west": 5902,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/W-4.90_-0.60_l90/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-4.90_-0.60_l90/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/W-4.90_-0.60_l90/capture.json"
+    }
+   },
+   {
+    "placement": "W-5.10_-0.10",
+    "family": "W",
+    "posture": "standing",
+    "rot_key": "s180",
+    "rotation": [
+     0,
+     0,
+     180
+    ],
+    "x": -5.1,
+    "y": -0.1,
+    "pixels": {
+     "entrance": 0,
+     "west": 17737,
+     "door": 0,
+     "fixed": 155
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/W-5.10_-0.10_s180/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-5.10_-0.10_s180/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/W-5.10_-0.10_s180/capture.json"
+    }
+   },
+   {
+    "placement": "W-5.10_-0.10",
+    "family": "W",
+    "posture": "lying",
+    "rot_key": "lm90",
+    "rotation": [
+     0,
+     90,
+     -90
+    ],
+    "x": -5.1,
+    "y": -0.1,
+    "pixels": {
+     "entrance": 0,
+     "west": 7742,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/W-5.10_-0.10_lm90/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-5.10_-0.10_lm90/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/W-5.10_-0.10_lm90/capture.json"
+    }
+   },
+   {
+    "placement": "E+0.60_+0.50",
+    "family": "E",
+    "posture": "standing",
+    "rot_key": "s180",
+    "rotation": [
+     0,
+     0,
+     180
+    ],
+    "x": 0.6,
+    "y": 0.5,
+    "pixels": {
+     "entrance": 6311,
+     "west": 0,
+     "door": 0,
+     "fixed": 290
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/E+0.60_+0.50_s180/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/E+0.60_+0.50_s180/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/E+0.60_+0.50_s180/capture.json"
+    }
+   },
+   {
+    "placement": "E+0.60_+0.50",
+    "family": "E",
+    "posture": "lying",
+    "rot_key": "l180",
+    "rotation": [
+     0,
+     90,
+     180
+    ],
+    "x": 0.6,
+    "y": 0.5,
+    "pixels": {
+     "entrance": 5588,
+     "west": 0,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/E+0.60_+0.50_l180/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/E+0.60_+0.50_l180/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/E+0.60_+0.50_l180/capture.json"
+    }
+   },
+   {
+    "placement": "E+0.75_+0.65",
+    "family": "E",
+    "posture": "standing",
+    "rot_key": "s180",
+    "rotation": [
+     0,
+     0,
+     180
+    ],
+    "x": 0.75,
+    "y": 0.65,
+    "pixels": {
+     "entrance": 7435,
+     "west": 0,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/entrance/E+0.75_+0.65_s180/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/west/E+0.75_+0.65_s180/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/door/E+0.75_+0.65_s180/capture.json"
+    }
+   },
+   {
+    "placement": "E+0.75_+0.65",
+    "family": "E",
+    "posture": "lying",
+    "rot_key": "lm90",
+    "rotation": [
+     0,
+     90,
+     -90
+    ],
+    "x": 0.75,
+    "y": 0.65,
+    "pixels": {
+     "entrance": 6357,
+     "west": 0,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/entrance/E+0.75_+0.65_lm90/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/west/E+0.75_+0.65_lm90/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/door/E+0.75_+0.65_lm90/capture.json"
+    }
+   },
+   {
+    "placement": "E+0.30_+0.80",
+    "family": "E",
+    "posture": "standing",
+    "rot_key": "s90",
+    "rotation": [
+     0,
+     0,
+     90
+    ],
+    "x": 0.3,
+    "y": 0.8,
+    "pixels": {
+     "entrance": 5576,
+     "west": 0,
+     "door": 0,
+     "fixed": 962
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/E+0.30_+0.80_s90/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/E+0.30_+0.80_s90/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/E+0.30_+0.80_s90/capture.json"
+    }
+   },
+   {
+    "placement": "E+0.30_+0.80",
+    "family": "E",
+    "posture": "lying",
+    "rot_key": "l90",
+    "rotation": [
+     0,
+     90,
+     90
+    ],
+    "x": 0.3,
+    "y": 0.8,
+    "pixels": {
+     "entrance": 6388,
+     "west": 0,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/E+0.30_+0.80_l90/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/E+0.30_+0.80_l90/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/E+0.30_+0.80_l90/capture.json"
+    }
+   },
+   {
+    "placement": "E+1.20_+0.50",
+    "family": "E",
+    "posture": "standing",
+    "rot_key": "s180",
+    "rotation": [
+     0,
+     0,
+     180
+    ],
+    "x": 1.2,
+    "y": 0.5,
+    "pixels": {
+     "entrance": 6985,
+     "west": 0,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/entrance/E+1.20_+0.50_s180/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/west/E+1.20_+0.50_s180/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/door/E+1.20_+0.50_s180/capture.json"
+    }
+   },
+   {
+    "placement": "E+1.20_+0.50",
+    "family": "E",
+    "posture": "lying",
+    "rot_key": "l0",
+    "rotation": [
+     0,
+     90,
+     0
+    ],
+    "x": 1.2,
+    "y": 0.5,
+    "pixels": {
+     "entrance": 6271,
+     "west": 0,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/entrance/E+1.20_+0.50_l0/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/west/E+1.20_+0.50_l0/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/door/E+1.20_+0.50_l0/capture.json"
+    }
+   },
+   {
+    "placement": "O+4.60_+2.20",
+    "family": "O",
+    "posture": "standing",
+    "rot_key": "s90",
+    "rotation": [
+     0,
+     0,
+     90
+    ],
+    "x": 4.6,
+    "y": 2.2,
+    "pixels": {
+     "entrance": 0,
+     "west": 0,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/entrance/O+4.60_+2.20_s90/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/west/O+4.60_+2.20_s90/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/door/O+4.60_+2.20_s90/capture.json"
+    }
+   },
+   {
+    "placement": "O+4.60_+2.20",
+    "family": "O",
+    "posture": "lying",
+    "rot_key": "l180",
+    "rotation": [
+     0,
+     90,
+     180
+    ],
+    "x": 4.6,
+    "y": 2.2,
+    "pixels": {
+     "entrance": 0,
+     "west": 0,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/entrance/O+4.60_+2.20_l180/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/west/O+4.60_+2.20_l180/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/door/O+4.60_+2.20_l180/capture.json"
+    }
+   },
+   {
+    "placement": "O+4.60_+0.30",
+    "family": "O",
+    "posture": "standing",
+    "rot_key": "s180",
+    "rotation": [
+     0,
+     0,
+     180
+    ],
+    "x": 4.6,
+    "y": 0.3,
+    "pixels": {
+     "entrance": 0,
+     "west": 0,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/entrance/O+4.60_+0.30_s180/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/west/O+4.60_+0.30_s180/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/door/O+4.60_+0.30_s180/capture.json"
+    }
+   },
+   {
+    "placement": "O+4.60_+0.30",
+    "family": "O",
+    "posture": "lying",
+    "rot_key": "lm90",
+    "rotation": [
+     0,
+     90,
+     -90
+    ],
+    "x": 4.6,
+    "y": 0.3,
+    "pixels": {
+     "entrance": 0,
+     "west": 0,
+     "door": 0,
+     "fixed": 0
+    },
+    "captures": {
+     "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/entrance/O+4.60_+0.30_lm90/capture.json",
+     "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/west/O+4.60_+0.30_lm90/capture.json",
+     "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/door/O+4.60_+0.30_lm90/capture.json"
+    }
+   }
+  ]
+ ]
+}
