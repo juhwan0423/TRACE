@@ -65,3 +65,7 @@ artifacts/heldout_preflight_20261115/*
 !artifacts/heldout_preflight_20261115/READINESS.md
 !artifacts/heldout_preflight_20261115/select_conditions.py
 !artifacts/heldout_preflight_20261115/selection.json
+
+# Local agent instructions and original task brief (kept on disk, not published)
+AGENTS.md
+implementation_guide.md

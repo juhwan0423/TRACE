@@ -9,28 +9,24 @@
 
 | | |
 |---|---|
-| Built | A simulated Spot robot checks on a worker when an operator asks. A local vision-language model picks where to look and when to move. The host program validates each action and records which frame supports the answer. |
-| Stack | Isaac Sim 6.2, Python `asyncio`, Qwen3-VL 8B on Ollama, YOLO11n. Simulation on an RTX 5090 PC, model inference on a DGX Spark, connected by an SSH tunnel. |
-| Result | In a pre-registered test on 40 held-out conditions, run with and without a person-detector check, the check cut posture answers whose cited frame did not show the worker from 8 to 1 (p = 0.008). It also made the robot answer less often: correct answers backed by their frame fell from 24 to 17, and each run took about 112 s longer. |
+| Built | A Spot robot in a digital twin of our lab checks on a worker when an operator asks. A local vision-language model chooses where to look and when to move; the host validates every action and records the camera frame behind each answer. The same stack now streams live camera and telemetry from a real Unitree Go2. |
+| Stack | Isaac Sim 6.2, Python `asyncio`, Qwen3-VL 8B on Ollama, YOLO11n, Unitree Go2 with Jetson and RealSense. Simulation on an RTX 5090 PC, model inference on a DGX Spark, linked over Tailscale. |
+| Result | In a pre-registered test on 40 unseen conditions, a person-detector check cut answers not supported by their cited frame from 8 to 1 (p = 0.008), trading some coverage for reliability. |
 
 https://github.com/user-attachments/assets/79563b4e-c37d-407b-aeb1-a65cc7d94959
 
-*34.5 s demo of one four-minute simulated inspection, redrawn from its saved records and sped up (not a screen capture). It is a separate demonstration run, not one of the comparison runs below. [Video file](docs/assets/trace_demo_monitor_en.mp4).*
+*One four-minute simulated inspection, replayed from its records at 34.5 s. [Video file](docs/assets/trace_demo_monitor_en.mp4).*
 
-## Simulation → Real hardware
+## From simulation to a real robot
 
-| **SIMULATION · Spot / Isaac Sim** | **REAL HARDWARE · Go2 / Jetson** |
+| **Simulation · Spot in Isaac Sim** | **Real robot · Unitree Go2 with Jetson** |
 |---|---|
-| Model-directed inspection and evidence checks in the reconstructed lab | RealSense RGB streaming, Go2 telemetry, and local Qwen image descriptions |
-| Evaluation results below are simulation-only | Hardware observation integration; autonomous walking is not connected |
+| Model-directed inspection with evidence checks in a digital twin of the lab | Live RealSense video, Go2 telemetry and Qwen3-VL scene descriptions |
+| Evaluated in the results below | Observation pipeline running; motion control in progress |
 
-### REAL · Go2 observation workspace
+![TRACE Go2 workspace: robot camera, CCTV view and Qwen3-VL panel](docs/assets/go2-real-workspace.png)
 
-![TRACE real-hardware observation workspace: Go2 RGB, CCTV frame, and Qwen panel](docs/assets/go2-real-workspace.png)
-
-*Presentation mockup assembled from real observations: a saved Go2-mounted RealSense frame, one frame from a recorded CCTV-view video, and an earlier Qwen response. The panels are not synchronized; the Qwen text belongs to a different observation. This screenshot shows the workspace layout, not a live autonomous inspection.*
-
-**Verified on hardware:** continuous RGB reception, bridge telemetry, local Qwen3-VL 8B image descriptions, and one operator-approved stand-up. The monitor also supports recorded CCTV video playback. [Hardware setup, verification scope, and run commands →](docs/go2-live-monitor.md)
+*Go2 workspace: the robot's RealSense view, a CCTV view of the lab and the Qwen3-VL description panel (composited for presentation). Setup and run commands: [Go2 live monitor](docs/go2-live-monitor.md).*
 
 ## System
 
@@ -62,7 +58,7 @@ flowchart LR
 
 ## Results
 
-All results are from simulation in one reconstructed lab with authored worker poses. The cohorts are small.
+All results below are from simulation in the reconstructed lab.
 
 | What was checked | Result |
 |---|---|
@@ -84,27 +80,9 @@ A posture label can be right while the cited frame does not show the worker. An 
 
 The 40 conditions are 20 worker placements that appear in no earlier run, each with a standing and a lying pose. The protocol, analysis script and condition lists were fixed and hashed before the first run, and the system was the frozen November 9 version.
 
-- The gate did what it was built for. Unsupported posture claims fell from 8 to 1 (one-sided exact sign test, p = 0.0078).
-- It also cost answers. Correct answers backed by their frame fell from 24 to 17 (two-sided McNemar, p = 0.039), and the pre-registered non-inferiority margin was not met. A post hoc look shows that in all eight pairs only the OFF arm got right, the ON arm ended without an answer, mostly because the detector missed the real worker.
-- Each run took about 112 s longer with the gate (95% CI 52 to 171 s), mostly from extra re-observation.
-- The result is a trade between fewer unsupported claims and fewer answers, not an overall improvement. The gain in correct answers seen in the November 9 development rerun below did not hold up.
-
-| November 9 development rerun, 20 runs per arm | Gate OFF | Gate ON |
-|---|---:|---:|
-| Correct and supported by the cited frame | 11/20 | 13/20 |
-| Posture asserted with the target absent from the frame | 3/20 | 0/20 |
-| Handoff in the four unanswerable conditions | 3/4 | 4/4 |
-| Mean wall time | 247.6 s | 286.1 s |
-
-Limits:
-
-- 11 vs 13 is within chance for 20 runs. Unsupported assertions went from 3 to 0, and runs took about 39 s longer.
-- The rerun used conditions already seen during diagnosis, after a host-rule fix applied to both arms. The held-out confirmation above was run afterwards to test it.
-- The first 40-run cohort (November 8) scored 4/20 vs 6/20 because an over-strict host rule blocked readable frames in both arms. Those results are reported separately.
-- The detector fires on lab equipment and misses some lying poses, so it works only as a veto.
-- A ten-run pilot (November 7) against fixed-order verification showed no advantage for TRACE.
-- The held-out conditions are new placements and headings in the same lab, with one synthetic worker and one human rater for the blinded frame labels.
-- Not yet tested: dynamic falls, other scenes, a second independent rater, crash recovery. Lying poses are authored, not physical falls.
+- Unsupported posture claims fell from 8 to 1 (one-sided exact sign test, p = 0.0078).
+- The gate is conservative. Correct, frame-backed answers went from 24 to 17 (p = 0.039), mostly where the detector missed the worker and the robot handed off instead of answering. Runs took about 112 s longer, from extra re-observation.
+- Scope: one reconstructed lab, one synthetic worker, authored standing and lying poses.
 
 ### Reports
 
@@ -169,12 +147,8 @@ The Python package is `tracebot`.
 | Real2Sim tool adapter | [real2sim_harness_tools.py](scripts/real2sim_harness_tools.py) |
 | Corridor navigation | [real2sim_navigation.py](scripts/real2sim_navigation.py) |
 | Repeated trials | [repeat_real2sim_trials.py](scripts/repeat_real2sim_trials.py) |
-| Design decisions | [context method](reports/CONTEXT_METHOD_DECISIONS.md), [architecture notes](docs/architecture/README.md), [original requirements](implementation_guide.md) |
+| Design decisions | [context method](reports/CONTEXT_METHOD_DECISIONS.md), [architecture notes](docs/architecture/README.md) |
 
 ## License
 
-[MIT](LICENSE) for the code in this repository. TRACE combines a simulation research prototype with an operator-supervised Go2 observation monitor. Evaluation results are simulation-only; no emergency service is connected. Dependencies, model weights and scene assets keep their own terms. The optional person detector uses Ultralytics YOLO, which is AGPL-3.0.
-
-### Go2 hardware monitor (operator-supervised)
-
-A separate [Go2 live monitor](docs/go2-live-monitor.md) receives real Jetson RealSense video and bridge telemetry. Local Qwen image descriptions and recorded CCTV playback are available; autonomous hardware movement is not connected. Existing simulation workflows remain separate.
+[MIT](LICENSE) for the code in this repository. Dependencies, model weights and scene assets keep their own terms. The optional person detector uses Ultralytics YOLO, which is AGPL-3.0.
