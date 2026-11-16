@@ -17,6 +17,21 @@ https://github.com/user-attachments/assets/79563b4e-c37d-407b-aeb1-a65cc7d94959
 
 *34.5 s demo of one four-minute simulated inspection, redrawn from its saved records and sped up (not a screen capture). It is a separate demonstration run, not one of the comparison runs below. [Video file](docs/assets/trace_demo_monitor_en.mp4).*
 
+## Simulation → Real hardware
+
+| **SIMULATION · Spot / Isaac Sim** | **REAL HARDWARE · Go2 / Jetson** |
+|---|---|
+| Model-directed inspection and evidence checks in the reconstructed lab | RealSense RGB streaming, Go2 telemetry, and local Qwen image descriptions |
+| Evaluation results below are simulation-only | Hardware observation integration; autonomous walking is not connected |
+
+### REAL · Go2 observation workspace
+
+![TRACE real-hardware observation workspace: Go2 RGB, CCTV frame, and Qwen panel](docs/assets/go2-real-workspace.png)
+
+*Presentation mockup assembled from real observations: a saved Go2-mounted RealSense frame, one frame from a recorded CCTV-view video, and an earlier Qwen response. The panels are not synchronized; the Qwen text belongs to a different observation. This screenshot shows the workspace layout, not a live autonomous inspection.*
+
+**Verified on hardware:** continuous RGB reception, bridge telemetry, local Qwen3-VL 8B image descriptions, and one operator-approved stand-up. The monitor also supports recorded CCTV video playback. [Hardware setup, verification scope, and run commands →](docs/go2-live-monitor.md)
+
 ## System
 
 ![TRACE system overview](docs/assets/system-overview.svg)
@@ -142,8 +157,8 @@ The Python package is `tracebot`.
 
 ## License
 
-[MIT](LICENSE) for the code in this repository. TRACE is a simulation research prototype with no real robot or emergency service connected. Dependencies, model weights and scene assets keep their own terms. The optional person detector uses Ultralytics YOLO, which is AGPL-3.0.
+[MIT](LICENSE) for the code in this repository. TRACE combines a simulation research prototype with an operator-supervised Go2 observation monitor. Evaluation results are simulation-only; no emergency service is connected. Dependencies, model weights and scene assets keep their own terms. The optional person detector uses Ultralytics YOLO, which is AGPL-3.0.
 
 ### Go2 hardware monitor (operator-supervised)
 
-A separate [Go2 live monitor](docs/go2-live-monitor.md) receives real Jetson RealSense video and bridge telemetry. Its Qwen and CCTV panels are explicitly marked UI placeholders; autonomous hardware movement is not connected. Existing simulation workflows remain separate.
+A separate [Go2 live monitor](docs/go2-live-monitor.md) receives real Jetson RealSense video and bridge telemetry. Local Qwen image descriptions and recorded CCTV playback are available; autonomous hardware movement is not connected. Existing simulation workflows remain separate.

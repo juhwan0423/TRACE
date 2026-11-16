@@ -520,3 +520,15 @@ One-command live reproduction: `PYTHONPATH=src .venv/bin/python -u scripts/demo_
 - Added docs/go2-live-monitor.md with commands, actual verification scope, hardware provenance, and remaining integration limitations.
 - During window replacement an old SSH camera consumer survived abrupt termination; explicitly terminated that owned process and restarted the monitor. Added SIGTERM cleanup for subsequent launches.
 - Screenshot generated from GTK widget drawing, excluding unrelated desktop windows and credentials.
+
+### Live Qwen observation connection
+- Confirmed the same RealSense RGB /dev/video4 (YUYV 640x480, 30fps capture); neither snapshot nor stream uses a ROS camera topic.
+- Camera controls: auto exposure=3, gain=64; enabled exposure_auto_priority from 0 to 1 to allow longer low-light exposure. Brightness cause not proven: stand-up changed framing toward the chair, and previous exposure measurements are unavailable.
+- Added actual local Ollama qwen3-vl:8b image requests to Go2 tab (localhost:11434), one request at a time, optional repeat every 5s when idle, reject stale input, label analyzed frame time, retain final responses in ignored artifacts/go2/qwen-live.jsonl. This is image description only; no robot tool execution.
+- Compilation and diff whitespace checks passed; local Ollama confirmed model loaded. Changes remain local pending verification.
+
+### Real workspace presentation and README
+- Added recorded CCTV file selection/playback and static presentation compositor; used saved initial RealSense frame, user-provided CCTV frame rotated 90 degrees counterclockwise, and a historical Qwen response. Sources are not synchronized or a matched evidence pair.
+- Added docs/assets/go2-real-workspace.png. Original recordings remain local and are not committed.
+- README now contrasts Simulation / Real hardware near the top, with the real workspace image and an explicit mockup caption. Existing simulation results, demo, architecture, and implementation guide preserved. Corrected stale claims that no hardware was connected and Qwen remained a placeholder.
+- Verified Python compilation, git diff whitespace, and visually checked the final screenshot. No additional robot commands sent.
