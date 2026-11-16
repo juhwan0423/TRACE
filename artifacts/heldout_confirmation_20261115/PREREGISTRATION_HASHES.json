@@ -1,0 +1,13 @@
+{
+ "recorded_before_first_heldout_trial": true,
+ "sha256": {
+  "reports/HELDOUT_CONFIRMATION_PROTOCOL_20261115.md": "f193374135ad6c0fea116f2160a0101ac35c98d548b909edca88f89faab8e477",
+  "artifacts/heldout_confirmation_20261115/analysis.py": "bc89d4918241cf57eb2d0ad85c4eaf7f61fcfab040c4cea627712fd73e2c2003",
+  "configs/comparison_heldout_20261115_A.json": "abdd4662f0bc9b8e53a7abca8b9c6d9d4ec71efb61f5cdd66167b1a756b1accf",
+  "configs/comparison_heldout_20261115_B.json": "207d749c281e9501b84f66ad2767f1ec994b0d4beebf6b20fb7a3110bcdb1ef8",
+  "configs/comparison_heldout_runtime_20261115.json": "86982da1359c933f695192a40e17894b88c30e7c24da96ea4ee89ca318ba89c6",
+  "configs/person_gate_yolo11n_confirmatory060.json": "0d913861d1f4bcdc246ebdf29111a10f6fcb50caf6e7035dec8da980c262b350",
+  "artifacts/heldout_preflight_20261115/select_conditions.py": "d7ce256e0110c5d00dfa703e4427a676945b2f0ec04df5119d22beafc737c9ee",
+  "artifacts/heldout_preflight_20261115/selection.json": "000d1db71016767bb5c9eca10a5285ef57b54233e809fac723e070e30de25a0b"
+ }
+}

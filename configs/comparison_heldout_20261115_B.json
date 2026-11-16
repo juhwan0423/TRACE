@@ -1,0 +1,711 @@
+{
+  "schema_version": 1,
+  "evaluation_role": "confirmatory",
+  "seed": 20261116,
+  "repetitions": 1,
+  "policies": [
+    "agent_gate_off",
+    "agent_gate_on"
+  ],
+  "preflight_complete": true,
+  "archive_all_detector_frames": true,
+  "heldout_cohort": "B",
+  "heldout_cohort_count": 2,
+  "independent_unit": "10 paired-posture placement IDs per cohort (4 west, 4 entrance, 2 off-catalog); 20 placements over both cohorts in one lab; nearby placements are correlated",
+  "geometry_selection": "Held-out rule in heldout_preflight_20261115/select_conditions.py: geometry screen, evaluator-mask visibility and framing only; no VLM/detector output on any held-out condition before freezing.",
+  "preflight_summary": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/READINESS.md",
+  "preflight_gate": "Existing drive fixed closed; same ComparisonGateControl as 2026-11-08/09",
+  "required_view_headings": {
+    "entrance": -1.5707963267948966,
+    "west": -1.5707963267948966,
+    "door": 2.9
+  },
+  "revision": "scoped-limitations-v2",
+  "host_rule_version": "trace-context/2-scoped-limitations",
+  "revision_note": "Held-out confirmation of the frozen 2026-11-09 system (identical code modulo package rename). No system, threshold, prompt, budget or metric change after seeing any held-out result.",
+  "baseline_protocol_sha256": "5df06e8e3f88d2521a46108ada83ecc7b8476623fe64ac5848f615aae35da98e",
+  "preregistration": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/reports/HELDOUT_CONFIRMATION_PROTOCOL_20261115.md",
+  "preregistration_sha256": "f193374135ad6c0fea116f2160a0101ac35c98d548b909edca88f89faab8e477",
+  "scenarios": [
+    {
+      "scenario_id": "ho_Wm530_m010_standing",
+      "independent_group_id": "heldout_Wm530_m010",
+      "spatial_family": "west",
+      "condition": "standing",
+      "actual_posture": "standing",
+      "answerable": true,
+      "position": [
+        -5.3,
+        -0.1,
+        0.03
+      ],
+      "rotation": [
+        0,
+        0,
+        180
+      ],
+      "frame": 0,
+      "geometry_evidence": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-5.30_-0.10_s180/capture.json",
+      "coverage_evidence": {
+        "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/W-5.30_-0.10_s180/capture.json",
+        "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-5.30_-0.10_s180/capture.json",
+        "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/W-5.30_-0.10_s180/capture.json"
+      },
+      "preflight_human_pixels": {
+        "entrance": 0,
+        "west": 16255,
+        "door": 0,
+        "fixed": 170
+      },
+      "useful_view_preflight": "west",
+      "rotation_key": "s180",
+      "limitations": "Authored static skinned pose, not simulated fall. Same reconstructed lab, viewpoints and camera catalog as development cohorts; held-out = unseen placements/body headings and schedule seed, not a new environment. Preflight visibility is not model correctness or outcome annotation."
+    },
+    {
+      "scenario_id": "ho_Wm530_m010_lying",
+      "independent_group_id": "heldout_Wm530_m010",
+      "spatial_family": "west",
+      "condition": "lying",
+      "actual_posture": "lying",
+      "answerable": true,
+      "position": [
+        -5.3,
+        -0.1,
+        0.03
+      ],
+      "rotation": [
+        0,
+        90,
+        -90
+      ],
+      "frame": 0,
+      "geometry_evidence": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-5.30_-0.10_lm90/capture.json",
+      "coverage_evidence": {
+        "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/W-5.30_-0.10_lm90/capture.json",
+        "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-5.30_-0.10_lm90/capture.json",
+        "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/W-5.30_-0.10_lm90/capture.json"
+      },
+      "preflight_human_pixels": {
+        "entrance": 0,
+        "west": 7788,
+        "door": 0,
+        "fixed": 0
+      },
+      "useful_view_preflight": "west",
+      "rotation_key": "lm90",
+      "limitations": "Authored static skinned pose, not simulated fall. Same reconstructed lab, viewpoints and camera catalog as development cohorts; held-out = unseen placements/body headings and schedule seed, not a new environment. Preflight visibility is not model correctness or outcome annotation."
+    },
+    {
+      "scenario_id": "ho_Wm490_m010_standing",
+      "independent_group_id": "heldout_Wm490_m010",
+      "spatial_family": "west",
+      "condition": "standing",
+      "actual_posture": "standing",
+      "answerable": true,
+      "position": [
+        -4.9,
+        -0.1,
+        0.03
+      ],
+      "rotation": [
+        0,
+        0,
+        -90
+      ],
+      "frame": 0,
+      "geometry_evidence": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-4.90_-0.10_sm90/capture.json",
+      "coverage_evidence": {
+        "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/W-4.90_-0.10_sm90/capture.json",
+        "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-4.90_-0.10_sm90/capture.json",
+        "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/W-4.90_-0.10_sm90/capture.json"
+      },
+      "preflight_human_pixels": {
+        "entrance": 0,
+        "west": 13316,
+        "door": 0,
+        "fixed": 130
+      },
+      "useful_view_preflight": "west",
+      "rotation_key": "sm90",
+      "limitations": "Authored static skinned pose, not simulated fall. Same reconstructed lab, viewpoints and camera catalog as development cohorts; held-out = unseen placements/body headings and schedule seed, not a new environment. Preflight visibility is not model correctness or outcome annotation."
+    },
+    {
+      "scenario_id": "ho_Wm490_m010_lying",
+      "independent_group_id": "heldout_Wm490_m010",
+      "spatial_family": "west",
+      "condition": "lying",
+      "actual_posture": "lying",
+      "answerable": true,
+      "position": [
+        -4.9,
+        -0.1,
+        0.03
+      ],
+      "rotation": [
+        0,
+        90,
+        -90
+      ],
+      "frame": 0,
+      "geometry_evidence": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-4.90_-0.10_lm90/capture.json",
+      "coverage_evidence": {
+        "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/W-4.90_-0.10_lm90/capture.json",
+        "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-4.90_-0.10_lm90/capture.json",
+        "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/W-4.90_-0.10_lm90/capture.json"
+      },
+      "preflight_human_pixels": {
+        "entrance": 0,
+        "west": 8861,
+        "door": 0,
+        "fixed": 0
+      },
+      "useful_view_preflight": "west",
+      "rotation_key": "lm90",
+      "limitations": "Authored static skinned pose, not simulated fall. Same reconstructed lab, viewpoints and camera catalog as development cohorts; held-out = unseen placements/body headings and schedule seed, not a new environment. Preflight visibility is not model correctness or outcome annotation."
+    },
+    {
+      "scenario_id": "ho_Wm490_m060_standing",
+      "independent_group_id": "heldout_Wm490_m060",
+      "spatial_family": "west",
+      "condition": "standing",
+      "actual_posture": "standing",
+      "answerable": true,
+      "position": [
+        -4.9,
+        -0.6,
+        0.03
+      ],
+      "rotation": [
+        0,
+        0,
+        90
+      ],
+      "frame": 0,
+      "geometry_evidence": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-4.90_-0.60_s90/capture.json",
+      "coverage_evidence": {
+        "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/W-4.90_-0.60_s90/capture.json",
+        "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-4.90_-0.60_s90/capture.json",
+        "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/W-4.90_-0.60_s90/capture.json"
+      },
+      "preflight_human_pixels": {
+        "entrance": 0,
+        "west": 8582,
+        "door": 189,
+        "fixed": 794
+      },
+      "useful_view_preflight": "west",
+      "rotation_key": "s90",
+      "limitations": "Authored static skinned pose, not simulated fall. Same reconstructed lab, viewpoints and camera catalog as development cohorts; held-out = unseen placements/body headings and schedule seed, not a new environment. Preflight visibility is not model correctness or outcome annotation."
+    },
+    {
+      "scenario_id": "ho_Wm490_m060_lying",
+      "independent_group_id": "heldout_Wm490_m060",
+      "spatial_family": "west",
+      "condition": "lying",
+      "actual_posture": "lying",
+      "answerable": true,
+      "position": [
+        -4.9,
+        -0.6,
+        0.03
+      ],
+      "rotation": [
+        0,
+        90,
+        90
+      ],
+      "frame": 0,
+      "geometry_evidence": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-4.90_-0.60_l90/capture.json",
+      "coverage_evidence": {
+        "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/W-4.90_-0.60_l90/capture.json",
+        "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-4.90_-0.60_l90/capture.json",
+        "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/W-4.90_-0.60_l90/capture.json"
+      },
+      "preflight_human_pixels": {
+        "entrance": 0,
+        "west": 5902,
+        "door": 0,
+        "fixed": 0
+      },
+      "useful_view_preflight": "west",
+      "rotation_key": "l90",
+      "limitations": "Authored static skinned pose, not simulated fall. Same reconstructed lab, viewpoints and camera catalog as development cohorts; held-out = unseen placements/body headings and schedule seed, not a new environment. Preflight visibility is not model correctness or outcome annotation."
+    },
+    {
+      "scenario_id": "ho_Wm510_m010_standing",
+      "independent_group_id": "heldout_Wm510_m010",
+      "spatial_family": "west",
+      "condition": "standing",
+      "actual_posture": "standing",
+      "answerable": true,
+      "position": [
+        -5.1,
+        -0.1,
+        0.03
+      ],
+      "rotation": [
+        0,
+        0,
+        180
+      ],
+      "frame": 0,
+      "geometry_evidence": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-5.10_-0.10_s180/capture.json",
+      "coverage_evidence": {
+        "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/W-5.10_-0.10_s180/capture.json",
+        "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-5.10_-0.10_s180/capture.json",
+        "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/W-5.10_-0.10_s180/capture.json"
+      },
+      "preflight_human_pixels": {
+        "entrance": 0,
+        "west": 17737,
+        "door": 0,
+        "fixed": 155
+      },
+      "useful_view_preflight": "west",
+      "rotation_key": "s180",
+      "limitations": "Authored static skinned pose, not simulated fall. Same reconstructed lab, viewpoints and camera catalog as development cohorts; held-out = unseen placements/body headings and schedule seed, not a new environment. Preflight visibility is not model correctness or outcome annotation."
+    },
+    {
+      "scenario_id": "ho_Wm510_m010_lying",
+      "independent_group_id": "heldout_Wm510_m010",
+      "spatial_family": "west",
+      "condition": "lying",
+      "actual_posture": "lying",
+      "answerable": true,
+      "position": [
+        -5.1,
+        -0.1,
+        0.03
+      ],
+      "rotation": [
+        0,
+        90,
+        -90
+      ],
+      "frame": 0,
+      "geometry_evidence": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-5.10_-0.10_lm90/capture.json",
+      "coverage_evidence": {
+        "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/W-5.10_-0.10_lm90/capture.json",
+        "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/W-5.10_-0.10_lm90/capture.json",
+        "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/W-5.10_-0.10_lm90/capture.json"
+      },
+      "preflight_human_pixels": {
+        "entrance": 0,
+        "west": 7742,
+        "door": 0,
+        "fixed": 0
+      },
+      "useful_view_preflight": "west",
+      "rotation_key": "lm90",
+      "limitations": "Authored static skinned pose, not simulated fall. Same reconstructed lab, viewpoints and camera catalog as development cohorts; held-out = unseen placements/body headings and schedule seed, not a new environment. Preflight visibility is not model correctness or outcome annotation."
+    },
+    {
+      "scenario_id": "ho_Ep060_p050_standing",
+      "independent_group_id": "heldout_Ep060_p050",
+      "spatial_family": "entrance",
+      "condition": "standing",
+      "actual_posture": "standing",
+      "answerable": true,
+      "position": [
+        0.6,
+        0.5,
+        0.03
+      ],
+      "rotation": [
+        0,
+        0,
+        180
+      ],
+      "frame": 0,
+      "geometry_evidence": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/E+0.60_+0.50_s180/capture.json",
+      "coverage_evidence": {
+        "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/E+0.60_+0.50_s180/capture.json",
+        "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/E+0.60_+0.50_s180/capture.json",
+        "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/E+0.60_+0.50_s180/capture.json"
+      },
+      "preflight_human_pixels": {
+        "entrance": 6311,
+        "west": 0,
+        "door": 0,
+        "fixed": 290
+      },
+      "useful_view_preflight": "entrance",
+      "rotation_key": "s180",
+      "limitations": "Authored static skinned pose, not simulated fall. Same reconstructed lab, viewpoints and camera catalog as development cohorts; held-out = unseen placements/body headings and schedule seed, not a new environment. Preflight visibility is not model correctness or outcome annotation."
+    },
+    {
+      "scenario_id": "ho_Ep060_p050_lying",
+      "independent_group_id": "heldout_Ep060_p050",
+      "spatial_family": "entrance",
+      "condition": "lying",
+      "actual_posture": "lying",
+      "answerable": true,
+      "position": [
+        0.6,
+        0.5,
+        0.03
+      ],
+      "rotation": [
+        0,
+        90,
+        180
+      ],
+      "frame": 0,
+      "geometry_evidence": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/E+0.60_+0.50_l180/capture.json",
+      "coverage_evidence": {
+        "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/E+0.60_+0.50_l180/capture.json",
+        "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/E+0.60_+0.50_l180/capture.json",
+        "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/E+0.60_+0.50_l180/capture.json"
+      },
+      "preflight_human_pixels": {
+        "entrance": 5588,
+        "west": 0,
+        "door": 0,
+        "fixed": 0
+      },
+      "useful_view_preflight": "entrance",
+      "rotation_key": "l180",
+      "limitations": "Authored static skinned pose, not simulated fall. Same reconstructed lab, viewpoints and camera catalog as development cohorts; held-out = unseen placements/body headings and schedule seed, not a new environment. Preflight visibility is not model correctness or outcome annotation."
+    },
+    {
+      "scenario_id": "ho_Ep075_p065_standing",
+      "independent_group_id": "heldout_Ep075_p065",
+      "spatial_family": "entrance",
+      "condition": "standing",
+      "actual_posture": "standing",
+      "answerable": true,
+      "position": [
+        0.75,
+        0.65,
+        0.03
+      ],
+      "rotation": [
+        0,
+        0,
+        180
+      ],
+      "frame": 0,
+      "geometry_evidence": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/entrance/E+0.75_+0.65_s180/capture.json",
+      "coverage_evidence": {
+        "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/entrance/E+0.75_+0.65_s180/capture.json",
+        "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/west/E+0.75_+0.65_s180/capture.json",
+        "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/door/E+0.75_+0.65_s180/capture.json"
+      },
+      "preflight_human_pixels": {
+        "entrance": 7435,
+        "west": 0,
+        "door": 0,
+        "fixed": 0
+      },
+      "useful_view_preflight": "entrance",
+      "rotation_key": "s180",
+      "limitations": "Authored static skinned pose, not simulated fall. Same reconstructed lab, viewpoints and camera catalog as development cohorts; held-out = unseen placements/body headings and schedule seed, not a new environment. Preflight visibility is not model correctness or outcome annotation."
+    },
+    {
+      "scenario_id": "ho_Ep075_p065_lying",
+      "independent_group_id": "heldout_Ep075_p065",
+      "spatial_family": "entrance",
+      "condition": "lying",
+      "actual_posture": "lying",
+      "answerable": true,
+      "position": [
+        0.75,
+        0.65,
+        0.03
+      ],
+      "rotation": [
+        0,
+        90,
+        -90
+      ],
+      "frame": 0,
+      "geometry_evidence": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/entrance/E+0.75_+0.65_lm90/capture.json",
+      "coverage_evidence": {
+        "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/entrance/E+0.75_+0.65_lm90/capture.json",
+        "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/west/E+0.75_+0.65_lm90/capture.json",
+        "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/door/E+0.75_+0.65_lm90/capture.json"
+      },
+      "preflight_human_pixels": {
+        "entrance": 6357,
+        "west": 0,
+        "door": 0,
+        "fixed": 0
+      },
+      "useful_view_preflight": "entrance",
+      "rotation_key": "lm90",
+      "limitations": "Authored static skinned pose, not simulated fall. Same reconstructed lab, viewpoints and camera catalog as development cohorts; held-out = unseen placements/body headings and schedule seed, not a new environment. Preflight visibility is not model correctness or outcome annotation."
+    },
+    {
+      "scenario_id": "ho_Ep030_p080_standing",
+      "independent_group_id": "heldout_Ep030_p080",
+      "spatial_family": "entrance",
+      "condition": "standing",
+      "actual_posture": "standing",
+      "answerable": true,
+      "position": [
+        0.3,
+        0.8,
+        0.03
+      ],
+      "rotation": [
+        0,
+        0,
+        90
+      ],
+      "frame": 0,
+      "geometry_evidence": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/E+0.30_+0.80_s90/capture.json",
+      "coverage_evidence": {
+        "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/E+0.30_+0.80_s90/capture.json",
+        "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/E+0.30_+0.80_s90/capture.json",
+        "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/E+0.30_+0.80_s90/capture.json"
+      },
+      "preflight_human_pixels": {
+        "entrance": 5576,
+        "west": 0,
+        "door": 0,
+        "fixed": 962
+      },
+      "useful_view_preflight": "entrance",
+      "rotation_key": "s90",
+      "limitations": "Authored static skinned pose, not simulated fall. Same reconstructed lab, viewpoints and camera catalog as development cohorts; held-out = unseen placements/body headings and schedule seed, not a new environment. Preflight visibility is not model correctness or outcome annotation."
+    },
+    {
+      "scenario_id": "ho_Ep030_p080_lying",
+      "independent_group_id": "heldout_Ep030_p080",
+      "spatial_family": "entrance",
+      "condition": "lying",
+      "actual_posture": "lying",
+      "answerable": true,
+      "position": [
+        0.3,
+        0.8,
+        0.03
+      ],
+      "rotation": [
+        0,
+        90,
+        90
+      ],
+      "frame": 0,
+      "geometry_evidence": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/E+0.30_+0.80_l90/capture.json",
+      "coverage_evidence": {
+        "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/entrance/E+0.30_+0.80_l90/capture.json",
+        "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/west/E+0.30_+0.80_l90/capture.json",
+        "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures/door/E+0.30_+0.80_l90/capture.json"
+      },
+      "preflight_human_pixels": {
+        "entrance": 6388,
+        "west": 0,
+        "door": 0,
+        "fixed": 0
+      },
+      "useful_view_preflight": "entrance",
+      "rotation_key": "l90",
+      "limitations": "Authored static skinned pose, not simulated fall. Same reconstructed lab, viewpoints and camera catalog as development cohorts; held-out = unseen placements/body headings and schedule seed, not a new environment. Preflight visibility is not model correctness or outcome annotation."
+    },
+    {
+      "scenario_id": "ho_Ep120_p050_standing",
+      "independent_group_id": "heldout_Ep120_p050",
+      "spatial_family": "entrance",
+      "condition": "standing",
+      "actual_posture": "standing",
+      "answerable": true,
+      "position": [
+        1.2,
+        0.5,
+        0.03
+      ],
+      "rotation": [
+        0,
+        0,
+        180
+      ],
+      "frame": 0,
+      "geometry_evidence": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/entrance/E+1.20_+0.50_s180/capture.json",
+      "coverage_evidence": {
+        "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/entrance/E+1.20_+0.50_s180/capture.json",
+        "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/west/E+1.20_+0.50_s180/capture.json",
+        "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/door/E+1.20_+0.50_s180/capture.json"
+      },
+      "preflight_human_pixels": {
+        "entrance": 6985,
+        "west": 0,
+        "door": 0,
+        "fixed": 0
+      },
+      "useful_view_preflight": "entrance",
+      "rotation_key": "s180",
+      "limitations": "Authored static skinned pose, not simulated fall. Same reconstructed lab, viewpoints and camera catalog as development cohorts; held-out = unseen placements/body headings and schedule seed, not a new environment. Preflight visibility is not model correctness or outcome annotation."
+    },
+    {
+      "scenario_id": "ho_Ep120_p050_lying",
+      "independent_group_id": "heldout_Ep120_p050",
+      "spatial_family": "entrance",
+      "condition": "lying",
+      "actual_posture": "lying",
+      "answerable": true,
+      "position": [
+        1.2,
+        0.5,
+        0.03
+      ],
+      "rotation": [
+        0,
+        90,
+        0
+      ],
+      "frame": 0,
+      "geometry_evidence": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/entrance/E+1.20_+0.50_l0/capture.json",
+      "coverage_evidence": {
+        "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/entrance/E+1.20_+0.50_l0/capture.json",
+        "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/west/E+1.20_+0.50_l0/capture.json",
+        "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_e3/door/E+1.20_+0.50_l0/capture.json"
+      },
+      "preflight_human_pixels": {
+        "entrance": 6271,
+        "west": 0,
+        "door": 0,
+        "fixed": 0
+      },
+      "useful_view_preflight": "entrance",
+      "rotation_key": "l0",
+      "limitations": "Authored static skinned pose, not simulated fall. Same reconstructed lab, viewpoints and camera catalog as development cohorts; held-out = unseen placements/body headings and schedule seed, not a new environment. Preflight visibility is not model correctness or outcome annotation."
+    },
+    {
+      "scenario_id": "ho_Op460_p220_standing",
+      "independent_group_id": "heldout_Op460_p220",
+      "spatial_family": "offcatalog",
+      "condition": "unanswerable_standing",
+      "actual_posture": "standing",
+      "answerable": false,
+      "position": [
+        4.6,
+        2.2,
+        0.03
+      ],
+      "rotation": [
+        0,
+        0,
+        90
+      ],
+      "frame": 0,
+      "geometry_evidence": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/entrance/O+4.60_+2.20_s90/capture.json",
+      "coverage_evidence": {
+        "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/entrance/O+4.60_+2.20_s90/capture.json",
+        "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/west/O+4.60_+2.20_s90/capture.json",
+        "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/door/O+4.60_+2.20_s90/capture.json"
+      },
+      "preflight_human_pixels": {
+        "entrance": 0,
+        "west": 0,
+        "door": 0,
+        "fixed": 0
+      },
+      "useful_view_preflight": null,
+      "rotation_key": "s90",
+      "limitations": "Authored static skinned pose, not simulated fall. Same reconstructed lab, viewpoints and camera catalog as development cohorts; held-out = unseen placements/body headings and schedule seed, not a new environment. Preflight visibility is not model correctness or outcome annotation."
+    },
+    {
+      "scenario_id": "ho_Op460_p220_lying",
+      "independent_group_id": "heldout_Op460_p220",
+      "spatial_family": "offcatalog",
+      "condition": "unanswerable_lying",
+      "actual_posture": "lying",
+      "answerable": false,
+      "position": [
+        4.6,
+        2.2,
+        0.03
+      ],
+      "rotation": [
+        0,
+        90,
+        180
+      ],
+      "frame": 0,
+      "geometry_evidence": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/entrance/O+4.60_+2.20_l180/capture.json",
+      "coverage_evidence": {
+        "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/entrance/O+4.60_+2.20_l180/capture.json",
+        "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/west/O+4.60_+2.20_l180/capture.json",
+        "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/door/O+4.60_+2.20_l180/capture.json"
+      },
+      "preflight_human_pixels": {
+        "entrance": 0,
+        "west": 0,
+        "door": 0,
+        "fixed": 0
+      },
+      "useful_view_preflight": null,
+      "rotation_key": "l180",
+      "limitations": "Authored static skinned pose, not simulated fall. Same reconstructed lab, viewpoints and camera catalog as development cohorts; held-out = unseen placements/body headings and schedule seed, not a new environment. Preflight visibility is not model correctness or outcome annotation."
+    },
+    {
+      "scenario_id": "ho_Op460_p030_standing",
+      "independent_group_id": "heldout_Op460_p030",
+      "spatial_family": "offcatalog",
+      "condition": "unanswerable_standing",
+      "actual_posture": "standing",
+      "answerable": false,
+      "position": [
+        4.6,
+        0.3,
+        0.03
+      ],
+      "rotation": [
+        0,
+        0,
+        180
+      ],
+      "frame": 0,
+      "geometry_evidence": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/entrance/O+4.60_+0.30_s180/capture.json",
+      "coverage_evidence": {
+        "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/entrance/O+4.60_+0.30_s180/capture.json",
+        "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/west/O+4.60_+0.30_s180/capture.json",
+        "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/door/O+4.60_+0.30_s180/capture.json"
+      },
+      "preflight_human_pixels": {
+        "entrance": 0,
+        "west": 0,
+        "door": 0,
+        "fixed": 0
+      },
+      "useful_view_preflight": null,
+      "rotation_key": "s180",
+      "limitations": "Authored static skinned pose, not simulated fall. Same reconstructed lab, viewpoints and camera catalog as development cohorts; held-out = unseen placements/body headings and schedule seed, not a new environment. Preflight visibility is not model correctness or outcome annotation."
+    },
+    {
+      "scenario_id": "ho_Op460_p030_lying",
+      "independent_group_id": "heldout_Op460_p030",
+      "spatial_family": "offcatalog",
+      "condition": "unanswerable_lying",
+      "actual_posture": "lying",
+      "answerable": false,
+      "position": [
+        4.6,
+        0.3,
+        0.03
+      ],
+      "rotation": [
+        0,
+        90,
+        -90
+      ],
+      "frame": 0,
+      "geometry_evidence": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/entrance/O+4.60_+0.30_lm90/capture.json",
+      "coverage_evidence": {
+        "entrance": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/entrance/O+4.60_+0.30_lm90/capture.json",
+        "west": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/west/O+4.60_+0.30_lm90/capture.json",
+        "door": "/home/jude/Documents/ChatGPT/ROSCLAW/TRACE/artifacts/heldout_preflight_20261115/captures_off2/door/O+4.60_+0.30_lm90/capture.json"
+      },
+      "preflight_human_pixels": {
+        "entrance": 0,
+        "west": 0,
+        "door": 0,
+        "fixed": 0
+      },
+      "useful_view_preflight": null,
+      "rotation_key": "lm90",
+      "limitations": "Authored static skinned pose, not simulated fall. Same reconstructed lab, viewpoints and camera catalog as development cohorts; held-out = unseen placements/body headings and schedule seed, not a new environment. Preflight visibility is not model correctness or outcome annotation."
+    }
+  ]
+}
