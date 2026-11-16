@@ -498,3 +498,25 @@ One-command live reproduction: `PYTHONPATH=src .venv/bin/python -u scripts/demo_
 - 2026-11-13: 사용자가 GitHub 웹 편집기로 영어판 영상을 올려 받은 첨부 주소(user-attachments)를 README에 넣어 바로 재생되게 함. 포스터 그림은 제거, mp4 사본은 `docs/assets/`에 유지.
 - 2026-11-13: 언어 통계가 `linguist-generated`만으로는 바뀌지 않아(main 병합 후 푸시 2회 뒤에도 HTML 377298바이트 유지) `.gitattributes`에 `-linguist-detectable` 추가.
 - 2026-11-14: README 정리(브랜치 `docs/readme-recruiter`, 사용자 요청: 채용 담당자가 보기 좋게, 이름 변경 이력 등 군더더기 서술 삭제). 상단에 배지와 Built/Stack/Result 요약 표 추가, 시스템 구성도 `docs/assets/system-overview.svg` 신규 제작(두 장비와 프로세스·데이터 흐름; 근거: `scripts/start_spark_tunnel.sh`, `scripts/start_trace_real2sim_5090.sh`, `configs/vlm_local.json`, `configs/person_gate_yolo11n_confirmatory060.json`의 device=cpu, `scripts/real2sim_harness_tools.py`). HAI-CLAW 이전 이름, 이전 README·Nav2 이력 링크 문장 삭제. 결과 수치와 한계 항목은 내용 변경 없이 문장만 줄임. 검증: `rsvg-convert`로 PNG 변환 후 눈으로 확인, `xmllint --noout` 통과, README 상대 링크 존재 확인, `PYTHONPATH=src .venv/bin/python -B -m unittest discover -s tests` 330 OK. 정적 검토 수준이며 GitHub 화면 렌더링(배지, 다크 모드)은 푸시 전이라 확인하지 않음.
+
+## 2026-11-16 — User-authorized real Go2 read-only connection
+- User explicitly requested real Go2 state and camera reception, overriding the original simulation-only scope for this addition. implementation_guide.md preserved.
+- Added src/tracebot/providers/go2_readonly.py: SSH execution of authenticated HTTP GET health/state on Jetson, RealSense /dev/video4 JPEG capture; token stays on Jetson. No motion API exposed.
+- Verified with `PYTHONPATH=src python3 -m tracebot.providers.go2_readonly`: actual DDS-derived state age 0.00131s, mode 0, error_code 1001 (meaning unverified), moving false; actual 640x480 RGB JPEG received.
+- Artifacts: artifacts/go2/20261116-165842/{state.json,frame.jpg}. Frame timestamp is host receipt time, not hardware exposure timestamp.
+- Transport: Tailscale SSH; image source is Jetson-attached RealSense, not verified as Go2 built-in camera. Snapshot reception verified; continuous video and planner integration not yet implemented.
+- Initial environment discovery: `v4l2-ctl --list-devices`, `v4l2-ctl -d /dev/video4 --list-formats-ext`, OpenCV 4.2.0 confirmed remotely. No additional skills used; no Isaac execution or motion tests.
+
+### Continuous Go2 camera UI
+- Added scripts/monitor_go2_ui.py: persistent SSH session, continuously open RealSense RGB capture, maximum 10fps JPEG delivery, telemetry GET once per second, latest-frame-only UI updates, stale/disconnected labels, explicit connect/stop and close cleanup.
+- Integrated Go2Tab into scripts/trace_desktop.py as `Go2 실시간`; existing simulation controls preserved. Standalone view uses the exact same tab.
+- Verified `/usr/bin/python3 -m py_compile scripts/monitor_go2_ui.py scripts/trace_desktop.py`.
+- Launched `/usr/bin/python3 scripts/monitor_go2_ui.py` on DISPLAY=:1. Desktop screenshot confirmed live receiver count 123 frames and last receipt 0.0 seconds ago. Stream left running for user. Main TRACE tab integration statically checked; full simulation UI not relaunched.
+- No motion commands, remote service changes, token copying, or new network listeners. Camera source is attached RealSense, not Go2 built-in video. No Qwen inference integration claimed.
+
+### Operator-authorized stand and presentation UI
+- Sent one authenticated stand_up after operator confirmed clearance; eight state samples showed body_height 0.076 -> 0.329 m, error_code 1001 -> 1002 (meaning unverified). No walking command issued.
+- Added Qwen placeholder tab, disabled analyze action, empty CCTV slot, and tool-record placeholder to the Go2 monitor. No fabricated inference output.
+- Added docs/go2-live-monitor.md with commands, actual verification scope, hardware provenance, and remaining integration limitations.
+- During window replacement an old SSH camera consumer survived abrupt termination; explicitly terminated that owned process and restarted the monitor. Added SIGTERM cleanup for subsequent launches.
+- Screenshot generated from GTK widget drawing, excluding unrelated desktop windows and credentials.

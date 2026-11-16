@@ -143,3 +143,7 @@ The Python package is `tracebot`.
 ## License
 
 [MIT](LICENSE) for the code in this repository. TRACE is a simulation research prototype with no real robot or emergency service connected. Dependencies, model weights and scene assets keep their own terms. The optional person detector uses Ultralytics YOLO, which is AGPL-3.0.
+
+### Go2 hardware monitor (operator-supervised)
+
+A separate [Go2 live monitor](docs/go2-live-monitor.md) receives real Jetson RealSense video and bridge telemetry. Its Qwen and CCTV panels are explicitly marked UI placeholders; autonomous hardware movement is not connected. Existing simulation workflows remain separate.

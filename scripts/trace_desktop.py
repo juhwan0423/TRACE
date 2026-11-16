@@ -91,6 +91,8 @@ class Window(Gtk.ApplicationWindow):
         self.system_tab=SystemTab();self.tabs.append_page(self.system_tab,Gtk.Label(label='전체 시스템 / VSS 비교'))
         from monitor_harness_ui import HarnessTab
         self.harness_tab=HarnessTab();self.tabs.append_page(self.harness_tab,Gtk.Label(label='에이전트 실행'))
+        from monitor_go2_ui import Go2Tab
+        self.go2_tab=Go2Tab();self.tabs.append_page(self.go2_tab,Gtk.Label(label='Go2 실시간'))
         if REAL2SIM:
             self.harness_tab.start.set_sensitive(True)
             self.harness_tab.status.set_text('Real2Sim native 하네스 · 작업자 상태 확인 요청 실행 가능')
@@ -134,6 +136,7 @@ class Window(Gtk.ApplicationWindow):
     def close_monitor(self,*args):
         self.stop_event.set()
         self.harness_tab.shutdown()
+        self.go2_tab.shutdown()
         if self.worker and self.worker.poll() is None:self.worker.terminate()
     def change_source(self,combo):
         self.source=combo.get_active_id();self.frame=None;self.pixbuf=None;self.last_stamp=None;self.canvas.queue_draw();self.frame_status.set_text('선택한 카메라 수신 중');self.analyze.set_sensitive(False)
