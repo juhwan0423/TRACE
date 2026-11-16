@@ -11,7 +11,7 @@
 |---|---|
 | Built | A simulated Spot robot checks on a worker when an operator asks. A local vision-language model picks where to look and when to move. The host program validates each action and records which frame supports the answer. |
 | Stack | Isaac Sim 6.2, Python `asyncio`, Qwen3-VL 8B on Ollama, YOLO11n. Simulation on an RTX 5090 PC, model inference on a DGX Spark, connected by an SSH tunnel. |
-| Result | In 20 test conditions run with and without a person-detector check, the check removed every posture answer whose cited frame did not show the worker (3 → 0). Correct answers backed by their frame went from 11 to 13. |
+| Result | In a pre-registered test on 40 held-out conditions, run with and without a person-detector check, the check cut posture answers whose cited frame did not show the worker from 8 to 1 (p = 0.008). It also made the robot answer less often: correct answers backed by their frame fell from 24 to 17, and each run took about 112 s longer. |
 
 https://github.com/user-attachments/assets/79563b4e-c37d-407b-aeb1-a65cc7d94959
 
@@ -69,13 +69,27 @@ All results are from simulation in one reconstructed lab with authored worker po
 | Spot patrol in the reconstructed lab | 23/23 waypoints, with movement cancellation and entrance arrival exercised |
 | Model-directed inspection, live Isaac + Qwen | Runs end in an inspection answer or an explicit unresolved handoff |
 | Software contracts | 330 CPU tests, no GPU or model needed, CI on Python 3.11 and 3.12 |
-| Person-detector gate OFF vs ON, 20 conditions per arm | Table below |
+| Person-detector gate OFF vs ON, 40 held-out conditions per arm | Tables below |
 
 ### Does the cited frame support the answer?
 
 A posture label can be right while the cited frame does not show the worker. An answer therefore counts only if it is correct and its cited frame contains the target. Both arms use the same Qwen planner, prompts, tools and budgets. The ON arm adds a YOLO11n person-detector veto at confidence 0.60.
 
-| November 9 rerun, 20 runs per arm | Gate OFF | Gate ON |
+| November 15 held-out confirmation, 40 runs per arm | Gate OFF | Gate ON |
+|---|---:|---:|
+| Posture asserted with the target absent from the frame (primary outcome) | 8/40 | 1/40 |
+| Correct and supported by the cited frame | 24/40 | 17/40 |
+| Handoff in the eight unanswerable conditions | 6/8 | 6/8 |
+| Mean wall time | 232 s | 344 s |
+
+The 40 conditions are 20 worker placements that appear in no earlier run, each with a standing and a lying pose. The protocol, analysis script and condition lists were fixed and hashed before the first run, and the system was the frozen November 9 version.
+
+- The gate did what it was built for. Unsupported posture claims fell from 8 to 1 (one-sided exact sign test, p = 0.0078).
+- It also cost answers. Correct answers backed by their frame fell from 24 to 17 (two-sided McNemar, p = 0.039), and the pre-registered non-inferiority margin was not met. A post hoc look shows that in all eight pairs only the OFF arm got right, the ON arm ended without an answer, mostly because the detector missed the real worker.
+- Each run took about 112 s longer with the gate (95% CI 52 to 171 s), mostly from extra re-observation.
+- The result is a trade between fewer unsupported claims and fewer answers, not an overall improvement. The gain in correct answers seen in the November 9 development rerun below did not hold up.
+
+| November 9 development rerun, 20 runs per arm | Gate OFF | Gate ON |
 |---|---:|---:|
 | Correct and supported by the cited frame | 11/20 | 13/20 |
 | Posture asserted with the target absent from the frame | 3/20 | 0/20 |
@@ -85,11 +99,12 @@ A posture label can be right while the cited frame does not show the worker. An 
 Limits:
 
 - 11 vs 13 is within chance for 20 runs. Unsupported assertions went from 3 to 0, and runs took about 39 s longer.
-- The rerun used conditions already seen during diagnosis, after a host-rule fix applied to both arms. There is no held-out confirmation yet.
+- The rerun used conditions already seen during diagnosis, after a host-rule fix applied to both arms. The held-out confirmation above was run afterwards to test it.
 - The first 40-run cohort (November 8) scored 4/20 vs 6/20 because an over-strict host rule blocked readable frames in both arms. Those results are reported separately.
 - The detector fires on lab equipment and misses some lying poses, so it works only as a veto.
 - A ten-run pilot (November 7) against fixed-order verification showed no advantage for TRACE.
-- Not yet tested: dynamic falls, held-out scenes, independent grounding assessment, crash recovery. Lying poses are authored, not physical falls.
+- The held-out conditions are new placements and headings in the same lab, with one synthetic worker and one human rater for the blinded frame labels.
+- Not yet tested: dynamic falls, other scenes, a second independent rater, crash recovery. Lying poses are authored, not physical falls.
 
 ### Reports
 
@@ -101,6 +116,7 @@ Limits:
 | Nov 8 | First 40-run cohort | [pre-registered plan](reports/DETECTOR_GATE_COHORT_20261108.md) |
 | Nov 9 | Host-rule fix and paired rerun | [rerun protocol](reports/SCOPED_LIMITATIONS_RERUN_20261109.md) |
 | Nov 11 | Result figures and number sources | [presentation outline](reports/KSME_2026_SLIDE_CONTENTS_V2.md), [slide assets](artifacts/ksme_slide_package_20261111/) |
+| Nov 15 | Held-out confirmation of the detector gate | [pre-registered protocol](reports/HELDOUT_CONFIRMATION_PROTOCOL_20261115.md), [results](reports/HELDOUT_CONFIRMATION_RESULTS_20261115.md), [analysis script and outputs](artifacts/heldout_confirmation_20261115/) |
 
 Raw frames and per-run records stay local under `artifacts/comparisons/`. The runner is [run_real2sim_comparison.py](scripts/run_real2sim_comparison.py). It refuses to overwrite earlier runs or to continue a cohort after the source or model changes.
 

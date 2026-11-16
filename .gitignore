@@ -49,3 +49,19 @@ artifacts/vlm/captures/*
 
 # KSME 2026 slide package (figures, demo video, provenance)
 !artifacts/ksme_slide_package_20261111/
+
+# Held-out confirmation 2026-11-15: pre-registration hashes, selection rule, analysis script and result summaries
+# (frames and per-run records stay local)
+!artifacts/heldout_confirmation_20261115/
+artifacts/heldout_confirmation_20261115/*
+!artifacts/heldout_confirmation_20261115/PREREGISTRATION_HASHES.json
+!artifacts/heldout_confirmation_20261115/analysis.py
+!artifacts/heldout_confirmation_20261115/finalize_labels.py
+!artifacts/heldout_confirmation_20261115/run_all.sh
+!artifacts/heldout_confirmation_20261115/results_P1_preannotation.json
+!artifacts/heldout_confirmation_20261115/results_final.json
+!artifacts/heldout_preflight_20261115/
+artifacts/heldout_preflight_20261115/*
+!artifacts/heldout_preflight_20261115/READINESS.md
+!artifacts/heldout_preflight_20261115/select_conditions.py
+!artifacts/heldout_preflight_20261115/selection.json
