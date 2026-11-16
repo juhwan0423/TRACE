@@ -532,3 +532,7 @@ One-command live reproduction: `PYTHONPATH=src .venv/bin/python -u scripts/demo_
 - Added docs/assets/go2-real-workspace.png. Original recordings remain local and are not committed.
 - README now contrasts Simulation / Real hardware near the top, with the real workspace image and an explicit mockup caption. Existing simulation results, demo, architecture, and implementation guide preserved. Corrected stale claims that no hardware was connected and Qwen remained a placeholder.
 - Verified Python compilation, git diff whitespace, and visually checked the final screenshot. No additional robot commands sent.
+
+### Match simulation presentation layout
+- Real workspace now follows the simulation monitor arrangement: CCTV overview above RGB in the left column; observation, historical Qwen result, and verified hardware status cards on the right. Matched dark palette and teal accents.
+- Reused existing real source images and historical output without new robot commands or inference. Reviewed generated screenshot and compiled the composition script; replaced only the real-workspace README image.
