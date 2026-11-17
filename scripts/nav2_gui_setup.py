@@ -6,7 +6,7 @@ from nav2_inspection import Nav2Inspection
 if 'inspection' in globals() and inspection.bridge is ros_bridge:
     inspection.close()
 inspection = Nav2Inspection(ros_bridge, root)
-inspection.update_subscription = omni.kit.app.get_app().get_update_event_stream().create_subscription_to_pop(inspection.update, name='HAICLAW inspection')
+inspection.update_subscription = omni.kit.app.get_app().get_update_event_stream().create_subscription_to_pop(inspection.update, name='TRACE inspection')
 if 'nav_window' in globals():
     nav_window.destroy()
 nav_start_busy = False
@@ -34,7 +34,7 @@ def cancel_navigation():
     nav_start_generation += 1
     inspection.cancel()
 
-nav_window = ui.Window('HAI-CLAW | Nav2 inspection', width=430, height=260)
+nav_window = ui.Window('TRACE | Nav2 inspection', width=430, height=260)
 with nav_window.frame:
     with ui.VStack():
         ui.Label('Goal: map x, y (m), yaw (degrees)')
@@ -59,4 +59,4 @@ def refresh_nav_status(event):
     else:
         detail = 'RGB saved' if run.evidence else (inspection.capture_failure or run.reason or '')
         nav_status_label.text = f'{run.status} {detail}'
-nav_status_subscription = omni.kit.app.get_app().get_update_event_stream().create_subscription_to_pop(refresh_nav_status, name='HAICLAW navigation status')
+nav_status_subscription = omni.kit.app.get_app().get_update_event_stream().create_subscription_to_pop(refresh_nav_status, name='TRACE navigation status')

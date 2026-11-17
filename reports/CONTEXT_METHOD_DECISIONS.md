@@ -6,9 +6,9 @@
 
 첫 버전은 단일 작업 구역·단일 대상·등록된 두 질문 유형으로 제한한다. 일반적인 산업안전 질문을 LLM이 자유롭게 생성하는 완성형 시스템은 아니다.
 
-- `src/haiclaw/context.py`: presence / lying 질문, 근거별 관측 해석과 조건 검사, unresolved / resolved / conflicted, 근거 만료·명시적 철회·충돌, 의존 판단 risk의 재계산, 변경 이력, canonical JSON SHA256 스냅샷.
-- `src/haiclaw/harness.py`: planner context에 질문과 부족한 조건 노출, action의 question_id 검사, tool 결과와 질문 연결, 유효 관측으로 context 갱신. context가 visible-lying을 지지해야 기존 사건 위험 판정을 허용한다.
-- `src/haiclaw/providers/harness_planner.py`: 등록된 질문 ID를 선택하는 출력 schema와 prompt. LLM이 해소 조건을 새로 작성하거나 승인하지 않는다.
+- `src/tracebot/context.py`: presence / lying 질문, 근거별 관측 해석과 조건 검사, unresolved / resolved / conflicted, 근거 만료·명시적 철회·충돌, 의존 판단 risk의 재계산, 변경 이력, canonical JSON SHA256 스냅샷.
+- `src/tracebot/harness.py`: planner context에 질문과 부족한 조건 노출, action의 question_id 검사, tool 결과와 질문 연결, 유효 관측으로 context 갱신. context가 visible-lying을 지지해야 기존 사건 위험 판정을 허용한다.
+- `src/tracebot/providers/harness_planner.py`: 등록된 질문 ID를 선택하는 출력 schema와 prompt. LLM이 해소 조건을 새로 작성하거나 승인하지 않는다.
 - `scripts/demo_context_resolution.py`: CPU fixture로 해소 → 충돌 → 철회 → 만료 → 재관측·재해소 시연.
 - `tests/test_context.py`: 질문 수명주기와 기존 하네스 연결 검증.
 

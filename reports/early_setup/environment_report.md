@@ -2,7 +2,7 @@
 
 ## 범위 및 권한
 
-작업 경로 `/home/jude/isaac_ws_61/haiclaw_ws`. 원본 가이드 보존. 기존 workspace/상위 AGENTS.md는 없었고 이번에 workspace AGENTS.md를 생성했다. 형제 IsaacLab 저장소는 수정하지 않았다. 설치된 Isaac Sim의 AGENTS.md와 skills/SKILLS.md를 읽고 공식 파일은 참조만 했다.
+작업 경로 `/home/jude/isaac_ws_61/trace_ws`. 원본 가이드 보존. 기존 workspace/상위 AGENTS.md는 없었고 이번에 workspace AGENTS.md를 생성했다. 형제 IsaacLab 저장소는 수정하지 않았다. 설치된 Isaac Sim의 AGENTS.md와 skills/SKILLS.md를 읽고 공식 파일은 참조만 했다.
 
 ## 실제 조사 결과
 
@@ -51,7 +51,7 @@ RTX 5090/Isaac Sim 6.2.0-rc.14 GUI에서 bundled PhysX Spot USD·정책·env·IO
 
 ## 2026-10-26 Nav2 Docker 및 실제 ROS 연결 추가 확인
 
-호스트 `/opt/ros` 없음/PATH ros2 없음과 별개로 기존 Jazzy Docker가 있었다. 두 Jazzy 이미지의 `ros2 pkg list` 조사에서 Nav2 서버가 없음을 확인했고, 사용자 요청에 따라 기존 `ros2-jazzy-gazebo:latest` 기반 `haiclaw-nav2:jazzy`를 별도 빌드했다. 원본 이미지 변경/호스트 apt 설치 없음. 다운로드 사전 추정 89.5 MB. `ros2/nav2/Dockerfile`, 정확한 이미지 ID·명령·로그는 `nav2_report.md`에 기록.
+호스트 `/opt/ros` 없음/PATH ros2 없음과 별개로 기존 Jazzy Docker가 있었다. 두 Jazzy 이미지의 `ros2 pkg list` 조사에서 Nav2 서버가 없음을 확인했고, 사용자 요청에 따라 기존 `ros2-jazzy-gazebo:latest` 기반 `trace-nav2:jazzy`를 별도 빌드했다. 원본 이미지 변경/호스트 apt 설치 없음. 다운로드 사전 추정 89.5 MB. `ros2/nav2/Dockerfile`, 정확한 이미지 ID·명령·로그는 `nav2_report.md`에 기록.
 
 새 이미지에서 `/opt/ros/jazzy`, `nav2_controller controller_server`, `nav2_planner planner_server` 확인. 실제 Isaac Sim bundled Jazzy rclpy와 컨테이너의 odom/TF/scan/cmd_vel/Nav2 action 연결 확인. domain 173, loopback UDP XML, host UID/GID, host IPC 사용. root 컨테이너에서는 토픽 발견만 되고 데이터 전달이 실패했으며 동일 UID/GID 후 전달 성공. 원인 내부까지 확정한 것은 아님.
 
@@ -65,4 +65,4 @@ RTX 5090/Isaac Sim 6.2.0-rc.14 GUI에서 bundled PhysX Spot USD·정책·env·IO
 
 사용자 후속 지시에 따라 Gemini Robotics ER 2 API로 선택했다. 표준 라이브러리 urllib 사용, 별도 SDK/대형 모델 다운로드 없음. API 키를 읽거나 저장하거나 실제 유료 요청을 실행하지 않았다. 키는 사용자가 shell의 GEMINI_API_KEY로 제공한다. 모델 계정 접근 권한/quota/실제 요청 성공은 미검증이다. 공식 endpoint와 structured REST 형식, 실행 명령은 vlm_report.md에 기록했다.
 
-실제 Isaac/ROS는 기존 소유 GUI와 haiclaw-nav2 연결을 사용했다. 한 번의 실제 도착 후 세 장면의 새 RGB 확보, 원래 장면 proxy 복원 확인. 호스트 ROS/전역 설정/공식 설치 수정 없음. 검증 결과 artifacts/vlm/verification.json 및 unit_tests.log(56 pass). API 실제 결과는 없음.
+실제 Isaac/ROS는 기존 소유 GUI와 trace-nav2 연결을 사용했다. 한 번의 실제 도착 후 세 장면의 새 RGB 확보, 원래 장면 proxy 복원 확인. 호스트 ROS/전역 설정/공식 설치 수정 없음. 검증 결과 artifacts/vlm/verification.json 및 unit_tests.log(56 pass). API 실제 결과는 없음.

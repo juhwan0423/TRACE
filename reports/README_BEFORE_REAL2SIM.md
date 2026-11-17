@@ -6,7 +6,7 @@ An experimental agent harness for active visual inspection in simulation.
 
 TRACE maintains unresolved person-loss incidents and lets a local model select observations and robot inspection actions within a bounded budget. Isaac Sim supplies images and physics, ROS 2/Nav2 supplies navigation, and Qwen3-VL supplies visual observations and structured action choices. Host-side evidence checks and deadlines control incident closure.
 
-> Research prototype, not a validated safety system. Simulation only; no real robot or external emergency service. The Python package remains `haiclaw` for compatibility with the earlier HAI-CLAW code.
+> Research prototype, not a validated safety system. Simulation only; no real robot or external emergency service. The Python package remains `trace` for compatibility with the earlier TRACE code.
 
 ## Current status
 
@@ -88,8 +88,8 @@ The planner does not execute arbitrary code or arbitrary coordinates and cannot 
 
 ## Repository guide
 
-- `src/haiclaw/harness.py`: state, bounded tool loop and host guards.
-- `src/haiclaw/providers/harness_planner.py`: local structured action planner.
+- `src/tracebot/harness.py`: state, bounded tool loop and host guards.
+- `src/tracebot/providers/harness_planner.py`: local structured action planner.
 - `scripts/harness_live_tools.py`: owned Isaac/ROS tool implementations.
 - `scripts/run_harness.py`: fixture/live experiment entry point.
 - `scripts/run_closed_loop.py`: fixed-sequence baseline.

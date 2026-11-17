@@ -1,6 +1,6 @@
 # TRACE / DGX Spark 작업 요약
 
-HAI-CLAW의 표시 이름은 TRACE로 전환했습니다. Python 패키지는 호환성을 위해 `haiclaw`를 유지합니다.
+TRACE의 표시 이름은 TRACE로 전환했습니다. Python 패키지는 호환성을 위해 `trace`를 유지합니다.
 
 ## 지금 되는 것
 
@@ -14,8 +14,8 @@ Isaac Sim 6.2.0 + Spot 물리 보행 + ROS 2 Jazzy/Nav2 + Ollama Qwen3-VL 8B를 
 |---|---|
 | `scripts/env_spark.sh` | 프로젝트 환경·SDK·ROS 경로 |
 | `scripts/start_ollama.sh`, `configs/vlm_local.json` | 로컬 모델 서버와 추론 설정 |
-| `src/haiclaw/providers/ollama.py` | Ollama 호출, JSON Schema와 근거 ID |
-| `src/haiclaw/closed_loop.py` | 관측 소실·이동·추론·사건 기한 연결 |
+| `src/tracebot/providers/ollama.py` | Ollama 호출, JSON Schema와 근거 ID |
+| `src/tracebot/closed_loop.py` | 관측 소실·이동·추론·사건 기한 연결 |
 | `scripts/prepare_closed_loop.py` | TRACE 전용 시뮬레이션 준비·재사용 |
 | `scripts/closed_loop_scene.py` | 시나리오·카메라·센서 시각 |
 | `scripts/run_closed_loop.py` | 실제 폐루프 실행·감사 기록 |
@@ -80,7 +80,7 @@ python3 -m http.server 8765 --bind 127.0.0.1 --directory dashboard/dist
 - 로컬 로그: `artifacts/live/qwen.jsonl`, 카메라 수신 상태: `artifacts/live/camera_status.json`. 프로그램 시작 시 과거 추론 로그는 건너뜁니다.
 - 창을 닫으면 모니터와 해당 창에서 시작한 분석 프로세스만 종료합니다. Isaac Sim·Ollama·별도 폐루프 실행기는 종료하지 않습니다.
 
-코드: `scripts/trace_desktop.py`, `scripts/trace_desktop.sh`, `scripts/vlm_stream.py`, `scripts/qwen_events.py`, `src/haiclaw/providers/ollama_stream.py`.
+코드: `scripts/trace_desktop.py`, `scripts/trace_desktop.sh`, `scripts/vlm_stream.py`, `scripts/qwen_events.py`, `src/tracebot/providers/ollama_stream.py`.
 
 ### 프로그램 v2: 전체 장면과 ROS 그래프
 

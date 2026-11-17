@@ -10,7 +10,7 @@ Date: 2026-11-08 (Asia/Seoul). This completes the detector-gate implementation a
 - A rejected post-arrival observation releases the observation requirement, allowing another viewpoint. Planner feedback contains the gate status and reason, not model paths, image hashes or simulator truth.
 - A detector-positive is not identity, posture or safety verification. Single false positives can pass; real people accompanied by false candidates can be rejected.
 
-Code: [detector](../src/haiclaw/providers/person_detector.py), [gate](../src/haiclaw/providers/person_gate.py), [comparison runner](../scripts/run_real2sim_comparison.py), [offline evaluator](../src/haiclaw/detector_gate_metrics.py).
+Code: [detector](../src/tracebot/providers/person_detector.py), [gate](../src/tracebot/providers/person_gate.py), [comparison runner](../scripts/run_real2sim_comparison.py), [offline evaluator](../src/tracebot/detector_gate_metrics.py).
 
 ## Fixed development configuration
 

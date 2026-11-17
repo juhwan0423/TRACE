@@ -73,10 +73,10 @@ annotation 결측/미판정은 0 오류 또는 1 성공으로 채우지 않는�
 
 ## 6. 평가기 및 검증 수준
 
-새 `src/haiclaw/detector_gate_metrics.py`는 기존 `comparison_records.normalize_report`의 record와 외부 평가 파일을 받는 standalone 표준 Python 평가기다. `comparison_metrics.py`의 일반 paired 비교를 대체하지 않는다. 새 평가기는 전체 분모, 기한, 근거 부재와 자세 가독성의 분리, 결측 범위, 비용 측정 coverage를 명시한다. paired bootstrap이나 자동 통계 유의성은 추가하지 않았다.
+새 `src/tracebot/detector_gate_metrics.py`는 기존 `comparison_records.normalize_report`의 record와 외부 평가 파일을 받는 standalone 표준 Python 평가기다. `comparison_metrics.py`의 일반 paired 비교를 대체하지 않는다. 새 평가기는 전체 분모, 기한, 근거 부재와 자세 가독성의 분리, 결측 범위, 비용 측정 coverage를 명시한다. paired bootstrap이나 자동 통계 유의성은 추가하지 않았다.
 
 ```python
-from haiclaw.detector_gate_metrics import evaluate_gate
+from tracebot.detector_gate_metrics import evaluate_gate
 
 summary = evaluate_gate(
     records,

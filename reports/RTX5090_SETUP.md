@@ -20,7 +20,7 @@ The local `.venv` symlink reuses the existing Isaac Sim 6.2 environment at
 package or global environment change is needed. Use `env_5090.sh`, since
 `env_spark.sh` contains an ARM-specific library preload.
 
-The previous HAICLAW checkout remains at `/home/jude/isaac_ws_61/haiclaw_ws`.
+The previous TRACE checkout remains at `/home/jude/isaac_ws_61/trace_ws`.
 Active endpoints are localhost 8227 (Real2Sim) and 11435 (SSH tunnel to Spark Ollama).
 
 Execution evidence and current limitations are recorded in `WORKLOG.md`.

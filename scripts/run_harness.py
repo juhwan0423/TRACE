@@ -41,7 +41,7 @@ async def main(args):
         from run_closed_loop import remote
         from harness_live_tools import LiveTools
         # Never replace a stage; require the previously prepared, owned context.
-        check=await remote("import carb.settings; print(json.dumps(dict(owner=carb.settings.get_settings().get('/haiclaw/workspace'), snapshot=trace_snapshot())))",timeout=5)
+        check=await remote("import carb.settings; print(json.dumps(dict(owner=carb.settings.get_settings().get('/trace/workspace'), snapshot=trace_snapshot())))",timeout=5)
         if check['owner']!=str(ROOT):raise RuntimeError('Not the owned TRACE workspace')
         if (check['snapshot'].get('navigation') or {}).get('status')=='moving':
             raise RuntimeError('Navigation already active; refusing new experiment')

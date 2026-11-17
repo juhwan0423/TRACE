@@ -69,3 +69,6 @@ artifacts/heldout_preflight_20261115/*
 # Local agent instructions and original task brief (kept on disk, not published)
 AGENTS.md
 implementation_guide.md
+
+# Early dry-run captures stay local.
+artifacts/vlm/

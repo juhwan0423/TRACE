@@ -9,7 +9,7 @@ import asyncio
 import isaacsim.core.experimental.utils.app as app_utils
 
 root = Path(workspace).resolve()
-if carb.settings.get_settings().get('/haiclaw/workspace') != str(root):
+if carb.settings.get_settings().get('/trace/workspace') != str(root):
     raise RuntimeError('Refusing to replace an unowned GUI stage')
 for folder in (root/'scripts', root/'src'):
     if str(folder) not in sys.path:
@@ -46,7 +46,7 @@ async def replay(mode):
     finally:
         globals()['reset_busy'] = False
 
-window = ui.Window('HAI-CLAW | Official Spot Policy', width=380, height=210)
+window = ui.Window('TRACE | Official Spot Policy', width=380, height=210)
 with window.frame:
     with ui.VStack():
         ui.Label('PhysX Spot: 500 Hz physics / 50 Hz policy')

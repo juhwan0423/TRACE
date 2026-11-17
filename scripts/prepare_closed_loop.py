@@ -21,7 +21,7 @@ async def prepare():
     if not listening(8226):
         with (logs / 'closed-loop-server.log').open('a') as log:
             process = subprocess.Popen(['bash', str(ROOT / 'scripts/start_sim_server.sh')],
-                                       cwd=ROOT, env=dict(os.environ, HAICLAW_ROS='1'),
+                                       cwd=ROOT, env=dict(os.environ, TRACE_ROS='1'),
                                        stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
         (logs / 'closed-loop-server.pid').write_text(str(process.pid))
         started = True
@@ -33,7 +33,7 @@ async def prepare():
             await asyncio.sleep(1)
         else:
             raise TimeoutError('Isaac startup timeout; existing process preserved')
-    state = await remote("import json, carb.settings, omni.usd; print(json.dumps(dict(owner=carb.settings.get_settings().get('/haiclaw/workspace'), demo='demo' in globals(), camera='trace_camera' in globals(), navigation='inspection' in globals() and 'ros_bridge' in globals())))")
+    state = await remote("import json, carb.settings, omni.usd; print(json.dumps(dict(owner=carb.settings.get_settings().get('/trace/workspace'), demo='demo' in globals(), camera='trace_camera' in globals(), navigation='inspection' in globals() and 'ros_bridge' in globals())))")
     if state['owner'] != str(ROOT):
         raise RuntimeError('Port 8226 belongs to another workspace; refusing changes')
     if not state['demo'] and not started:
@@ -53,7 +53,7 @@ async def prepare():
                          workspace=str(ROOT), occlusion=True, replace_demo=False)
             print(response)
     containers = subprocess.check_output(['docker', 'ps', '--format', '{{.Names}}'], text=True).splitlines()
-    if 'haiclaw-nav2' not in containers:
+    if 'trace-nav2' not in containers:
         with (logs / 'closed-loop-nav2.log').open('a') as log:
             process = subprocess.Popen(['bash', str(ROOT/'scripts/start_nav2.sh')], cwd=ROOT,
                                        stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
