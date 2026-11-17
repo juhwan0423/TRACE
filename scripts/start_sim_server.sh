@@ -17,7 +17,7 @@ with socket.socket() as s:
         raise SystemExit('Port 8226 occupied: preserve the existing instance; inspect it first.')
 PY
 ros_args=(--/isaac/startup/ros_bridge_extension=)
-if [[ "${HAICLAW_ROS:-0}" == "1" ]]; then
+if [[ "${TRACE_ROS:-0}" == "1" ]]; then
     export ROS_DISTRO=jazzy RMW_IMPLEMENTATION=rmw_fastrtps_cpp
     export FASTRTPS_DEFAULT_PROFILES_FILE="$WORKSPACE_DIR/ros2/nav2/fastdds_local.xml"
     export ROS_LOG_DIR="$WORKSPACE_DIR/artifacts/nav2/roslogs"
@@ -25,13 +25,13 @@ if [[ "${HAICLAW_ROS:-0}" == "1" ]]; then
     ros_args=(--enable isaacsim.ros2.bridge)
 fi
 window_args=()
-if [[ "${HAICLAW_HEADLESS:-1}" == "1" ]]; then window_args+=(--no-window); fi
+if [[ "${TRACE_HEADLESS:-1}" == "1" ]]; then window_args+=(--no-window); fi
 exec "$ISAAC_LAB_DIR/.venv/bin/python" -B -c \
  'import charset_normalizer, charset_normalizer.md, charset_normalizer.cd; from isaacsim import main; main()' \
  "${window_args[@]}" --enable isaacsim.code_editor.python_server \
  "${ros_args[@]}" --/isaac/startup/ros_sim_control_extension= \
  --/exts/isaacsim.code_editor.python_server/host=127.0.0.1 \
- --/app/settings/persistent=false --/haiclaw/workspace="$WORKSPACE_DIR" \
+ --/app/settings/persistent=false --/trace/workspace="$WORKSPACE_DIR" \
  --/app/userConfigPath="$WORKSPACE_DIR/artifacts/runtime/user.config.json" \
  --/app/userCachePath="$XDG_CACHE_HOME" --/app/userDataPath="$XDG_DATA_HOME" \
  --/log/file="$WORKSPACE_DIR/artifacts/logs/kit.log" \

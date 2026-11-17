@@ -1,4 +1,4 @@
-# HAI-CLAW official skill integration — 2026-10-23
+# TRACE official skill integration — 2026-10-23
 
 ## Feature → skill mapping (before foundation verification)
 - Installed pip runtime and integration: isaac-sim-orchestrator; installation references if needed.
@@ -51,7 +51,7 @@ Prior code is Kit-independent: no existing Isaac Sim API calls to migrate. Scene
 - Skills: isaac-sim-robot-navigation (policy deployment), remote (owned GUI/control), existing physics/camera skills for contact scene and body sensor.
 
 ### Spot foundation evidence
-- Dedicated GUI started with HAICLAW_HEADLESS=0 bash scripts/start_sim_server.sh; no existing Kit process or port 8226 listener was present. User scenes untouched.
+- Dedicated GUI started with TRACE_HEADLESS=0 bash scripts/start_sim_server.sh; no existing Kit process or port 8226 listener was present. User scenes untouched.
 - get_spot_spec resolved PhysX Spot artifacts. stat: USD 3,491,625 bytes; policy 776,662 bytes; env 50,228 bytes; IO descriptor 7,530 bytes. Env and descriptor actually parsed. Model SHA256 independently matched the bundled trusted digest and official runner initialized with 12 matching joints.
 - Exact exported timing: physics_dt=0.002, decimation=10, render_interval=10. No observation/action ordering, gains, or controller cadence implemented in client.
 - Reuse QuadrupedExample/LocomotionPolicySample lifecycle; build scene floor with official friction 1/1/0. Real camera body mount /World/Spot/body/HAIFrontCamera.
@@ -68,7 +68,7 @@ Prior code is Kit-independent: no existing Isaac Sim API calls to migrate. Scene
 
 ### 2026-10-26 — Jazzy Docker Nav2 통합
 
-- 사용자 “기존 Jazzy Docker에 Nav2 추가” 지시에 따라 원본 보존 파생 이미지 `haiclaw-nav2:jazzy` 생성. 빌드/패키지 검사/실행 로그는 artifacts/nav2.
+- 사용자 “기존 Jazzy Docker에 Nav2 추가” 지시에 따라 원본 보존 파생 이미지 `trace-nav2:jazzy` 생성. 빌드/패키지 검사/실행 로그는 artifacts/nav2.
 - 공식 ROS bridge, camera, remote 및 Python Server 문서, PhysX RaycastsDemo, 시간 annotator 소스 검토. ROS workspace skill은 비적용으로 분류. occupancy-map/validator의 검증 구분 참조.
 - `navigation.py`의 lease/goal/fresh-frame/cadence 계약 및 tests/test_navigation.py 추가. 41 fixture tests pass.
 - `spot_lifecycle.py`에 opt-in nav2 mode/lease 추가. 기존 policy/env/descriptor/gains/500Hz 유지. ROS 연결 상태 기존 보행 2회 actual replay pass, 각 physics/callback 9500회.

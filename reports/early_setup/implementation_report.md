@@ -8,7 +8,7 @@
 
 ## 2026-10-26 Nav2 실제 연결 및 도착 후 새 영상
 
-기존 Jazzy Docker를 보존한 `haiclaw-nav2:jazzy` 이미지와 GUI Nav2 통합을 추가했다. 실제 도착+새 RGB 성공 run은 `artifacts/nav2/1792984808819520772`이며 위치 .177744 m, yaw .080316 rad, capture 34.133333333 s > arrival 33.182 s, stop residual .006647 m로 사전 기준을 통과했다. 실제 영상에 사람 대체 캡슐이 보인다.
+기존 Jazzy Docker를 보존한 `trace-nav2:jazzy` 이미지와 GUI Nav2 통합을 추가했다. 실제 도착+새 RGB 성공 run은 `artifacts/nav2/1792984808819520772`이며 위치 .177744 m, yaw .080316 rad, capture 34.133333333 s > arrival 33.182 s, stop residual .006647 m로 사전 기준을 통과했다. 실제 영상에 사람 대체 캡슐이 보인다.
 
 중간 GUI Reset 재시험은 실측 .255245 m로 실패했다. 이후 Smac Hybrid-A* + RPP lookahead .3 m / stateful=false로 조정했고 최종 동일 목표 GUI Reset 2회가 연속 통과했다. 위치 오차 .092373/.093260 m, yaw .086967/.098312 rad, 정지 잔여 .002705/.003952 m. 최종 run은 `1792985258921926274`, `1792985384306864306`이며 각 새 RGB/계획 경로/telemetry/verification.json을 저장했다. 임의 목표의 일반적 안정성까지 주장하지 않는다. 각 실패/후속 조정/최종 상태 및 GUI 명령은 [nav2_report.md](nav2_report.md)에 기록한다. Localization은 시뮬레이션 ground-truth, 장애물 scan은 PhysX collision rays이며 AMCL/SLAM/실제 LiDAR 검증과 다르다.
 
@@ -50,13 +50,13 @@ PYTHONPATH=src python3 -B -m unittest discover -s tests -v > artifacts/logs/core
 
 ### 변경 파일과 통합 조건
 
-`src/haiclaw/core.py`, `src/haiclaw/providers/perception.py`, `src/haiclaw/providers/vlm.py`, `tests/test_core.py`, README 및 보고/작업 기록만 변경했다(테스트 로그 추가).
+`src/tracebot/core.py`, `src/tracebot/providers/perception.py`, `src/tracebot/providers/vlm.py`, `tests/test_core.py`, README 및 보고/작업 기록만 변경했다(테스트 로그 추가).
 
 공급자는 캡처 또는 요청 시점에 episode/generation을 저장하고 비동기 응답에 원래 Evidence를 결합해야 한다. reset 후 응답에 현재 generation을 덧씌우면 안 된다. Incident 생성 시 해당 generation을 전달한다. 기존 최초 에피소드 호출은 generation=0 기본값으로 호환된다. 전체 사건 실행기/타이머 스케줄러는 여전히 미구현이므로 자동 폐루프 전체 검증으로 해석하지 않는다.
 
 ## 이전 카메라 실험 완료 범위
 
-공식 skill 연결과 작은 장면의 고정 카메라 가림 → 이동 카메라 추가 관측을 구현했다. 전체 HAI-CLAW MVP/P1 완료를 의미하지 않는다.
+공식 skill 연결과 작은 장면의 고정 카메라 가림 → 이동 카메라 추가 관측을 구현했다. 전체 TRACE MVP/P1 완료를 의미하지 않는다.
 
 - `AGENTS.md`: 설치된 공식 지침/skill 경로, 단계별 읽기, pip 설치 원칙, GUI 보존 규칙.
 - `scripts/start_sim_server.sh`: workspace 전용 headless Python Server, loopback, ROS 자동 로딩 차단, 기존 리스너 보호.
@@ -98,20 +98,20 @@ PYTHONPATH=src python3 -B -m unittest discover -s tests -v > artifacts/logs/core
 
 공식 API 검증: RtxCamera + CameraSensor, 해상도 (height,width), get_data()의 (Warp 배열, metadata) 반환값, semantics.add_labels를 설치 소스/테스트와 대조하고 실제 실행했다. 캡슐·설비는 로컬 USD primitive/UsdPreviewSurface여서 외부 자산 루트나 전역 asset profile을 변경하지 않았다.
 
-기존 src/haiclaw 코드는 Isaac API 호출이 없으므로 이름 변경 대상은 없다. 실제 camera provider와 incident core 연결은 아직 없다.
+기존 src/tracebot 코드는 Isaac API 호출이 없으므로 이름 변경 대상은 없다. 실제 camera provider와 incident core 연결은 아직 없다.
 
 ## 실제 명령 및 로그
 
 ```bash
-# 작업 디렉터리 /home/jude/isaac_ws_61/haiclaw_ws
+# 작업 디렉터리 /home/jude/isaac_ws_61/trace_ws
 bash scripts/start_sim_server.sh > artifacts/logs/server.log 2>&1
 python3 /home/jude/isaac_ws_61/IsaacLab/.venv/lib/python3.12/site-packages/isaacsim/skills/isaac-sim-remote/scripts/isaacsim_send.py --timeout 30 --file /home/jude/isaac_ws_61/IsaacLab/.venv/lib/python3.12/site-packages/isaacsim/skills/isaac-sim-remote/scripts/health_check.py
-python3 /home/jude/isaac_ws_61/IsaacLab/.venv/lib/python3.12/site-packages/isaacsim/skills/isaac-sim-remote/scripts/isaacsim_send.py --context haiclaw --timeout 180 --execution-timeout 170 --args-json '{"workspace":"/home/jude/isaac_ws_61/haiclaw_ws"}' --file scripts/occlusion_demo.py
+python3 /home/jude/isaac_ws_61/IsaacLab/.venv/lib/python3.12/site-packages/isaacsim/skills/isaac-sim-remote/scripts/isaacsim_send.py --context trace --timeout 180 --execution-timeout 170 --args-json '{"workspace":"/home/jude/isaac_ws_61/trace_ws"}' --file scripts/occlusion_demo.py
 PYTHONPATH=src python3 -B -m unittest discover -s tests -v
 bash /home/jude/isaac_ws_61/IsaacLab/.venv/lib/python3.12/site-packages/isaacsim/skills/isaac-sim-validator/scripts/validate_sim.sh --level 1 scripts/build_scene.py
 ```
 
-첫 launcher 수정 전에는 소유 표시가 없어, 해당 작업에서 만든 서버에 한해 `carb.settings.get_settings().set('/haiclaw/workspace', workspace)`를 공식 client로 설정했다. 최종 launcher는 시작 플래그로 설정한다.
+첫 launcher 수정 전에는 소유 표시가 없어, 해당 작업에서 만든 서버에 한해 `carb.settings.get_settings().set('/trace/workspace', workspace)`를 공식 client로 설정했다. 최종 launcher는 시작 플래그로 설정한다.
 
 단위 검사 7개: 5 통과, 2 expected failure. 이전 읽기 전용 세션에서 실행한 19개 메모리 테스트와 이번 저장된 테스트를 혼동하지 않는다.
 

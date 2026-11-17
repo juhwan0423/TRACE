@@ -1,11 +1,11 @@
 # TRACE 비교 평가 규칙
 
-`src/haiclaw/comparison_metrics.py`는 외부 정답을 받는 표준 Python 평가기입니다. 정책 실행·모델 호출·시뮬레이터 접근을 하지 않습니다. 기존 성공 사례는 기본적으로 `development`이며, 확인 실험 결과로 재분류하지 않습니다.
+`src/tracebot/comparison_metrics.py`는 외부 정답을 받는 표준 Python 평가기입니다. 정책 실행·모델 호출·시뮬레이터 접근을 하지 않습니다. 기존 성공 사례는 기본적으로 `development`이며, 확인 실험 결과로 재분류하지 않습니다.
 
 ## 입력
 
 ```python
-from haiclaw.comparison_metrics import evaluate
+from tracebot.comparison_metrics import evaluate
 
 report = evaluate(records, ground_truth_by_trial_id,
                   expected_policies=["fixed_reference", "trace"],
@@ -73,7 +73,7 @@ report = evaluate(records, ground_truth_by_trial_id,
 ## Harness 기록 정규화
 
 ```python
-from haiclaw.comparison_records import normalize_report
+from tracebot.comparison_records import normalize_report
 
 record = normalize_report(
     harness_report, trial_id="trial-01", scenario_id="scene-01",

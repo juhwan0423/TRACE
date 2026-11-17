@@ -73,10 +73,10 @@ def write_view(results, output):
                      f'<img alt="입력 RGB" src="data:image/png;base64,{encoded}">'
                      f'<p>사건 상태: {html.escape(str(result["final_incident_state"]))}</p><pre>{detail}</pre></article>')
     (output/'index.html').write_text('''<!doctype html><html lang="ko"><meta charset="utf-8">
-<title>HAI-CLAW 단일 프레임 관측</title><style>body{font-family:system-ui;background:#eef2f5;padding:24px}
+<title>TRACE 단일 프레임 관측</title><style>body{font-family:system-ui;background:#eef2f5;padding:24px}
 main{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}article{background:white;padding:20px;border-radius:12px}
 img{width:100%;height:auto}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}</style>
-<h1>HAI-CLAW 단일 프레임 관측</h1><p>dry_run은 실제 추론이 아닙니다. 시나리오 이름은 평가용이며 모델에 전달되지 않습니다.</p><main>'''+''.join(cards)+'</main></html>')
+<h1>TRACE 단일 프레임 관측</h1><p>dry_run은 실제 추론이 아닙니다. 시나리오 이름은 평가용이며 모델에 전달되지 않습니다.</p><main>'''+''.join(cards)+'</main></html>')
 
 
 async def main():

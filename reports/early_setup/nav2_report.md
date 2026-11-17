@@ -4,7 +4,7 @@
 
 호스트 Ubuntu 24.04에는 `/opt/ros`와 PATH의 `ros2`가 없다. 기존 Docker 이미지 `ros2-jazzy-gazebo:latest`, `ros:jazzy-ros-base`에는 Nav2 실행 패키지가 없었다. Isaac bundled Jazzy에는 nav2_msgs/common/simple_commander가 있지만 planner/controller 서버는 없다.
 
-사용자가 기존 Jazzy Docker에 Nav2를 추가하는 방식을 요청했다. 원본 이미지와 호스트 ROS를 변경하지 않고 `ros2/nav2/Dockerfile`로 `haiclaw-nav2:jazzy`를 빌드했다. apt 사전 추정은 다운로드 89.5 MB, 설치 공간 576 MB. 모델 가중치 다운로드 없음. 원본 ID `61692107afc248c2043239454b703c9e4f70f7ed5668536c4f92d6c64afa3962`, 파생 ID `f5dd5ba334f295edf645237412d3ac8a592704aac2e830d1a982e2e5060b9b7e`.
+사용자가 기존 Jazzy Docker에 Nav2를 추가하는 방식을 요청했다. 원본 이미지와 호스트 ROS를 변경하지 않고 `ros2/nav2/Dockerfile`로 `trace-nav2:jazzy`를 빌드했다. apt 사전 추정은 다운로드 89.5 MB, 설치 공간 576 MB. 모델 가중치 다운로드 없음. 원본 ID `61692107afc248c2043239454b703c9e4f70f7ed5668536c4f92d6c64afa3962`, 파생 ID `f5dd5ba334f295edf645237412d3ac8a592704aac2e830d1a982e2e5060b9b7e`.
 
 공식 설치·skills·전역 설정은 수정하지 않았다. guide SHA256 `09adb11f375e5b03dff4b0f4713e9eff925ba7253c9d6f67bbaf76c42ac66403` 보존.
 
@@ -31,8 +31,8 @@ ss -ltnp 'sport = :8226'
 docker image ls --format '{{.Repository}}:{{.Tag}}'
 docker run --rm --network none --read-only --entrypoint bash ros2-jazzy-gazebo:latest -c 'source /opt/ros/jazzy/setup.bash; ros2 pkg list | grep -E "nav2|navigation|slam|amcl"'
 docker run --rm --network none --read-only --entrypoint bash ros:jazzy-ros-base -c 'source /opt/ros/jazzy/setup.bash; ros2 pkg list | grep -E "nav2|navigation|slam|amcl"'
-docker run --rm --pull never --entrypoint bash ros2-jazzy-gazebo:latest -c 'apt-get update -qq >/tmp/haiclaw-apt-update.log 2>&1 && apt-get install --assume-no --no-install-recommends ros-jazzy-navigation2 ros-jazzy-nav2-bringup 2>&1 | tail -30'
-docker build --pull=false -t haiclaw-nav2:jazzy ros2/nav2 > artifacts/nav2/docker_build.log 2>&1
+docker run --rm --pull never --entrypoint bash ros2-jazzy-gazebo:latest -c 'apt-get update -qq >/tmp/trace-apt-update.log 2>&1 && apt-get install --assume-no --no-install-recommends ros-jazzy-navigation2 ros-jazzy-nav2-bringup 2>&1 | tail -30'
+docker build --pull=false -t trace-nav2:jazzy ros2/nav2 > artifacts/nav2/docker_build.log 2>&1
 bash scripts/start_nav2.sh > artifacts/nav2/bringup_trial2.log 2>&1
 python3 scripts/nav2_gui.py > artifacts/nav2/gui_restart_setup.log 2>&1
 PYTHONPATH=src python3 -B -m unittest discover -s tests -v > artifacts/nav2/unit_tests.log 2>&1
@@ -93,7 +93,7 @@ python3 /home/jude/isaac_ws_61/IsaacLab/.venv/lib/python3.12/site-packages/isaac
 | 1792985258921926274 | 0.092373 m | 0.086967 rad | 0.002705 m | 0.001531 m/s | capture 31.833333333 s |
 | 1792985384306864306 | 0.093260 m | 0.098312 rad | 0.003952 m | 0.001660 m/s | capture 31.633333333 s |
 
-둘 다 `verification.json`의 arrived/xy/yaw/fresh/height/tilt/residual/stop_speed가 true. 두 번째는 `python3 scripts/nav2_gui.py --attach`로 같은 장면에 컨트롤러를 다시 붙인 뒤 GUI 버튼과 같은 `reset_and_navigate()` 경로를 실행했다. 최종 /odom publisher 1개, /scan publisher 1개, haiclaw_spot_bridge node 1개, command=[0,0,0], mode=hold, failure=None을 확인했다. 이전 실패는 삭제하거나 성공으로 바꾸지 않았다.
+둘 다 `verification.json`의 arrived/xy/yaw/fresh/height/tilt/residual/stop_speed가 true. 두 번째는 `python3 scripts/nav2_gui.py --attach`로 같은 장면에 컨트롤러를 다시 붙인 뒤 GUI 버튼과 같은 `reset_and_navigate()` 경로를 실행했다. 최종 /odom publisher 1개, /scan publisher 1개, trace_spot_bridge node 1개, command=[0,0,0], mode=hold, failure=None을 확인했다. 이전 실패는 삭제하거나 성공으로 바꾸지 않았다.
 
 마지막 실행 도착 30.702 s, RGB capture 31.633333333 s, 수신 31.702 s. 실제 영상에서 분홍색 사람 대체 캡슐과 설비 확인. RGB mean 186.65/std 50.51/640×360/81,316 bytes. 작은 PNG이므로 validator 파일 크기 150 KB 기준 전체 통과는 주장하지 않는다.
 
@@ -108,7 +108,7 @@ python3 /home/jude/isaac_ws_61/IsaacLab/.venv/lib/python3.12/site-packages/isaac
 
 ## GUI 실행 / 재실행
 
-현재 HAI-CLAW GUI와 `haiclaw-nav2` 컨테이너는 남겨 두었다. GUI `HAI-CLAW | Nav2 inspection`의 x=3, y=1.3, yaw=180을 사용한다. **Reset Spot, navigate, capture**: 로봇 물리 상태만 Reset하고 3초 안정화 후 Nav2 목표 전송. **Cancel and stop**: action 취소 요청 + 즉시 zero command. 상태 표시와 run별 result.json으로 arrived/failed/cancelled 및 RGB 저장을 확인한다. 임의 target은 별도 검증 대상이다.
+현재 TRACE GUI와 `trace-nav2` 컨테이너는 남겨 두었다. GUI `TRACE | Nav2 inspection`의 x=3, y=1.3, yaw=180을 사용한다. **Reset Spot, navigate, capture**: 로봇 물리 상태만 Reset하고 3초 안정화 후 Nav2 목표 전송. **Cancel and stop**: action 취소 요청 + 즉시 zero command. 상태 표시와 run별 result.json으로 arrived/failed/cancelled 및 RGB 저장을 확인한다. 임의 target은 별도 검증 대상이다.
 
 완전히 새로 실행할 때, workspace에서 두 터미널:
 
@@ -120,7 +120,7 @@ bash scripts/start_nav2.sh
 python3 scripts/nav2_gui.py
 ```
 
-기존의 **동일 HAI-CLAW Spot 장면**에 컨트롤러/UI만 다시 연결할 때:
+기존의 **동일 TRACE Spot 장면**에 컨트롤러/UI만 다시 연결할 때:
 
 ```bash
 python3 scripts/nav2_gui.py --attach
@@ -128,7 +128,7 @@ python3 scripts/nav2_gui.py --attach
 
 `--attach`는 기존 action을 취소하고 보행을 hold로 만든 뒤 이전 ROS node/update subscription을 정리한다. 사용자로 교체된 stage나 workspace 소유 표식이 다른 stage는 거부한다. USD를 새로 생성하지 않는다. `nav2_gui.py` 기본 실행은 이미 배치된 Spot demo를 무단 교체하지 않고 거부하므로 `--attach`를 사용한다. ROS 없이 실행한 이전 GUI는 loader 환경을 hot-patch하지 않으며, 사용자가 저장·종료 후 새 launcher를 실행해야 한다. 전역 ROS/Codex 설정을 바꾸지 않는다.
 
-정리할 경우 이 작업 컨테이너만 `docker stop haiclaw-nav2`로 종료하고 GUI는 사용자가 닫는다. 다른 인스턴스를 종료하지 않는다.
+정리할 경우 이 작업 컨테이너만 `docker stop trace-nav2`로 종료하고 GUI는 사용자가 닫는다. 다른 인스턴스를 종료하지 않는다.
 
 추가 실제 검증 명령:
 

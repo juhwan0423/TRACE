@@ -16,7 +16,7 @@ health = subprocess.run([sys.executable, str(client), '--timeout', '30', '--file
                          str(client.parent / 'health_check.py')], check=False)
 if health.returncode:
     raise SystemExit(health.returncode)
-command = [sys.executable, str(client), '--context', 'haiclaw', '--timeout', str(args.timeout),
+command = [sys.executable, str(client), '--context', 'trace', '--timeout', str(args.timeout),
            '--execution-timeout', str(args.timeout-10), '--args-json', json.dumps({'workspace': str(root)}),
            '--file', str(root/'scripts/occlusion_demo.py')]
 raise SystemExit(subprocess.call(command))

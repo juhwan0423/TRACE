@@ -25,8 +25,8 @@ context = omni.usd.get_context()
 stage = context.get_stage()
 # Refuse to replace a user's scene. The dedicated launcher identifies ownership.
 settings = carb.settings.get_settings()
-if settings.get('/haiclaw/workspace') != str(root):
-    raise RuntimeError('Not a HAI-CLAW-owned session: preserve the existing stage.')
+if settings.get('/trace/workspace') != str(root):
+    raise RuntimeError('Not a TRACE-owned session: preserve the existing stage.')
 if stage:
     backup = output / ('before_demo_' + str(time.time_ns()) + '.usda')
     if not stage.Export(str(backup)):

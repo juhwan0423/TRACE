@@ -15,7 +15,7 @@ Python 표준 라이브러리 HTTPS로 `https://generativelanguage.googleapis.co
 workspace에서 실행:
 
 ```bash
-cd /home/jude/isaac_ws_61/haiclaw_ws
+cd /home/jude/isaac_ws_61/trace_ws
 # 네트워크 호출 없는 입력/화면 확인
 python3 scripts/vlm_run.py --cases artifacts/vlm/cases.json
 

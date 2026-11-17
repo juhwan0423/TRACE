@@ -11,7 +11,7 @@ import time
 root = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--scene', choices=['flat','occlusion'], default='flat')
-parser.add_argument('--replace-demo', action='store_true', help='Save/replace only an existing HAI-CLAW Spot demo')
+parser.add_argument('--replace-demo', action='store_true', help='Save/replace only an existing TRACE Spot demo')
 args = parser.parse_args()
 install = Path(os.environ.get('ISAAC_SIM_DIR', str(root.parent/'IsaacLab/.venv/lib/python3.12/site-packages/isaacsim')))
 client = install/'skills/isaac-sim-remote/scripts/isaacsim_send.py'
@@ -22,7 +22,7 @@ def listening():
         return sock.connect_ex(('127.0.0.1', 8226)) == 0
 
 if not listening():
-    env = dict(os.environ, HAICLAW_HEADLESS='0')
+    env = dict(os.environ, TRACE_HEADLESS='0')
     log_dir = root/'artifacts/spot'
     log_dir.mkdir(parents=True, exist_ok=True)
     log_path = log_dir/f'gui_{time.time_ns()}.log'

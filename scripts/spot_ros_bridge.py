@@ -23,7 +23,7 @@ class SpotROS(Node):
     def __init__(self, demo):
         if not rclpy.ok():
             rclpy.init()
-        super().__init__('haiclaw_spot_bridge')
+        super().__init__('trace_spot_bridge')
         self.demo = demo
         self.commands = 0
         self.plan = []

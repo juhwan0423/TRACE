@@ -20,11 +20,11 @@
 
 2026-10-30 코드 검토 기준:
 
-- `src/haiclaw/harness.py`: 모델 도구 선택, 실행, 예산, 취소, 실패 피드백, 이력 기록이 존재한다.
-- `src/haiclaw/providers/harness_planner.py`: Qwen이 허용된 도구와 대상을 선택한다. 질문 목록은 `presence/lying`에 고정돼 있다.
-- `src/haiclaw/context.py`: 근거 만료·철회·충돌과 의존 판단의 재개방을 지원하지만 사람 존재·자세에 특화돼 있다.
-- `src/haiclaw/tool_contracts.py`: `Planner`와 `InspectionTools` 계약이 있으나 관측 반환형이 사람 영상 해석에 결합돼 있다.
-- `src/haiclaw/core.py`: 근거 구조와 사건 상태가 있지만 `Incident.accept`의 판단은 작업자 상황에 특화돼 있다.
+- `src/tracebot/harness.py`: 모델 도구 선택, 실행, 예산, 취소, 실패 피드백, 이력 기록이 존재한다.
+- `src/tracebot/providers/harness_planner.py`: Qwen이 허용된 도구와 대상을 선택한다. 질문 목록은 `presence/lying`에 고정돼 있다.
+- `src/tracebot/context.py`: 근거 만료·철회·충돌과 의존 판단의 재개방을 지원하지만 사람 존재·자세에 특화돼 있다.
+- `src/tracebot/tool_contracts.py`: `Planner`와 `InspectionTools` 계약이 있으나 관측 반환형이 사람 영상 해석에 결합돼 있다.
+- `src/tracebot/core.py`: 근거 구조와 사건 상태가 있지만 `Incident.accept`의 판단은 작업자 상황에 특화돼 있다.
 - CPU 회귀 테스트 122개 통과 기록이 있다. 이는 펌프 실험이나 신규 구조의 검증이 아니다.
 - 당시 설정된 로컬 모델 주소 `127.0.0.1:11435`는 연결되지 않았다. 새로운 실제 모델 실험 전에 연결 확인이 필요하다.
 
@@ -64,7 +64,7 @@ flowchart TB
 다음은 예정 구조이며, 기존 파일을 이미 옮겼다는 뜻이 아니다.
 
 ```text
-src/haiclaw/
+src/tracebot/
 ├── harness.py                 # 공통 실행·예산·취소·실패 처리
 ├── tool_contracts.py          # 도구 요청과 응답 계약
 ├── evidence.py               # 공통 근거·출처·시간·의존 관계

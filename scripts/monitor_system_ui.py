@@ -13,7 +13,7 @@ SYSTEM='digraph System {'+STYLE+'''
 subgraph cluster_sim {label="Isaac Sim process";fontcolor="#bdd4ea";color="#42566a";
  sim [label="Isaac Sim 6.2\nScene / physics / Spot policy"];
  sensor [label="Fixed + body RGB\nSensor timestamp"];
- bridge [label="haiclaw_spot_bridge\nrclpy + Nav2Inspection"];
+ bridge [label="trace_spot_bridge\nrclpy + Nav2Inspection"];
  sim -> sensor [label="render"];
  bridge -> sim [label="velocity lease / locomotion"];
  sim -> bridge [label="pose / collision rays"];

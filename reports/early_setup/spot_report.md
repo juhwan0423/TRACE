@@ -65,8 +65,8 @@ Reset 후 두 실행의 측정 결과는 동일했다. 공식 reset_async의 Sto
 
 - `scripts/spot_scene.py`: 바닥·가림 설비·조명과 실제 `/World/Spot/body/HAIFrontCamera` 부착. 로봇 이동 제어 없음.
 - `scripts/spot_lifecycle.py`: QuadrupedExample 상속, 공식 runner spawn/restart/step/close 및 공식 callback 등록/해제 재사용, 측정 기록.
-- `src/haiclaw/spot_commands.py`: 제한된 속도 명령 시퀀스 및 waypoint 추종. 관절/로봇 pose 쓰기 없음.
-- `src/haiclaw/spot_validation.py`: 실행 전 기준으로 telemetry 평가.
+- `src/tracebot/spot_commands.py`: 제한된 속도 명령 시퀀스 및 waypoint 추종. 관절/로봇 pose 쓰기 없음.
+- `src/tracebot/spot_validation.py`: 실행 전 기준으로 telemetry 평가.
 - `scripts/spot_gui_setup.py`: owned GUI 보호, 백업, 재실행 정리, GUI 버튼.
 - `scripts/spot_gui.py`: pip GUI 실행과 health/preflight/setup CLI. source-build python.sh 사용 없음.
 
@@ -79,11 +79,11 @@ Play: 첫 physics tick에서 공식 runner가 default state와 정책을 재초�
 ## 재현 명령 / 사용자 GUI 동작
 
 ```bash
-cd /home/jude/isaac_ws_61/haiclaw_ws
+cd /home/jude/isaac_ws_61/trace_ws
 python3 scripts/spot_gui.py --scene flat
 ```
 
-GUI의 **HAI-CLAW | Official Spot Policy** 창에서 **Run / Reset validation**을 누르면 약 19초의 시뮬레이션 동안 자세 유지→전진→회전→정지를 볼 수 있다. **Zero velocity (keep balance)**로 0 명령, **Reset and hold**로 초기화한다. GUI가 닫혔다면 위 명령으로 새로 시작한다.
+GUI의 **TRACE | Official Spot Policy** 창에서 **Run / Reset validation**을 누르면 약 19초의 시뮬레이션 동안 자세 유지→전진→회전→정지를 볼 수 있다. **Zero velocity (keep balance)**로 0 명령, **Reset and hold**로 초기화한다. GUI가 닫혔다면 위 명령으로 새로 시작한다.
 
 같은 소유 GUI를 가림 장면으로 바꿀 때:
 
@@ -91,14 +91,14 @@ GUI의 **HAI-CLAW | Official Spot Policy** 창에서 **Run / Reset validation**�
 python3 scripts/spot_gui.py --scene occlusion --replace-demo
 ```
 
-가림 장면의 **Reset and follow waypoints** 버튼으로 보행을 재생한다. 실행 중인 사용자 GUI에서 장면을 저장하지 않고 교체하지 않는다. 위 명령은 명시적 기존 demo 교체 명령이며 자동 백업을 만든다. GUI 창이 이동 경로를 가리면 HAI-CLAW 패널을 옆으로 옮길 수 있다.
+가림 장면의 **Reset and follow waypoints** 버튼으로 보행을 재생한다. 실행 중인 사용자 GUI에서 장면을 저장하지 않고 교체하지 않는다. 위 명령은 명시적 기존 demo 교체 명령이며 자동 백업을 만든다. GUI 창이 이동 경로를 가리면 TRACE 패널을 옆으로 옮길 수 있다.
 
 ## 실제 실행 명령과 증거
 
 ```bash
-HAICLAW_HEADLESS=0 bash scripts/start_sim_server.sh > artifacts/spot/gui.log 2>&1
-python3 /home/jude/isaac_ws_61/IsaacLab/.venv/lib/python3.12/site-packages/isaacsim/skills/isaac-sim-remote/scripts/isaacsim_send.py --context spot --timeout 90 --args-json '{"workspace":"/home/jude/isaac_ws_61/haiclaw_ws"}' --file scripts/spot_preflight.py
-python3 /home/jude/isaac_ws_61/IsaacLab/.venv/lib/python3.12/site-packages/isaacsim/skills/isaac-sim-remote/scripts/isaacsim_send.py --context spot --timeout 180 --args-json '{"workspace":"/home/jude/isaac_ws_61/haiclaw_ws","occlusion":false}' --file scripts/spot_gui_setup.py
+TRACE_HEADLESS=0 bash scripts/start_sim_server.sh > artifacts/spot/gui.log 2>&1
+python3 /home/jude/isaac_ws_61/IsaacLab/.venv/lib/python3.12/site-packages/isaacsim/skills/isaac-sim-remote/scripts/isaacsim_send.py --context spot --timeout 90 --args-json '{"workspace":"/home/jude/isaac_ws_61/trace_ws"}' --file scripts/spot_preflight.py
+python3 /home/jude/isaac_ws_61/IsaacLab/.venv/lib/python3.12/site-packages/isaacsim/skills/isaac-sim-remote/scripts/isaacsim_send.py --context spot --timeout 180 --args-json '{"workspace":"/home/jude/isaac_ws_61/trace_ws","occlusion":false}' --file scripts/spot_gui_setup.py
 python3 /home/jude/isaac_ws_61/IsaacLab/.venv/lib/python3.12/site-packages/isaacsim/skills/isaac-sim-remote/scripts/isaacsim_send.py --context spot --timeout 300 --file scripts/spot_validate_remote.py
 python3 scripts/spot_gui.py --scene occlusion --replace-demo
 python3 /home/jude/isaac_ws_61/IsaacLab/.venv/lib/python3.12/site-packages/isaacsim/skills/isaac-sim-remote/scripts/isaacsim_send.py --context spot --timeout 300 --file scripts/spot_waypoint_validate.py
